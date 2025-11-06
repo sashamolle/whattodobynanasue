@@ -1,0 +1,64 @@
+/* Custom Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+    --sage-green: #A3B8A5;
+    --sage-green-dark: #8F9E8B;
+    --sage-green-light: #EAF0EB;
+    --warm-beige: #F7F6F2;
+    --dark-text: #4A4A4A;
+    --dark-heading: #333333;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: var(--warm-beige); /* Warm beige background */
+    color: var(--dark-text); /* Darker gray for readability */
+}
+h1, h2, h3, h4 {
+    color: var(--dark-heading); /* Darker headings */
+}
+/* Custom active state for navigation */
+/* We'll use a class 'active' to highlight the current page */
+.nav-link.active {
+    color: var(--sage-green); /* Sage green accent */
+    border-bottom-width: 2px;
+    border-color: var(--sage-green);
+}
+.mobile-nav-link.active {
+    background-color: var(--sage-green-light); /* Lighter sage */
+    color: var(--sage-green);
+}
+
+/* Hero background shapes - simplified */
+.hero-bg {
+    background: linear-gradient(to top, var(--warm-beige) 0%, #FFFFFF 100%);
+}
+
+/* Custom button styles */
+.btn-primary {
+    background-color: var(--sage-green); /* Sage green */
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 0.5rem; /* rounded-lg */
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border: 2px solid transparent;
+}
+.btn-primary:hover {
+    background-color: var(--sage-green-dark); /* Darker sage */
+}
+.btn-secondary {
+    background-color: transparent; /* "Ghost" button */
+    color: var(--sage-green);
+    padding: 0.8rem 2rem;
+    border-radius: 0.5rem; /* rounded-lg */
+    font-weight: 500;
+    transition: all 0.2s ease-in-out;
+    border: 2px solid var(--sage-green);
+}
+.btn-secondary:hover {
+    background-color: var(--sage-green-light); /* Light sage on hover */
+}
