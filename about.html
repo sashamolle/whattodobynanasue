@@ -20,6 +20,7 @@
                 <!-- Desktop Navigation --><div class="hidden md:flex md:items-center md:space-x-10">
                     <a href="index.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium nav-link">Home</a>
                     <a href="about.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium nav-link active">About</a>
+                    <a href="book.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium nav-link">The Book</a>
                     <a href="services.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium nav-link">Services</a>
                     <a href="schedule.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium nav-link">Schedule</a>
                     <a href="contact.html" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium nav-link">Contact</a>
@@ -38,6 +39,7 @@
             <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
                 <a href="index.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">Home</a>
                 <a href="about.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link active">About</a>
+                <a href="book.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">The Book</a>
                 <a href="services.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">Services</a>
                 <a href="schedule.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">Schedule</a>
                 <a href="contact.html" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50 mobile-nav-link">Contact</a>
@@ -50,7 +52,15 @@
         <!-- ======================= --><!-- ==    ABOUT PAGE     == --><!-- ======================= --><section id="about">
             <div class="bg-white rounded-3xl shadow-sm overflow-hidden md:flex flex-row-reverse">
                 <div class="md:w-1/2">
-                    <!-- IMPORTANT CHANGE HERE: Added object-top to ensure face is visible --><img class="h-64 w-full object-cover object-top md:h-full" src="dr-sue.jpg" alt="Dr. Sue Weber">
+                    <!--
+                      HERE IS THE FIX:
+                      REMOVED: h-64 (the problem)
+                      ADDED:   aspect-[1/1] (makes it a square on mobile)
+                      ADDED:   object-top (prioritizes the face)
+                      ADDED:   md:aspect-auto (removes the square aspect ratio on desktop)
+                      KEPT:    src="dr-sue.jpg" (your original file)
+                    -->
+                    <img class="w-full aspect-[1/1] object-cover object-top md:aspect-auto md:h-full" src="dr-sue.jpg" alt="Dr. Sue Weber">
                 </div>
                 <div class="p-8 md:p-12 md:w-1/2">
                     <h2 class="text-4xl font-bold text-gray-900 mb-4">Meet Nana Sue</h2>
@@ -99,7 +109,7 @@
             <p class="text-sm">&copy; 2025 What To Do by Nana Sue. All rights reserved.</p>
             <div class="flex space-x-6 mt-6 md:mt-0">
                 <a href="#" class="hover:text-white"><span class="sr-only">Facebook</span><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg></a>
-                <a href="#" class="hover:text-white"><span class="sr-only">Instagram</span><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.101a.75.75 0 01.37.03c.866.213 1.63.54 2.316.965a4.842 4.842 0 011.64 1.64c.424.686.752 1.45.965 2.316a.75.75 0 01.03.37l.01 1.748a9.75 9.T5 0 010 3.66c-.002.122-.01.244-.03.37-.213.866-.54 1.63-.965 2.316a4.842 4.842 0 01-1.64 1.64c-.686.424-1.45.752-2.316.965a.75.75 0 01-.37.03l-1.748.01a9.75 9.75 0 01-3.66 0c-.122-.002-.244-.01-.37-.03-.866-.213-1.63-.54-2.316-.965a4.842 4.842 0 01-1.64-1.64c-.424-.686-.752-1.45-.965-2.316a.75.75 0 01-.03-.37l-.01-1.748a9.75 9.75 0 010-3.66c.002-.122.01-.244.03.37.213.866.54 1.63.965 2.316a4.842 4.842 0 011.64 1.64c.686.424 1.45-.752 2.316.965a.75.75 0 01.37-.03l1.748-.01zm-1.04 1.74a7.92 7.92 0 00-1.92.368c-.73.22-1.38.53-1.94.94a3.34 3.34 0 00-1.12 1.12c-.41.56-.72 1.21-.94 1.94a7.92 7.92 0 00-.368 1.92l-.008 1.5a7.92 7.92 0 00.368 1.92c.22.73.53 1.38.94 1.94a3.34 3.34 0 001.12 1.12c.56.41 1.21.72 1.94.94a7.92 7.92 0 001.92.368l1.5.008a7.92 7.92 0 001.92-.368c.73-.22 1.38-.53 1.94-.94a3.34 3.34 0 001.12-1.12c.41-.56.72-1.21.94-1.94a7.92 7.92 0 00.368-1.92l.008-1.5a7.92 7.92 0 00-.368-1.92c-.22-.73-.53-1.38-.94-1.94a3.34 3.34 0 00-1.12-1.12c-.56-.41-1.21-.72-1.94-.94a7.92 7.92 0 00-1.92-.368l-1.5-.008zm4.42 1.95a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zM10.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" /></svg></a>
+                <a href="#" class="hover:text-white"><span class="sr-only">Instagram</span><svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12.315 2.101a.75.75 0 01._37.03c.866.213 1.63.54 2.316.965a4.842 4.842 0 011.64 1.64c.424.686.752 1.45.965 2.316a.75.75 0 01.03.37l.01 1.748a9.75 9.T5 0 010 3.66c-.002.122-.01.244-.03.37-.213.866-.54 1.63-.965 2.316a4.842 4.842 0 01-1.64 1.64c-.686.424-1.45.752-2.316.965a.75.75 0 01-.37.03l-1.748.01a9.75 9.75 0 01-3.66 0c-.122-.002-.244-.01-.37-.03-.866-.213-1.63-.54-2.316-.965a4.842 4.842 0 01-1.64-1.64c-.424-.686-.752-1.45-.965-2.316a.75.75 0 01-.03-.37l-.01-1.748a9.75 9.75 0 010-3.66c.002-.122.01-.244.03.37.213.866.54 1.63.965 2.316a4.842 4.842 0 011.64 1.64c.686.424 1.45-.752 2.316.965a.75.75 0 01.37-.03l1.748-.01zm-1.04 1.74a7.92 7.92 0 00-1.92.368c-.73.22-1.38.53-1.94.94a3.34 3.34 0 00-1.12 1.12c-.41.56-.72 1.21-.94 1.94a7.92 7.92 0 00-.368 1.92l-.008 1.5a7.92 7.92 0 00.368 1.92c.22.73.53 1.38.94 1.94a3.34 3.34 0 001.12 1.12c.56.41 1.21.72 1.94.94a7.92 7.92 0 001.92.368l1.5.008a7.92 7.92 0 001.92-.368c.73-.22 1.38-.53 1.94-.94a3.34 3.34 0 001.12-1.12c.41-.56.72-1.21.94-1.94a7.92 7.92 0 00.368-1.92l.008-1.5a7.92 7.92 0 00-.368-1.92c-.22-.73-.53-1.38-.94-1.94a3.34 3.34 0 00-1.12-1.12c-.56-.41-1.21-.72-1.94-.94a7.92 7.92 0 00-1.92-.368l-1.5-.008zm4.42 1.95a1.125 1.125 0 100 2.25 1.125 1.125 0 000-2.25zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zM10.5 12a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z" clip-rule="evenodd" /></svg></a>
             </div>
         </div>
     </footer>
