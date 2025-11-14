@@ -65,20 +65,20 @@
                     <div class="p-8 md:p-12">
                         <h3 class="text-2xl font-bold text-gray-900 mb-6">Send a Message</h3>
                         
-                        <!-- 
-                          =================================
-                          ==  START FORM CHANGES HERE  ==
-                          =================================
-                        -->
+                        <!-- ADDED THIS SUCCESS MESSAGE BOX -->
+                        <div id="form-success" class="hidden p-4 mb-6 bg-[var(--sage-green-light)] text-[var(--dark-text)] rounded-lg">
+                            Thanks! Your message has been sent. Nana Sue will be in touch soon.
+                        </div>
 
-                        <!-- 
-                          1. Added method="POST"
-                          2. Added action="...YOUR_ID_HERE"
-                        -->
+                        <!-- ADDED THIS ERROR MESSAGE BOX -->
+                        <div id="form-error" class="hidden p-4 mb-6 bg-red-100 text-red-700 rounded-lg">
+                            Oops! Something went wrong. Please try again.
+                        </div>
+
                         <form id="contact-form" 
                               class="space-y-6"
                               method="POST"
-                              action="https://formspree.io/f/mzzyzolz"> 
+                              action="https://nanasue-backend.vercel.app"> 
                             
                             <div>
                                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
@@ -107,7 +107,7 @@
                                 <textarea id="message" name="message" rows="4" required class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-[var(--sage-green)] focus:border-[var(--sage-green)]"></textarea>
                             </div>
                             <div>
-                                <button type="submit" class="w-full btn-primary">
+                                <button type="submit" id="form-submit-btn" class="w-full btn-primary">
                                     Send Message
                                 </button>
                             </div>
@@ -183,6 +183,78 @@
             // Note: The mock form success JS is not in your GitHub version,
             // so I am not including it here. Formspree will handle
             // the success message on its own page.
+        });
+    </script>
+
+    </footer>
+
+    <!-- 
+      =================================
+      ==     ADDED THIS SCRIPT       ==
+      =================================
+    -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Mobile Menu Toggle ---
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            // ... (mobile menu code is unchanged) ...
+
+            // --- AJAX Form Submission ---
+            const contactForm = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('form-submit-btn');
+            const successMsg = document.getElementById('form-success');
+            const errorMsg = document.getElementById('form-error');
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', async (e) => {
+                    e.preventDefault(); // Prevent the default form redirect
+
+                    // Change button text to show loading
+                    submitBtn.disabled = true;
+                    submitBtn.innerText = 'Sending...';
+
+                    // 1. Get data as FormData
+                    const formData = new FormData(contactForm);
+                    
+                    // 2. Convert FormData to a plain JavaScript object
+                    const formObject = Object.fromEntries(formData.entries());
+                    
+                    // 3. Stringify the object into a JSON string
+                    const jsonBody = JSON.stringify(formObject);
+
+                    const action = contactForm.getAttribute('action');
+
+                    try {
+                        const response = await fetch(action, {
+                            method: 'POST',
+                            body: jsonBody,
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            // --- SUCCESS ---
+                            // Hide the form, show the success message
+                            contactForm.classList.add('hidden');
+                            successMsg.classList.remove('hidden');
+                        } else {
+                            // --- SERVER ERROR ---
+                            // Show the error message
+                            errorMsg.classList.remove('hidden');
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = 'Send Message';
+                        }
+                    } catch (error) {
+                        // --- NETWORK ERROR ---
+                        // Show the error message
+                        console.error('Form submission error:', error);
+                        errorMsg.classList.remove('hidden');
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Send Message';
+                    }
+                });
+            }
         });
     </script>
 </body>
