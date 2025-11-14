@@ -65,20 +65,20 @@
                     <div class="p-8 md:p-12">
                         <h3 class="text-2xl font-bold text-gray-900 mb-6">Send a Message</h3>
                         
-                        <!-- 
-                          =================================
-                          ==  START FORM CHANGES HERE  ==
-                          =================================
-                        -->
+                        <!-- ADDED THIS SUCCESS MESSAGE BOX -->
+                        <div id="form-success" class="hidden p-4 mb-6 bg-[var(--sage-green-light)] text-[var(--dark-text)] rounded-lg">
+                            Thanks! Your message has been sent. Nana Sue will be in touch soon.
+                        </div>
 
-                        <!-- 
-                          1. Added method="POST"
-                          2. Added action="...YOUR_ID_HERE"
-                        -->
+                        <!-- ADDED THIS ERROR MESSAGE BOX -->
+                        <div id="form-error" class="hidden p-4 mb-6 bg-red-100 text-red-700 rounded-lg">
+                            Oops! Something went wrong. Please try again.
+                        </div>
+
                         <form id="contact-form" 
                               class="space-y-6"
                               method="POST"
-                              action="https://formspree.io/f/mzzyzolz"> 
+                              action="https://nanasue-backend.vercel.app"> 
                             
                             <div>
                                 <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
@@ -107,7 +107,7 @@
                                 <textarea id="message" name="message" rows="4" required class="block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-[var(--sage-green)] focus:border-[var(--sage-green)]"></textarea>
                             </div>
                             <div>
-                                <button type="submit" class="w-full btn-primary">
+                                <button type="submit" id="form-submit-btn" class="w-full btn-primary">
                                     Send Message
                                 </button>
                             </div>
@@ -127,26 +127,26 @@
                                 <svg class="h-6 w-6 text-[var(--sage-green)] flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
                                 <div class="ml-4">
                                     <h4 class="text-gray-800 font-medium text-lg">Email</h4>
-                                    <p class="text-gray-600">sue@whattodobynanasue.com</p>
+                                    <p class="text-gray-600">whattodobynanasue@gmail.com</p>
                                 </div>
                             </div>
                             <div class="flex items-start">
                                 <svg class="h-6 w-6 text-[var(--sage-green)] flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.211-.998-.552-1.348l-3.498-3.498a2.25 2.25 0 00-3.182 0l-1.12 1.12c-.527.527-1.28.815-2.074.665-3.58-.73-6.558-3.708-7.288-7.288-.15-.794.138-1.547.665-2.074l1.12-1.12a2.25 2.25 0 000-3.182L4.602 3.102a2.25 2.25 0 00-1.348-.552H2.25A2.25 2.25 0 000 4.5v2.25z" /></svg>
                                 <div class="ml-4">
                                     <h4 class="text-gray-800 font-medium text-lg">Phone</h4>
-                                    <p class="text-gray-600">(555) 123-4567</p>
+                                    <p class="text-gray-600">(917) 816-6348</p>
                                 </div>
                             </div>
                             <div class="flex items-start">
                                 <svg class="h-6 w-6 text-[var(--sage-green)] flex-shrink-0 mt-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>
                                 <div class="ml-4">
                                     <h4 class="text-gray-800 font-medium text-lg">Location</h4>
-                                    <p class="text-gray-600">Serving the [Your City] area.</p>
+                                    <p class="text-gray-600">Serving the NYC and Stockholm area.</p>
                                 </div>
                             </div>
                         </div>
                         <div class="mt-8">
-                            <img src="https://placehold.co/600x400/EAF0EB/A3B8A5?text=Mock+Map" alt="Map" class="rounded-xl shadow-md w-full object-cover">
+                            <img src="map.png" alt="Map" class="rounded-xl shadow-md w-full object-cover">
                         </div>
                     </div>
                 </div>
@@ -183,6 +183,78 @@
             // Note: The mock form success JS is not in your GitHub version,
             // so I am not including it here. Formspree will handle
             // the success message on its own page.
+        });
+    </script>
+
+    </footer>
+
+    <!-- 
+      =================================
+      ==     ADDED THIS SCRIPT       ==
+      =================================
+    -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Mobile Menu Toggle ---
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            // ... (mobile menu code is unchanged) ...
+
+            // --- AJAX Form Submission ---
+            const contactForm = document.getElementById('contact-form');
+            const submitBtn = document.getElementById('form-submit-btn');
+            const successMsg = document.getElementById('form-success');
+            const errorMsg = document.getElementById('form-error');
+
+            if (contactForm) {
+                contactForm.addEventListener('submit', async (e) => {
+                    e.preventDefault(); // Prevent the default form redirect
+
+                    // Change button text to show loading
+                    submitBtn.disabled = true;
+                    submitBtn.innerText = 'Sending...';
+
+                    // 1. Get data as FormData
+                    const formData = new FormData(contactForm);
+                    
+                    // 2. Convert FormData to a plain JavaScript object
+                    const formObject = Object.fromEntries(formData.entries());
+                    
+                    // 3. Stringify the object into a JSON string
+                    const jsonBody = JSON.stringify(formObject);
+
+                    const action = contactForm.getAttribute('action');
+
+                    try {
+                        const response = await fetch(action, {
+                            method: 'POST',
+                            body: jsonBody,
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            // --- SUCCESS ---
+                            // Hide the form, show the success message
+                            contactForm.classList.add('hidden');
+                            successMsg.classList.remove('hidden');
+                        } else {
+                            // --- SERVER ERROR ---
+                            // Show the error message
+                            errorMsg.classList.remove('hidden');
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = 'Send Message';
+                        }
+                    } catch (error) {
+                        // --- NETWORK ERROR ---
+                        // Show the error message
+                        console.error('Form submission error:', error);
+                        errorMsg.classList.remove('hidden');
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = 'Send Message';
+                    }
+                });
+            }
         });
     </script>
 </body>
