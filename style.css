@@ -62,3 +62,23 @@ h1, h2, h3, h4 {
 .btn-secondary:hover {
     background-color: var(--sage-green-light); /* Light sage on hover */
 }
+
+/* --- ACCORDION ANIMATION STYLES --- */
+
+/* 1. The Hidden Section */
+.card-details {
+    max-height: 0;           /* Hidden by default */
+    overflow: hidden;        /* Hides content that overflows */
+    transition: max-height 0.4s ease-out; /* Smooth slide animation */
+}
+
+/* 2. The Chevron/Arrow Icon Rotation */
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+/* When the card has the 'active' class, rotate the icon */
+/* Note: The Javascript adds the 'active' class to the header parent */
+.class-card .card-header.active .toggle-icon {
+    transform: rotate(180deg);
+}
