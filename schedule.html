@@ -151,7 +151,7 @@
             <!-- Class One -->
 
             <div
-              class="class-card mb-6 rounded-xl overflow-hidden bg-[var(--warm-beige)] shadow-sm"
+              class="class-card active mb-6 rounded-xl overflow-hidden bg-[var(--warm-beige)] shadow-sm"
             >
               <div
                 class="card-header flex flex-col md:flex-row justify-between items-center p-6 cursor-pointer"
@@ -287,7 +287,7 @@
             <!-- Mock Class 2 -->
 
             <div
-              class="class-card mb-6 rounded-xl overflow-hidden bg-[var(--warm-beige)] shadow-sm"
+              class="class-card active mb-6 rounded-xl overflow-hidden bg-[var(--warm-beige)] shadow-sm"
             >
               <div
                 class="card-header flex flex-col md:flex-row justify-between items-center p-6 cursor-pointer"
@@ -417,7 +417,7 @@
             <!-- Mock Class 3 -->
 
             <div
-              class="class-card mb-6 rounded-xl overflow-hidden bg-[var(--warm-beige)] shadow-sm"
+              class="class-card active mb-6 rounded-xl overflow-hidden bg-[var(--warm-beige)] shadow-sm"
             >
               <div
                 class="card-header flex flex-col md:flex-row justify-between items-center p-6 cursor-pointer"
@@ -618,22 +618,35 @@
         });
       });
     </script>
+
+    <!-- Toggle class instance -->
     <script>
+      // 1. Toggle function for clicking
       function toggleCard(header) {
-        // Find the parent card and the details section
         const card = header.parentElement;
         const details = card.querySelector(".card-details");
 
-        // Toggle the rotation class
+        // Toggle the class
         card.classList.toggle("active");
 
-        // Toggle the height (Slide down/up)
+        // Toggle the height
         if (card.classList.contains("active")) {
           details.style.maxHeight = details.scrollHeight + "px";
         } else {
           details.style.maxHeight = null;
         }
       }
+
+      // 2. NEW: Run this on page load to open default cards
+      document.addEventListener("DOMContentLoaded", () => {
+        const activeCards = document.querySelectorAll(".class-card.active");
+
+        activeCards.forEach((card) => {
+          const details = card.querySelector(".card-details");
+          // Set the height immediately so it appears open
+          details.style.maxHeight = details.scrollHeight + "px";
+        });
+      });
     </script>
   </body>
 </html>
