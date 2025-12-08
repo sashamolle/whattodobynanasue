@@ -88,5 +88,5 @@ h4 {
 
 /* Rotate the arrow 180 degrees when the card is expanded */
 .class-card.active .toggle-icon {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
