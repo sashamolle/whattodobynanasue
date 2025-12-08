@@ -1,84 +1,87 @@
 /* Custom Font */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
 :root {
-    --sage-green: #A3B8A5;
-    --sage-green-dark: #8F9E8B;
-    --sage-green-light: #EAF0EB;
-    --warm-beige: #F7F6F2;
-    --dark-text: #4A4A4A;
-    --dark-heading: #333333;
+  --sage-green: #a3b8a5;
+  --sage-green-dark: #8f9e8b;
+  --sage-green-light: #eaf0eb;
+  --warm-beige: #f7f6f2;
+  --dark-text: #4a4a4a;
+  --dark-heading: #333333;
 }
 
 body {
-    font-family: 'Poppins', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    background-color: var(--warm-beige); /* Warm beige background */
-    color: var(--dark-text); /* Darker gray for readability */
+  font-family: "Poppins", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--warm-beige); /* Warm beige background */
+  color: var(--dark-text); /* Darker gray for readability */
 }
-h1, h2, h3, h4 {
-    color: var(--dark-heading); /* Darker headings */
+h1,
+h2,
+h3,
+h4 {
+  color: var(--dark-heading); /* Darker headings */
 }
 /* Custom active state for navigation */
 /* We'll use a class 'active' to highlight the current page */
 .nav-link.active {
-    color: var(--sage-green); /* Sage green accent */
-    border-bottom-width: 2px;
-    border-color: var(--sage-green);
+  color: var(--sage-green); /* Sage green accent */
+  border-bottom-width: 2px;
+  border-color: var(--sage-green);
 }
 .mobile-nav-link.active {
-    background-color: var(--sage-green-light); /* Lighter sage */
-    color: var(--sage-green);
+  background-color: var(--sage-green-light); /* Lighter sage */
+  color: var(--sage-green);
 }
 
 /* Hero background shapes - simplified */
 .hero-bg {
-    background: linear-gradient(to top, var(--warm-beige) 0%, #FFFFFF 100%);
+  background: linear-gradient(to top, var(--warm-beige) 0%, #ffffff 100%);
 }
 
 /* Custom button styles */
 .btn-primary {
-    background-color: var(--sage-green); /* Sage green */
-    color: white;
-    padding: 0.8rem 2rem;
-    border-radius: 0.5rem; /* rounded-lg */
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-    border: 2px solid transparent;
+  background-color: var(--sage-green); /* Sage green */
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 0.5rem; /* rounded-lg */
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid transparent;
 }
 .btn-primary:hover {
-    background-color: var(--sage-green-dark); /* Darker sage */
+  background-color: var(--sage-green-dark); /* Darker sage */
 }
 .btn-secondary {
-    background-color: transparent; /* "Ghost" button */
-    color: var(--sage-green);
-    padding: 0.8rem 2rem;
-    border-radius: 0.5rem; /* rounded-lg */
-    font-weight: 500;
-    transition: all 0.2s ease-in-out;
-    border: 2px solid var(--sage-green);
+  background-color: transparent; /* "Ghost" button */
+  color: var(--sage-green);
+  padding: 0.8rem 2rem;
+  border-radius: 0.5rem; /* rounded-lg */
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid var(--sage-green);
 }
 .btn-secondary:hover {
-    background-color: var(--sage-green-light); /* Light sage on hover */
+  background-color: var(--sage-green-light); /* Light sage on hover */
 }
 
 /* --- ACCORDION ANIMATION STYLES --- */
 
 /* 1. The Hidden Section */
 .card-details {
-    max-height: 0;           /* Hidden by default */
-    overflow: hidden;        /* Hides content that overflows */
-    transition: max-height 0.4s ease-out; /* Smooth slide animation */
+  max-height: 0; /* Hidden by default */
+  overflow: hidden; /* Hides content that overflows */
+  transition: max-height 0.4s ease-out; /* Smooth slide animation */
 }
 
 /* 2. The Chevron/Arrow Icon Rotation */
 .toggle-icon {
-    transition: transform 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 /* When the card has the 'active' class, rotate the icon */
 /* Note: The Javascript adds the 'active' class to the header parent */
 .class-card .card-header.active .toggle-icon {
-    transform: rotate(180deg);
+  transform: rotate(180deg);
 }
