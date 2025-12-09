@@ -14,7 +14,7 @@ class SiteHeader extends HTMLElement {
             <div class="hidden md:flex md:items-center md:space-x-10">
               <a href="index.html" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium">Home</a>
               <a href="about.html" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium">About</a>
-              <a href="services.html" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium">Services</a>
+              <!-- <a href="services.html" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium">Services</a> -->
               <a href="playbook.html" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium">PlayBook</a>
               <a href="schedule.html" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium">Schedule</a>
               <a href="contact.html" class="nav-link text-gray-600 hover:text-gray-900 px-3 py-2 text-base font-medium">Contact</a>
@@ -42,7 +42,7 @@ class SiteHeader extends HTMLElement {
           <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             <a href="index.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Home</a>
             <a href="about.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">About</a>
-            <a href="services.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Services</a>
+            <!-- <a href="services.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Services</a> -->
             <a href="playbook.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">PlayBook</a>
             <a href="schedule.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Schedule</a>
             <a href="contact.html" class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">Contact</a>
