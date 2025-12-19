@@ -276,7 +276,11 @@
     }
 
     // Navigation Logic
+    let isSubmitting = false;
+
     async function nextStep(step) {
+      if (isSubmitting) return;
+
       // Save Step 1 Data
       if (step === 2) {
         bookingData.parentName = document.getElementById('parentName').value;
@@ -298,7 +302,12 @@
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving...';
         btn.disabled = true;
 
+        isSubmitting = true;
+
         const saved = await saveBookingData();
+
+        isSubmitting = false;
+
         if (!saved) {
           btn.innerHTML = originalText;
           btn.disabled = false;
