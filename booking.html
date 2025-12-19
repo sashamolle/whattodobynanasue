@@ -173,25 +173,11 @@
           <div id="calendly-embed" style="min-width:320px;height:700px;"></div>
           <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
-          <div class="flex flex-col md:flex-row md:items-center justify-between mt-8">
+          <div class="flex justify-start mt-8">
             <button type="button" onclick="prevStep(2)"
-              class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50 mb-4 md:mb-0">
+              class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
               Back
             </button>
-
-            <div class="flex flex-col items-end">
-              <div class="flex items-center mb-2">
-                <input type="checkbox" id="manual-advance-confirm"
-                  class="mr-2 h-4 w-4 text-[var(--sage-green)] border-gray-300 rounded"
-                  onchange="toggleManualAdvance(this)">
-                <label for="manual-advance-confirm" class="text-sm text-gray-600 select-none">I confirm I have
-                  successfully booked my time above</label>
-              </div>
-              <button type="button" id="manual-advance-btn" onclick="nextStep(4)" disabled
-                class="btn-primary opacity-50 cursor-not-allowed shadow-none transition-all">
-                I have booked my time <i class="fas fa-check ml-2"></i>
-              </button>
-            </div>
           </div>
         </div>
 
@@ -209,7 +195,7 @@
             <p class="mb-2"><strong class="text-gray-800">Confirmation Sent To:</strong> <span id="confirm-email"
                 class="text-gray-600">...</span></p>
             <p class="text-sm text-gray-500 mt-4">
-              Payment is due at the time of the appointment. Y
+              Payment is due at the time of the appointment and can be made in-person via cash.
             </p>
           </div>
 
@@ -365,15 +351,22 @@
 
     // Listen for Calendly Events (Auto-Advance)
     window.addEventListener('message', function (e) {
-      if (e.data.event && e.data.event === 'calendly.event.scheduled') {
-        // Auto-advance to confirmation
-        // Disable the manual button logic if it was pending
-        const manualBtn = document.getElementById('manual-advance-btn');
-        if (manualBtn) {
-          manualBtn.disabled = true;
-          manualBtn.innerHTML = 'Booking Detected...';
-        }
+      if (!e.data) return;
 
+      const eventName = 'calendly.event.scheduled';
+      let isMatch = false;
+
+      // Check 1: Standard Object
+      if (e.data.event === eventName) {
+        isMatch = true;
+      }
+
+      // Check 2: Stringified (some browsers/implementations)
+      else if (typeof e.data === 'string' && e.data.includes(eventName)) {
+        isMatch = true;
+      }
+
+      if (isMatch) {
         console.log("Calendly booking success detected!");
         nextStep(4);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -406,19 +399,6 @@
           circle.classList.remove('active', 'completed');
           circle.innerHTML = i;
         }
-      }
-    }
-
-    function toggleManualAdvance(checkbox) {
-      const btn = document.getElementById('manual-advance-btn');
-      if (checkbox.checked) {
-        btn.disabled = false;
-        btn.classList.remove('opacity-50', 'cursor-not-allowed', 'shadow-none');
-        btn.classList.add('shadow-lg', 'transform', 'hover:-translate-y-0.5');
-      } else {
-        btn.disabled = true;
-        btn.classList.add('opacity-50', 'cursor-not-allowed', 'shadow-none');
-        btn.classList.remove('shadow-lg', 'transform', 'hover:-translate-y-0.5');
       }
     }
 
