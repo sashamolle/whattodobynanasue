@@ -24,7 +24,7 @@
     <div class="max-w-3xl mx-auto">
       <!-- Header -->
       <div class="text-center mb-10">
-        <h1 class="text-3xl font-bold text-gray-900">Book a Private Session</h1>
+        <h1 class="text-3xl font-bold text-gray-900">Book a Private In Home Session</h1>
         <p class="text-gray-600 mt-2">1:1 Milestone Consultation (45 mins)</p>
       </div>
 
@@ -43,171 +43,177 @@
               id="step-1-indicator">1</div>
             <span class="text-xs font-medium text-gray-600">Details</span>
           </div>
+          <p id="page-subtitle" class="text-gray-600 mb-6">1:1 Milestone Consultation (45 mins) • $150.00</p>
+        </div>
 
-          <!-- Step 2 Indicator -->
-          <div class="flex flex-col items-center bg-gray-50 px-2">
+        <!-- Progress Indicators -->
+        <div class="flex justify-between mb-8 relative">
+          <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-10 transform -translate-y-1/2"></div>
+
+          <div id="ind-1" class="step-indicator active">
             <div
-              class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
-              id="step-2-indicator">2</div>
+              class="w-8 h-8 rounded-full bg-[var(--sage-green)] text-white flex items-center justify-center font-bold mb-1">
+              1</div>
+            <span class="text-xs font-medium text-[var(--sage-green)]">Details</span>
+          </div>
+          <div id="ind-2" class="step-indicator">
+            <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1">
+              2</div>
             <span class="text-xs font-medium text-gray-500">Waiver</span>
           </div>
-
-          <!-- Step 3 Indicator -->
-          <div class="flex flex-col items-center bg-gray-50 px-2">
-            <div
-              class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
-              id="step-3-indicator">3</div>
+          <div id="ind-3" class="step-indicator">
+            <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1">
+              3</div>
             <span class="text-xs font-medium text-gray-500">Schedule</span>
           </div>
-
-          <!-- Step 4 Indicator -->
-          <div class="flex flex-col items-center bg-gray-50 px-2">
-            <div
-              class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
-              id="step-4-indicator">4</div>
+          <div id="ind-4" class="step-indicator">
+            <div class="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center font-bold mb-1">
+              4</div>
             <span class="text-xs font-medium text-gray-500">Done</span>
           </div>
         </div>
-      </div>
 
-      <!-- Main Form Container -->
-      <div class="bg-white rounded-2xl shadow-sm p-8 md:p-10 border border-gray-100 min-h-[500px] relative">
+        <!-- Main Form Container -->
+        <div class="bg-white rounded-2xl shadow-sm p-8 md:p-10 border border-gray-100 min-h-[500px] relative">
 
-        <!-- STEP 1: INTAKE FORM -->
-        <div id="step-1" class="fade-in">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">Intake Details</h2>
-          <form id="intake-form" onsubmit="event.preventDefault(); nextStep(2);">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              <!-- Parent Info -->
-              <div class="col-span-1 md:col-span-2">
-                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Parent
-                  Information</h3>
+          <!-- STEP 1: Details -->
+          <div id="step-1" class="fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Intake Details</h2>
+            <form onsubmit="event.preventDefault(); nextStep(2);">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <!-- Parent Info -->
+                <div class="col-span-1 md:col-span-2">
+                  <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Parent
+                    Information</h3>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+                  <input type="text" id="parentName" required class="form-input" placeholder="First & Last Name">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                  <input type="email" id="parentEmail" required class="form-input" placeholder="you@example.com">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                  <input type="tel" id="parentPhone" required class="form-input" placeholder="(555) 123-4567">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Home Address</label>
+                  <input type="text" id="parentAddress" required class="form-input" placeholder="Street, City, Zip">
+                </div>
+
+                <!-- Baby Info -->
+                <div class="col-span-1 md:col-span-2 mt-2">
+                  <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Baby's
+                    Information</h3>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Baby's Name</label>
+                  <input type="text" id="babyName" required class="form-input" placeholder="Baby's Name">
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                  <input type="date" id="babyDob" required class="form-input">
+                </div>
+
+                <!-- Concerns -->
+                <div class="col-span-1 md:col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Primary Concerns / Goals</label>
+                  <textarea id="concerns" rows="3" class="form-input"
+                    placeholder="What specific milestones are you working on?"></textarea>
+                </div>
+
+
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-                <input type="text" id="parentName" required class="form-input" placeholder="Jane Doe">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-                <input type="email" id="parentEmail" required class="form-input" placeholder="jane@example.com">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                <input type="tel" id="parentPhone" required class="form-input" placeholder="(555) 123-4567">
-              </div>
 
-              <!-- Baby Info -->
-              <div class="col-span-1 md:col-span-2 mt-2">
-                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Baby's
-                  Information</h3>
+              <div class="mt-8 flex justify-end">
+                <button type="submit" class="btn-primary">
+                  Next: Waiver <i class="fas fa-arrow-right ml-2"></i>
+                </button>
               </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Baby's Name</label>
-                <input type="text" id="babyName" required class="form-input" placeholder="Baby's Name">
-              </div>
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-                <input type="date" id="babyDob" required class="form-input">
-              </div>
-
-              <!-- Concerns -->
-              <div class="col-span-1 md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 mb-1">What are your main concerns?</label>
-                <textarea id="concerns" rows="3" class="form-input"
-                  placeholder="e.g. Baby dislikes tummy time, not rolling yet..."></textarea>
-              </div>
-
-
-            </div>
-
-            <div class="flex justify-end mt-8">
-              <button type="submit" class="btn-primary">
-                Next: Waiver <i class="fas fa-arrow-right ml-2"></i>
-              </button>
-            </div>
-          </form>
-        </div>
-
-        <!-- STEP 2: WAIVER -->
-        <div id="step-2" class="hidden fade-in">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">Waiver & Release of Liability</h2>
-
-          <div id="waiver-content"
-            class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 h-64 overflow-y-auto text-sm text-gray-600 leading-relaxed">
-            <div class="flex items-center justify-center h-full">
-              <i class="fas fa-circle-notch fa-spin text-gray-400 text-2xl"></i>
-              <span class="ml-3 text-gray-500">Loading waiver...</span>
-            </div>
+            </form>
           </div>
 
-          <form id="waiver-form" onsubmit="event.preventDefault(); nextStep(3);">
-            <div class="flex items-start mb-8">
-              <div class="flex items-center h-5">
-                <input id="waiver-agree" type="checkbox" required
-                  class="focus:ring-[var(--sage-green)] h-4 w-4 text-[var(--sage-green)] border-gray-300 rounded">
-              </div>
-              <div class="ml-3 text-sm">
-                <label for="waiver-agree" class="font-medium text-gray-700">I have read and agree to the Liability
-                  Waiver</label>
-                <p class="text-gray-500">You must agree to continue.</p>
+          <!-- STEP 2: WAIVER -->
+          <div id="step-2" class="hidden fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Waiver & Release of Liability</h2>
+
+            <div id="waiver-content"
+              class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 h-64 overflow-y-auto text-sm text-gray-600 leading-relaxed">
+              <div class="flex items-center justify-center h-full">
+                <i class="fas fa-circle-notch fa-spin text-gray-400 text-2xl"></i>
+                <span class="ml-3 text-gray-500">Loading waiver...</span>
               </div>
             </div>
 
-            <div class="flex justify-between mt-8">
-              <button type="button" onclick="prevStep(1)"
+            <form id="waiver-form" onsubmit="event.preventDefault(); nextStep(3);">
+              <div class="flex items-start mb-8">
+                <div class="flex items-center h-5">
+                  <input id="waiver-agree" type="checkbox" required
+                    class="focus:ring-[var(--sage-green)] h-4 w-4 text-[var(--sage-green)] border-gray-300 rounded">
+                </div>
+                <div class="ml-3 text-sm">
+                  <label for="waiver-agree" class="font-medium text-gray-700">I have read and agree to the Liability
+                    Waiver</label>
+                  <p class="text-gray-500">You must agree to continue.</p>
+                </div>
+              </div>
+
+              <div class="flex justify-between mt-8">
+                <button type="button" onclick="prevStep(1)"
+                  class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
+                  Back
+                </button>
+                <button type="submit" class="btn-primary">
+                  Next: Select Time <i class="fas fa-arrow-right ml-2"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- STEP 3: PAYMENT -->
+          <div id="step-3" class="hidden fade-in">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Select a Time</h2>
+
+            <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 text-sm text-gray-600">
+              <i class="fas fa-info-circle mr-2"></i> Please select your preferred time below to complete your booking.
+            </div>
+
+            <!-- Calendly Inline Widget -->
+            <div id="calendly-embed" style="min-width:320px;height:700px;"></div>
+
+
+            <div class="flex justify-start mt-8">
+              <button type="button" onclick="prevStep(2)"
                 class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
                 Back
               </button>
-              <button type="submit" class="btn-primary">
-                Next: Select Time <i class="fas fa-arrow-right ml-2"></i>
-              </button>
             </div>
-          </form>
-        </div>
-
-        <!-- STEP 3: PAYMENT -->
-        <div id="step-3" class="hidden fade-in">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">Select a Time</h2>
-
-          <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 text-sm text-gray-600">
-            <i class="fas fa-info-circle mr-2"></i> Please select your preferred time below to complete your booking.
           </div>
 
-          <!-- Calendly Inline Widget -->
-          <div id="calendly-embed" style="min-width:320px;height:700px;"></div>
-
-
-          <div class="flex justify-start mt-8">
-            <button type="button" onclick="prevStep(2)"
-              class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
-              Back
-            </button>
-          </div>
-        </div>
-
-        <!-- STEP 4: CONFIRMATION -->
-        <div id="step-4" class="hidden fade-in text-center py-10">
-          <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i class="fas fa-check text-3xl text-green-600"></i>
-          </div>
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h2>
-          <p class="text-xl text-gray-600 mb-8 max-w-md mx-auto">
-            Thank you! Your appointment has been scheduled.
-          </p>
-
-          <div class="bg-gray-50 rounded-xl p-6 mb-8 text-left max-w-md mx-auto border border-gray-200">
-            <p class="mb-2"><strong class="text-gray-800">Confirmation Sent To:</strong> <span id="confirm-email"
-                class="text-gray-600">...</span></p>
-            <p class="text-sm text-gray-500 mt-4">
-              Payment is due at the time of the appointment and can be made in-person via cash.
+          <!-- STEP 4: CONFIRMATION -->
+          <div id="step-4" class="hidden fade-in text-center py-10">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <i class="fas fa-check text-3xl text-green-600"></i>
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h2>
+            <p class="text-xl text-gray-600 mb-8 max-w-md mx-auto">
+              Thank you! Your appointment has been scheduled.
             </p>
+
+            <div class="bg-gray-50 rounded-xl p-6 mb-8 text-left max-w-md mx-auto border border-gray-200">
+              <p class="mb-2"><strong class="text-gray-800">Confirmation Sent To:</strong> <span id="confirm-email"
+                  class="text-gray-600">...</span></p>
+              <p class="text-[var(--sage-green)] font-medium mt-4"><i class="fas fa-wallet mr-2"></i>Payment of $150.00
+                is due in person.</p>
+            </div>
+
+            <a href="index.html" class="btn-secondary">Back to Home</a>
           </div>
 
-          <a href="index.html" class="btn-secondary">Back to Home</a>
         </div>
-
       </div>
-    </div>
   </main>
 
   <footer class="bg-gray-800 text-gray-400 mt-20 py-10">
@@ -226,12 +232,14 @@
       parentName: '',
       parentEmail: '',
       parentPhone: '',
+      parentAddress: '',
       babyName: '',
       babyDob: '',
       concerns: '',
       preferredSlots: [],
       waiverAgreed: false,
-      waiverVersion: ''
+      waiverVersion: '',
+      price: 150.00
     };
 
     // Load Waiver on Startup
@@ -299,9 +307,11 @@
         bookingData.parentName = document.getElementById('parentName').value;
         bookingData.parentEmail = document.getElementById('parentEmail').value;
         bookingData.parentPhone = document.getElementById('parentPhone').value;
+        bookingData.parentAddress = document.getElementById('parentAddress').value;
         bookingData.babyName = document.getElementById('babyName').value;
         bookingData.babyDob = document.getElementById('babyDob').value;
         bookingData.concerns = document.getElementById('concerns').value;
+        bookingData.price = 150.00; // Set price for the booking
         // No slots to capture anymore
       }
 
@@ -333,50 +343,36 @@
         btn.disabled = false;
 
         const calContainer = document.getElementById('calendly-embed');
-        if (calContainer) {
-          calContainer.innerHTML = ''; // Clear prevent duplicates
-
-          const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
-          // Pass bookingId in utm_content for tracking
-          // Added primary_color for branding (Sage Green Dark)
-          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=8f9e8b`;
-
-          // Use global Calendly object if available
-          if (window.Calendly) {
-            window.Calendly.initInlineWidget({
-              url: baseUrl + params,
-              parentElement: calContainer
-            });
-          } else {
-            console.error("Calendly script not loaded yet.");
-            calContainer.innerHTML = '<p class="text-center text-red-500">Calendar failed to load. Please refresh.</p>';
-          }
+        if (window.Calendly) {
+          window.Calendly.initInlineWidget({
+            url: baseUrl + params,
+            parentElement: calContainer
+          });
+        } else {
+          console.error("Calendly script not loaded yet.");
+          calContainer.innerHTML = '<p class="text-center text-red-500">Calendar failed to load. Please refresh.</p>';
         }
       }
+    }
 
-      if (step === 4) {
-        const emailSpan = document.getElementById('confirm-email');
-        if (emailSpan) {
-          emailSpan.textContent = bookingData.parentEmail || "your email";
-        }
+
+
+    if (step === 4) {
+      // Populate confirmation details
+      const emailSpan = document.getElementById('confirm-email');
+      if (emailSpan) {
+        emailSpan.textContent = bookingData.parentEmail || "your email";
       }
+    }
 
-      if (step === 4) {
-        // Populate confirmation details
-        const emailSpan = document.getElementById('confirm-email');
-        if (emailSpan) {
-          emailSpan.textContent = bookingData.parentEmail || "your email";
-        }
-      }
+    // Hide all steps
+    document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
 
-      // Hide all steps
-      document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+    // Show target step
+    document.getElementById(`step-${step}`).classList.remove('hidden');
 
-      // Show target step
-      document.getElementById(`step-${step}`).classList.remove('hidden');
-
-      // Update Indicators
-      updateProgress(step);
+    // Update Indicators
+    updateProgress(step);
     }
 
     // Listen for Calendly Events (Auto-Advance)
