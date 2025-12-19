@@ -343,12 +343,6 @@
         if (calContainer) {
           calContainer.innerHTML = ''; // Clear to prevent duplicates
 
-          // Price Reminder
-          const priceDiv = document.createElement('div');
-          priceDiv.className = "text-center mb-4 p-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium";
-          priceDiv.innerHTML = '<i class="fas fa-info-circle mr-1"></i> In-home consultation fee: $150.00';
-          calContainer.appendChild(priceDiv);
-
           const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
           const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=8f9e8b`;
 
