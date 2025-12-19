@@ -173,7 +173,7 @@
         <div id="step-3" class="hidden fade-in">
 
           <!-- Calendly Inline Widget -->
-          <div id="calendly-embed" style="min-width:320px;height:700px;"></div>
+          <div id="calendly-embed" style="min-width:320px;height:700px;" class="-mt-6"></div>
 
           <div class="flex justify-start mt-8">
             <button type="button" onclick="prevStep(2)"
@@ -230,7 +230,8 @@
       preferredSlots: [],
       waiverAgreed: false,
       waiverVersion: '',
-      price: 150.00
+      price: 150.00,
+      bookingComplete: false
     };
 
     // Load Waiver on Startup
@@ -267,7 +268,8 @@
           if (waiverCheckbox) waiverCheckbox.disabled = false;
           if (nextBtn) nextBtn.disabled = false;
         } else {
-          throw new Error("Server returned error");
+          console.error("Server Error:", response.status, response.statusText);
+          throw new Error(`Server returned error: ${response.status}`);
         }
       } catch (error) {
         console.error("Waiver fetch error:", error);
@@ -275,7 +277,7 @@
           <div class="flex flex-col items-center justify-center h-full text-red-500 text-center p-4">
             <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
             <p class="font-bold">Unable to load waiver</p>
-            <p class="text-xs text-gray-400 mt-2">Please refresh or check connection.</p>
+            <p class="text-xs text-gray-400 mt-2">Error: ${error.message}</p>
           </div>
         `;
         // Ensure they stay locked
@@ -373,7 +375,7 @@
     }
 
     // Listen for Calendly Events (Auto-Advance)
-    window.addEventListener('message', function (e) {
+    window.addEventListener('message', async function (e) {
       if (!e.data) return;
 
       // Ultra-permissive check used to ensure cross-browser compatibility
@@ -386,6 +388,11 @@
           dataStr.toLowerCase().includes('scheduled')) {
 
           console.log("Calendly booking success detected via permissive check!");
+
+          // Mark as complete and save to trigger email
+          bookingData.bookingComplete = true;
+          await saveBookingData();
+
           nextStep(4);
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }
