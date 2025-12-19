@@ -314,7 +314,8 @@
         if (calContainer) {
           calContainer.innerHTML = ''; // Clear prevent duplicates
           const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
-          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}`;
+          // Pass bookingId in utm_content for tracking
+          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}`;
 
           // Use global Calendly object if available
           if (window.Calendly) {
@@ -338,6 +339,16 @@
       // Update Indicators
       updateProgress(step);
     }
+
+    // Listen for Calendly Events (Auto-Advance)
+    window.addEventListener('message', function (e) {
+      if (e.data.event && e.data.event === 'calendly.event.scheduled') {
+        console.log("Calendly event scheduled:", e.data);
+        // Auto-advance to confirmation
+        nextStep(4);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    });
 
     function prevStep(step) {
       document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
