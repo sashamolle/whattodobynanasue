@@ -250,11 +250,8 @@
 
   <script>
     // Production-ready API URL Detection
-    // If hostname is localhost, use local backend
-    // Otherwise, use the secure production domain
-    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-      ? 'http://localhost:3001'
-      : 'https://www.what2dobaby.com'; // Backend must be accessible via https (e.g. Nginx proxy /api -> :3001)
+    // Using relative path to rely on Nginx reverse proxy /api -> :3001
+    // const API_BASE = ... (removed to fix mixed content/CORS issues)
 
     // Store data as we go
     let bookingData = {
@@ -381,7 +378,7 @@
 
       try {
         // 3. SEND TO BACKEND
-        const response = await fetch(`${API_BASE}/api/booking`, {
+        const response = await fetch(`/api/booking`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
