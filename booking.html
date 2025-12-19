@@ -365,27 +365,8 @@
 
     // Listen for Calendly Events (Auto-Advance)
     window.addEventListener('message', function (e) {
-      // Basic validation
-      if (!e.data) return;
-
-      // Debug logging
-      // console.log("Message received:", e.data); 
-
-      let eventData = e.data;
-
-      // Handle stringified JSON (rare but possible)
-      if (typeof e.data === 'string') {
-        try {
-          eventData = JSON.parse(e.data);
-        } catch (err) {
-          // Not JSON, ignore
-          return;
-        }
-      }
-
-      if (eventData.event === 'calendly.event.scheduled') {
-        console.log("Calendly booking success detected!", eventData);
-
+      if (e.data.event && e.data.event === 'calendly.event.scheduled') {
+        // Auto-advance to confirmation
         // Disable the manual button logic if it was pending
         const manualBtn = document.getElementById('manual-advance-btn');
         if (manualBtn) {
@@ -393,7 +374,7 @@
           manualBtn.innerHTML = 'Booking Detected...';
         }
 
-        // Auto-advance to confirmation
+        console.log("Calendly booking success detected!");
         nextStep(4);
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }
