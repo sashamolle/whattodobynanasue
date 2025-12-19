@@ -90,3 +90,73 @@ h4 {
 .class-card.active .toggle-icon {
   transform: rotate(180deg);
 }
+
+.btn-primary {
+  background-color: var(--sage-green);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-block;
+  border: 2px solid var(--sage-green);
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background-color: var(--sage-green-dark);
+  border-color: var(--sage-green-dark);
+}
+.btn-secondary {
+  background-color: transparent;
+  color: var(--sage-green);
+  border: 2px solid var(--sage-green);
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-block;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background-color: var(--sage-green-light);
+}
+
+/* Progress Bar Styles */
+.step-circle {
+  transition: all 0.3s ease;
+}
+.step-circle.active {
+  background-color: var(--sage-green);
+  color: white;
+  border-color: var(--sage-green);
+}
+.step-circle.completed {
+  background-color: var(--sage-green);
+  color: white;
+  border-color: var(--sage-green);
+}
+.step-line {
+  transition: all 0.3s ease;
+}
+.step-line.active {
+  background-color: var(--sage-green);
+}
+
+/* Form Input Styles */
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.form-input:focus {
+  border-color: var(--sage-green);
+  box-shadow: 0 0 0 3px var(--sage-green-light);
+}
+
+/* Hidden Utilities */
+.hidden { display: none; }
+.fade-in { animation: fadeIn 0.5s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }

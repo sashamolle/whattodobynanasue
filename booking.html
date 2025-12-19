@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book Private Session - What To Do by Nana Sue</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <script src="components.js" defer></script>
+</head>
+
+<body class="bg-gray-50">
+
+  <site-header></site-header>
+
+  <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <div class="max-w-3xl mx-auto">
+      <!-- Header -->
+      <div class="text-center mb-10">
+        <h1 class="text-3xl font-bold text-gray-900">Book a Private Session</h1>
+        <p class="text-gray-600 mt-2">1:1 Milestone Consultation (45 mins)</p>
+      </div>
+
+      <!-- Progress Bar -->
+      <div class="mb-10">
+        <div class="flex items-center justify-between relative">
+          <div class="absolute left-0 top-1/2 transform -translate-y-1/2 w-full h-1 bg-gray-200 -z-10"></div>
+          <div
+            class="absolute left-0 top-1/2 transform -translate-y-1/2 h-1 bg-[var(--sage-green)] -z-10 transition-all duration-300"
+            id="progress-line" style="width: 0%"></div>
+
+          <!-- Step 1 Indicator -->
+          <div class="flex flex-col items-center bg-gray-50 px-2">
+            <div
+              class="step-circle active w-10 h-10 rounded-full border-2 border-[var(--sage-green)] bg-white flex items-center justify-center font-bold text-[var(--sage-green)] mb-1"
+              id="step-1-indicator">1</div>
+            <span class="text-xs font-medium text-gray-600">Details</span>
+          </div>
+
+          <!-- Step 2 Indicator -->
+          <div class="flex flex-col items-center bg-gray-50 px-2">
+            <div
+              class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
+              id="step-2-indicator">2</div>
+            <span class="text-xs font-medium text-gray-500">Waiver</span>
+          </div>
+
+          <!-- Step 3 Indicator -->
+          <div class="flex flex-col items-center bg-gray-50 px-2">
+            <div
+              class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
+              id="step-3-indicator">3</div>
+            <span class="text-xs font-medium text-gray-500">Payment</span>
+          </div>
+
+          <!-- Step 4 Indicator -->
+          <div class="flex flex-col items-center bg-gray-50 px-2">
+            <div
+              class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
+              id="step-4-indicator">4</div>
+            <span class="text-xs font-medium text-gray-500">Done</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Form Container -->
+      <div class="bg-white rounded-2xl shadow-sm p-8 md:p-10 border border-gray-100 min-h-[500px] relative">
+
+        <!-- STEP 1: INTAKE FORM -->
+        <div id="step-1" class="fade-in">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Intake Details</h2>
+          <form id="intake-form" onsubmit="event.preventDefault(); nextStep(2);">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <!-- Parent Info -->
+              <div class="col-span-1 md:col-span-2">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Parent
+                  Information</h3>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                <input type="text" id="parentName" required class="form-input" placeholder="Jane Doe">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                <input type="email" id="parentEmail" required class="form-input" placeholder="jane@example.com">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                <input type="tel" id="parentPhone" required class="form-input" placeholder="(555) 123-4567">
+              </div>
+
+              <!-- Baby Info -->
+              <div class="col-span-1 md:col-span-2 mt-2">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Baby's
+                  Information</h3>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Baby's Name</label>
+                <input type="text" id="babyName" required class="form-input" placeholder="Baby's Name">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                <input type="date" id="babyDob" required class="form-input">
+              </div>
+
+              <!-- Concerns -->
+              <div class="col-span-1 md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">What are your main concerns?</label>
+                <textarea id="concerns" rows="3" class="form-input"
+                  placeholder="e.g. Baby dislikes tummy time, not rolling yet..."></textarea>
+              </div>
+
+              <!-- Scheduling -->
+              <div class="col-span-1 md:col-span-2 mt-2">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Preferred
+                  Availability</h3>
+              </div>
+              <div class="col-span-1 md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Select a Date & Time</label>
+                <select id="slot" required class="form-input">
+                  <option value="">-- Select a Slot --</option>
+                  <option value="mon-10">Monday, Dec 18 @ 10:00 AM</option>
+                  <option value="mon-2">Monday, Dec 18 @ 2:00 PM</option>
+                  <option value="tue-11">Tuesday, Dec 19 @ 11:00 AM</option>
+                  <option value="wed-9">Wednesday, Dec 20 @ 9:00 AM</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex justify-end mt-8">
+              <button type="submit" class="btn-primary">
+                Next: Waiver <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- STEP 2: WAIVER -->
+        <div id="step-2" class="hidden fade-in">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Waiver & Release of Liability</h2>
+
+          <div id="waiver-content"
+            class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 h-64 overflow-y-auto text-sm text-gray-600 leading-relaxed">
+            <div class="flex items-center justify-center h-full">
+              <i class="fas fa-circle-notch fa-spin text-gray-400 text-2xl"></i>
+              <span class="ml-3 text-gray-500">Loading waiver...</span>
+            </div>
+          </div>
+
+          <form id="waiver-form" onsubmit="event.preventDefault(); nextStep(3);">
+            <div class="flex items-start mb-8">
+              <div class="flex items-center h-5">
+                <input id="waiver-agree" type="checkbox" required
+                  class="focus:ring-[var(--sage-green)] h-4 w-4 text-[var(--sage-green)] border-gray-300 rounded">
+              </div>
+              <div class="ml-3 text-sm">
+                <label for="waiver-agree" class="font-medium text-gray-700">I have read and agree to the Liability
+                  Waiver</label>
+                <p class="text-gray-500">You must agree to continue.</p>
+              </div>
+            </div>
+
+            <div class="flex justify-between mt-8">
+              <button type="button" onclick="prevStep(1)"
+                class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
+                Back
+              </button>
+              <button type="submit" class="btn-primary">
+                Next: Payment <i class="fas fa-arrow-right ml-2"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- STEP 3: PAYMENT -->
+        <div id="step-3" class="hidden fade-in">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Secure Payment</h2>
+
+          <!-- Order Summary -->
+          <div
+            class="bg-[var(--sage-green-light)] rounded-xl p-6 mb-8 flex justify-between items-center border border-[var(--sage-green)]">
+            <div>
+              <h3 class="font-bold text-gray-800">Private Consultation (45m)</h3>
+              <p class="text-sm text-gray-600">Virtual or In-Person Assessment</p>
+            </div>
+            <div class="text-xl font-bold text-[var(--sage-green-dark)]">
+              $125.00
+            </div>
+          </div>
+
+          <form id="payment-form" onsubmit="event.preventDefault(); processPayment();">
+            <div class="space-y-4 mb-8">
+              <div>
+                <p class="text-sm text-gray-500 mb-2">Payment Details</p>
+                <div class="p-4 bg-gray-50 rounded border border-gray-200 text-gray-500 text-sm">
+                  <p><i class="fas fa-info-circle mr-2"></i> Payment processing will be handled securely by our backend
+                    provider. No card details are stored locally.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex justify-between mt-8">
+              <button type="button" onclick="prevStep(2)"
+                class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
+                Back
+              </button>
+              <button type="submit" id="pay-btn" class="btn-primary w-48 flex justify-center items-center">
+                <span>Confirm Booking</span>
+              </button>
+            </div>
+            <p class="text-center text-xs text-gray-400 mt-4">
+              <i class="fas fa-lock mr-1"></i> Payments are secure and encrypted.
+            </p>
+          </form>
+        </div>
+
+        <!-- STEP 4: CONFIRMATION -->
+        <div id="step-4" class="hidden fade-in text-center py-10">
+          <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <i class="fas fa-check text-3xl text-green-600"></i>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h2>
+          <p class="text-xl text-gray-600 mb-8 max-w-md mx-auto">
+            Thank you! Your appointment has been scheduled.
+          </p>
+
+          <div class="bg-gray-50 rounded-xl p-6 mb-8 text-left max-w-md mx-auto border border-gray-200">
+            <p class="mb-2"><strong class="text-gray-800">Confirmation Sent To:</strong> <span id="confirm-email"
+                class="text-gray-600">...</span></p>
+            <p class="text-sm text-gray-500 mt-4">
+              Please check your email for the Zoom link (if virtual) or location details. A receipt has also been sent.
+            </p>
+          </div>
+
+          <a href="index.html" class="btn-secondary">Back to Home</a>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 text-gray-400 mt-20 py-10">
+    <div class="container mx-auto px-6 text-center">
+      <p class="text-sm">&copy; 2025 What To Do by Nana Sue. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Production-ready API URL Detection
+    // If hostname is localhost or 127.0.0.1, use localhost:3001
+    // Otherwise, assume relative path /api (if proxied) or prompt user for config if different
+    const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:3001'
+      : 'http://34.19.66.12:3001';
+
+    // Store data as we go
+    let bookingData = {
+      parentName: '',
+      parentEmail: '',
+      parentPhone: '',
+      babyName: '',
+      babyDob: '',
+      concerns: '',
+      slot: '',
+      waiverAgreed: false,
+      waiverVersion: ''
+    };
+
+    // Load Waiver on Startup
+    document.addEventListener('DOMContentLoaded', fetchWaiver);
+
+    async function fetchWaiver() {
+      const waiverContainer = document.getElementById('waiver-content');
+      try {
+        const response = await fetch(`${API_BASE}/api/waiver/latest`);
+        if (response.ok) {
+          const data = await response.json();
+          waiverContainer.innerHTML = data.text;
+          bookingData.waiverVersion = data.version;
+          console.log("Loaded waiver version:", data.version);
+        } else {
+          waiverContainer.innerHTML = '<div class="text-red-500 text-center p-10"><i class="fas fa-exclamation-triangle mb-2"></i><br>Failed to load waiver. Please refresh.</div>';
+        }
+      } catch (error) {
+        console.error("Waiver fetch error:", error);
+        waiverContainer.innerHTML = '<div class="text-red-500 text-center p-10"><i class="fas fa-wifi mb-2"></i><br>Network error loading waiver.</div>';
+      }
+    }
+
+    // Navigation Logic
+    function nextStep(step) {
+      // Save Step 1 Data
+      if (step === 2) {
+        bookingData.parentName = document.getElementById('parentName').value;
+        bookingData.parentEmail = document.getElementById('parentEmail').value;
+        bookingData.parentPhone = document.getElementById('parentPhone').value;
+        bookingData.babyName = document.getElementById('babyName').value;
+        bookingData.babyDob = document.getElementById('babyDob').value;
+        bookingData.concerns = document.getElementById('concerns').value;
+        bookingData.slot = document.getElementById('slot').value;
+      }
+
+      // Save Step 2 Data
+      if (step === 3) {
+        bookingData.waiverAgreed = document.getElementById('waiver-agree').checked;
+      }
+
+      // Hide all steps
+      document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+
+      // Show target step
+      document.getElementById(`step-${step}`).classList.remove('hidden');
+
+      // Update Indicators
+      updateProgress(step);
+    }
+
+    function prevStep(step) {
+      document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById(`step-${step}`).classList.remove('hidden');
+      updateProgress(step);
+    }
+
+    function updateProgress(step) {
+      // Update line width
+      const progress = ((step - 1) / 3) * 100;
+      document.getElementById('progress-line').style.width = `${progress}%`;
+
+      // Update circles
+      for (let i = 1; i <= 4; i++) {
+        const circle = document.getElementById(`step-${i}-indicator`);
+        if (i < step) {
+          circle.classList.add('completed');
+          circle.innerHTML = '<i class="fas fa-check"></i>';
+          circle.classList.remove('active');
+        } else if (i === step) {
+          circle.classList.add('active');
+          circle.innerHTML = i;
+          circle.classList.remove('completed');
+        } else {
+          circle.classList.remove('active', 'completed');
+          circle.innerHTML = i;
+        }
+      }
+    }
+
+    // Process Payment & Send Data to Backend
+    async function processPayment() {
+      const btn = document.getElementById('pay-btn');
+
+      // 1. Show loading state
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> Processing...';
+      btn.disabled = true;
+
+      try {
+        // 3. SEND TO BACKEND
+        const response = await fetch(`${API_BASE}/api/booking`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(bookingData)
+        });
+
+        if (response.ok) {
+          // Success
+          document.getElementById('confirm-email').innerText = bookingData.parentEmail;
+          nextStep(4);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // Backend returned error
+          const errorData = await response.json();
+          alert(`There was an issue processing your booking: ${errorData.message || 'Unknown error'}`);
+          btn.innerHTML = 'Confirm Booking';
+          btn.disabled = false;
+        }
+
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Network error. Please check your connection or try again later.');
+        btn.innerHTML = 'Confirm Booking';
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+
+</html>
