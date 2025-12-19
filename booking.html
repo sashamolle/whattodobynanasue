@@ -171,11 +171,9 @@
 
         <!-- STEP 3: PAYMENT -->
         <div id="step-3" class="hidden fade-in">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">Select a Time</h2>
 
           <!-- Calendly Inline Widget -->
           <div id="calendly-embed" style="min-width:320px;height:700px;"></div>
-
 
           <div class="flex justify-start mt-8">
             <button type="button" onclick="prevStep(2)"
@@ -340,7 +338,7 @@
           calContainer.innerHTML = ''; // Clear to prevent duplicates
 
           const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
-          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=8f9e8b`;
+          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=8f9e8b&hide_event_type_details=1&hide_gdpr_banner=1`;
 
           if (window.Calendly) {
             window.Calendly.initInlineWidget({
