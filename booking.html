@@ -343,14 +343,27 @@
         btn.disabled = false;
 
         const calContainer = document.getElementById('calendly-embed');
-        if (window.Calendly) {
-          window.Calendly.initInlineWidget({
-            url: baseUrl + params,
-            parentElement: calContainer
-          });
-        } else {
-          console.error("Calendly script not loaded yet.");
-          calContainer.innerHTML = '<p class="text-center text-red-500">Calendar failed to load. Please refresh.</p>';
+        if (calContainer) {
+          calContainer.innerHTML = ''; // Clear to prevent duplicates
+
+          // Price Reminder
+          const priceDiv = document.createElement('div');
+          priceDiv.className = "text-center mb-4 p-2 bg-blue-50 text-blue-700 rounded-lg text-sm font-medium";
+          priceDiv.innerHTML = '<i class="fas fa-info-circle mr-1"></i> In-home consultation fee: $150.00';
+          calContainer.appendChild(priceDiv);
+
+          const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
+          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=8f9e8b`;
+
+          if (window.Calendly) {
+            window.Calendly.initInlineWidget({
+              url: baseUrl + params,
+              parentElement: calContainer
+            });
+          } else {
+            console.error("Calendly script not loaded yet.");
+            calContainer.innerHTML = '<p class="text-center text-red-500">Calendar failed to load. Please refresh.</p>';
+          }
         }
       }
     }
