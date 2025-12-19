@@ -177,7 +177,7 @@
 
         <!-- STEP 3: PAYMENT -->
         <div id="step-3" class="hidden fade-in">
-          <h2 class="text-2xl font-bold text-gray-800 mb-6">Secure Payment</h2>
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Finalize Booking</h2>
 
           <!-- Order Summary -->
           <div
@@ -196,8 +196,9 @@
               <div>
                 <p class="text-sm text-gray-500 mb-2">Payment Details</p>
                 <div class="p-4 bg-gray-50 rounded border border-gray-200 text-gray-500 text-sm">
-                  <p><i class="fas fa-info-circle mr-2"></i> Payment processing will be handled securely by our backend
-                    provider. No card details are stored locally.</p>
+                  <p class="mb-2"><i class="fas fa-info-circle mr-2"></i> <strong>Payment is collected at the time of
+                      your appointment.</strong></p>
+                  <p>You will receive an invoice or can pay in person via Swish or card.</p>
                 </div>
               </div>
             </div>
@@ -208,12 +209,9 @@
                 Back
               </button>
               <button type="submit" id="pay-btn" class="btn-primary w-48 flex justify-center items-center">
-                <span>Confirm Booking</span>
+                <span>Complete Booking</span>
               </button>
             </div>
-            <p class="text-center text-xs text-gray-400 mt-4">
-              <i class="fas fa-lock mr-1"></i> Payments are secure and encrypted.
-            </p>
           </form>
         </div>
 
@@ -231,7 +229,7 @@
             <p class="mb-2"><strong class="text-gray-800">Confirmation Sent To:</strong> <span id="confirm-email"
                 class="text-gray-600">...</span></p>
             <p class="text-sm text-gray-500 mt-4">
-              Please check your email for the Zoom link (if virtual) or location details. A receipt has also been sent.
+              Please check your email for the Zoom link (if virtual) or location details.
             </p>
           </div>
 
