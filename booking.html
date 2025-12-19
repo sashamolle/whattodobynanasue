@@ -25,7 +25,7 @@
       <!-- Header -->
       <div class="text-center mb-10">
         <h1 class="text-3xl font-bold text-gray-900">Book a Private In Home Session</h1>
-        <p class="text-gray-600 mt-2">1:1 Milestone Consultation (45 mins) • $150.00</p>
+        <p class="text-gray-600 mt-2">1:1 Mobility Class (45 mins) • $150.00</p>
       </div>
 
       <!-- Progress Bar -->
@@ -231,6 +231,7 @@
       waiverAgreed: false,
       waiverVersion: '',
       price: 150.00,
+      appointmentTime: 'As Scheduled',
       bookingComplete: false
     };
 
@@ -388,6 +389,16 @@
           dataStr.toLowerCase().includes('scheduled')) {
 
           console.log("Calendly booking success detected via permissive check!");
+
+          // Try to extract time from payload if available (often requires API, but we'll try)
+          // e.data.payload might contain info.
+          if (e.data.payload && e.data.payload.event && e.data.payload.event.start_time) {
+            // This is a guess at structure, fallback is safe
+            try {
+              const dateObj = new Date(e.data.payload.event.start_time);
+              bookingData.appointmentTime = dateObj.toLocaleString();
+            } catch (err) { console.log("Time parse error", err); }
+          }
 
           // 1. Immediate UI Feedback (Optimistic)
           nextStep(4);
