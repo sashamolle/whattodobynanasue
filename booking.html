@@ -324,7 +324,8 @@
           calContainer.innerHTML = ''; // Clear prevent duplicates
           const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
           // Pass bookingId in utm_content for tracking
-          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}`;
+          // Added primary_color for branding (Sage Green)
+          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=a3b8a5`;
 
           // Use global Calendly object if available
           if (window.Calendly) {
@@ -353,23 +354,21 @@
     window.addEventListener('message', function (e) {
       if (!e.data) return;
 
-      const eventName = 'calendly.event.scheduled';
-      let isMatch = false;
+      // Ultra-permissive check used to ensure cross-browser compatibility
+      // This catches 'calendly.event.scheduled', 'calendly.event_scheduled',
+      // or any other variation, whether it's an object or a string.
+      try {
+        const dataStr = (typeof e.data === 'string') ? e.data : JSON.stringify(e.data);
 
-      // Check 1: Standard Object
-      if (e.data.event === eventName) {
-        isMatch = true;
-      }
+        if (dataStr.toLowerCase().includes('calendly') &&
+          dataStr.toLowerCase().includes('scheduled')) {
 
-      // Check 2: Stringified (some browsers/implementations)
-      else if (typeof e.data === 'string' && e.data.includes(eventName)) {
-        isMatch = true;
-      }
-
-      if (isMatch) {
-        console.log("Calendly booking success detected!");
-        nextStep(4);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+          console.log("Calendly booking success detected via permissive check!");
+          nextStep(4);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      } catch (err) {
+        // Ignore json stringify errors for circular structures etc
       }
     });
 
