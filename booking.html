@@ -391,6 +391,10 @@
         });
 
         if (response.ok) {
+          const data = await response.json();
+          if (data.bookingId) {
+            bookingData.id = data.bookingId;
+          }
           console.log("Booking data saved successfully.");
           return true;
         } else {
