@@ -305,6 +305,10 @@
           return; // Stop if save failed
         }
 
+        // Reset button state so it's ready if they click Back
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+
         // Initialize Calendly with Pre-filled Data
         const calContainer = document.getElementById('calendly-embed');
         if (calContainer) {
