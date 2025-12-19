@@ -53,7 +53,7 @@
             <div
               class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
               id="step-3-indicator">3</div>
-            <span class="text-xs font-medium text-gray-500">Payment</span>
+            <span class="text-xs font-medium text-gray-500">Schedule</span>
           </div>
 
           <!-- Step 4 Indicator -->
@@ -155,7 +155,7 @@
                 Back
               </button>
               <button type="submit" class="btn-primary">
-                Next: Payment <i class="fas fa-arrow-right ml-2"></i>
+                Next: Select Time <i class="fas fa-arrow-right ml-2"></i>
               </button>
             </div>
           </form>
@@ -177,6 +177,10 @@
             <button type="button" onclick="prevStep(2)"
               class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
               Back
+            </button>
+            <button type="button" onclick="nextStep(4)"
+              class="btn-primary ml-auto shadow-lg transform hover:-translate-y-0.5 transition-transform">
+              I have booked my time <i class="fas fa-check ml-2"></i>
             </button>
           </div>
         </div>
