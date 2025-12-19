@@ -389,12 +389,13 @@
 
           console.log("Calendly booking success detected via permissive check!");
 
-          // Mark as complete and save to trigger email
-          bookingData.bookingComplete = true;
-          await saveBookingData();
-
+          // 1. Immediate UI Feedback (Optimistic)
           nextStep(4);
           window.scrollTo({ top: 0, behavior: 'smooth' });
+
+          // 2. Background Save to trigger email
+          bookingData.bookingComplete = true;
+          saveBookingData().catch(err => console.error("Background save failed:", err));
         }
       } catch (err) {
         // Ignore json stringify errors for circular structures etc
