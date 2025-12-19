@@ -9,6 +9,10 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
   <script src="components.js" defer></script>
+  <!-- Preload Calendly -->
+  <link rel="preconnect" href="https://assets.calendly.com">
+  <link rel="preload" href="https://assets.calendly.com/assets/external/widget.js" as="script">
+  <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 </head>
 
 <body class="bg-gray-50">
@@ -171,7 +175,7 @@
 
           <!-- Calendly Inline Widget -->
           <div id="calendly-embed" style="min-width:320px;height:700px;"></div>
-          <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
+
 
           <div class="flex justify-start mt-8">
             <button type="button" onclick="prevStep(2)"
@@ -321,11 +325,18 @@
         // Initialize Calendly with Pre-filled Data
         const calContainer = document.getElementById('calendly-embed');
         if (calContainer) {
-          calContainer.innerHTML = ''; // Clear prevent duplicates
+          // Show spinner while iframe loads
+          calContainer.innerHTML = `
+              <div class="flex flex-col items-center justify-center h-full pt-20">
+                  <i class="fas fa-circle-notch fa-spin text-4xl text-[var(--sage-green)] mb-4"></i>
+                  <p class="text-gray-500 font-medium">Loading availability...</p>
+              </div>
+          `;
+
           const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
           // Pass bookingId in utm_content for tracking
-          // Added primary_color for branding (Sage Green)
-          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=a3b8a5`;
+          // Added primary_color for branding (Sage Green Dark)
+          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=8f9e8b`;
 
           // Use global Calendly object if available
           if (window.Calendly) {
