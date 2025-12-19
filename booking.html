@@ -366,26 +366,25 @@
           }
         }
       }
-    }
 
 
 
-    if (step === 4) {
-      // Populate confirmation details
-      const emailSpan = document.getElementById('confirm-email');
-      if (emailSpan) {
-        emailSpan.textContent = bookingData.parentEmail || "your email";
+      if (step === 4) {
+        // Populate confirmation details
+        const emailSpan = document.getElementById('confirm-email');
+        if (emailSpan) {
+          emailSpan.textContent = bookingData.parentEmail || "your email";
+        }
       }
-    }
 
-    // Hide all steps
-    document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+      // Hide all steps
+      document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
 
-    // Show target step
-    document.getElementById(`step-${step}`).classList.remove('hidden');
+      // Show target step
+      document.getElementById(`step-${step}`).classList.remove('hidden');
 
-    // Update Indicators
-    updateProgress(step);
+      // Update Indicators
+      updateProgress(step);
     }
 
     // Listen for Calendly Events (Auto-Advance)
