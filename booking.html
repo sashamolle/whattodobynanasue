@@ -170,8 +170,7 @@
           </div>
 
           <!-- Calendly Inline Widget -->
-          <div class="calendly-inline-widget" data-url="https://calendly.com/whattodobynanasue/private-mobility-class"
-            style="min-width:320px;height:700px;"></div>
+          <div id="calendly-embed" style="min-width:320px;height:700px;"></div>
           <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js" async></script>
 
           <div class="flex justify-start mt-8">
@@ -304,6 +303,25 @@
           btn.innerHTML = originalText;
           btn.disabled = false;
           return; // Stop if save failed
+        }
+
+        // Initialize Calendly with Pre-filled Data
+        const calContainer = document.getElementById('calendly-embed');
+        if (calContainer) {
+          calContainer.innerHTML = ''; // Clear prevent duplicates
+          const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
+          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}`;
+
+          // Use global Calendly object if available
+          if (window.Calendly) {
+            window.Calendly.initInlineWidget({
+              url: baseUrl + params,
+              parentElement: calContainer
+            });
+          } else {
+            console.error("Calendly script not loaded yet.");
+            calContainer.innerHTML = '<p class="text-center text-red-500">Calendar failed to load. Please refresh.</p>';
+          }
         }
       }
 
