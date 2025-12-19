@@ -250,11 +250,11 @@
 
   <script>
     // Production-ready API URL Detection
-    // If hostname is localhost or 127.0.0.1, use localhost:3001
-    // Otherwise, assume relative path /api (if proxied) or prompt user for config if different
+    // If hostname is localhost, use local backend
+    // Otherwise, use the secure production domain
     const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
       ? 'http://localhost:3001'
-      : 'http://34.19.66.12:3001';
+      : 'https://www.what2dobaby.com'; // Backend must be accessible via https (e.g. Nginx proxy /api -> :3001)
 
     // Store data as we go
     let bookingData = {
@@ -274,6 +274,14 @@
 
     async function fetchWaiver() {
       const waiverContainer = document.getElementById('waiver-content');
+      const waiverCheckbox = document.getElementById('waiver-agree');
+      // The button inside the waiver-form (Step 2)
+      const nextBtn = document.querySelector('#waiver-form button[type="submit"]');
+
+      // 1. Lock controls initially
+      if (waiverCheckbox) waiverCheckbox.disabled = true;
+      if (nextBtn) nextBtn.disabled = true;
+
       try {
         const response = await fetch(`${API_BASE}/api/waiver/latest`);
         if (response.ok) {
@@ -281,12 +289,28 @@
           waiverContainer.innerHTML = data.text;
           bookingData.waiverVersion = data.version;
           console.log("Loaded waiver version:", data.version);
+
+          // 2. Unlock controls on success
+          if (waiverCheckbox) waiverCheckbox.disabled = false;
+          if (nextBtn) nextBtn.disabled = false;
         } else {
-          waiverContainer.innerHTML = '<div class="text-red-500 text-center p-10"><i class="fas fa-exclamation-triangle mb-2"></i><br>Failed to load waiver. Please refresh.</div>';
+          throw new Error("Server returned error");
         }
       } catch (error) {
         console.error("Waiver fetch error:", error);
-        waiverContainer.innerHTML = '<div class="text-red-500 text-center p-10"><i class="fas fa-wifi mb-2"></i><br>Network error loading waiver.</div>';
+        waiverContainer.innerHTML = `
+          <div class="flex flex-col items-center justify-center h-full text-red-500 text-center p-4">
+            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+            <p class="font-bold">Unable to load waiver</p>
+            <p class="text-xs text-gray-400 mt-2">Please refresh or check connection.</p>
+          </div>
+        `;
+        // Ensure they stay locked
+        if (waiverCheckbox) {
+          waiverCheckbox.disabled = true;
+          waiverCheckbox.checked = false;
+        }
+        if (nextBtn) nextBtn.disabled = true;
       }
     }
 
