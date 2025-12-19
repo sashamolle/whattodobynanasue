@@ -235,7 +235,16 @@
     };
 
     // Load Waiver on Startup
-    document.addEventListener('DOMContentLoaded', fetchWaiver);
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchWaiver();
+
+      // Prevent future dates for baby DOB
+      const dobInput = document.getElementById('babyDob');
+      if (dobInput) {
+        const today = new Date().toISOString().split('T')[0];
+        dobInput.setAttribute('max', today);
+      }
+    });
 
     async function fetchWaiver() {
       const waiverContainer = document.getElementById('waiver-content');
