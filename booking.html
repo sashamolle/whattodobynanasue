@@ -283,7 +283,7 @@
       if (nextBtn) nextBtn.disabled = true;
 
       try {
-        const response = await fetch(`${API_BASE}/api/waiver/latest`);
+        const response = await fetch(`/api/waiver/latest`);
         if (response.ok) {
           const data = await response.json();
           waiverContainer.innerHTML = data.text;
