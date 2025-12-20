@@ -251,7 +251,7 @@
             <!-- Date Picker (Simple Native Input for MVP, styled) -->
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
-              <input type="date" id="visit-date" class="form-input" onchange="fetchTimeSlots()">
+              <input type="date" id="visit-date" class="form-input" max="2100-12-31">
               <p class="text-xs text-gray-400 mt-2">Available Mon-Fri, 9am - 5pm</p>
             </div>
 
@@ -409,6 +409,23 @@
       if (dobInput) {
         const today = new Date().toISOString().split('T')[0];
         dobInput.setAttribute('max', today);
+      }
+
+      // --- NEW: Visit Date Input Logic ---
+      const visitDateInput = document.getElementById('visit-date');
+      if (visitDateInput) {
+        // Enforce 4-digit year
+        visitDateInput.addEventListener('input', (e) => {
+          const val = e.target.value;
+          const parts = val.split('-');
+          if (parts[0] && parts[0].length > 4) {
+            const newYear = parts[0].slice(0, 4);
+            // Reconstruct date string
+            e.target.value = `${newYear}${val.substring(parts[0].length)}`;
+          }
+        });
+        // Trigger fetch on change
+        visitDateInput.addEventListener('change', fetchTimeSlots);
       }
     });
 
@@ -569,11 +586,29 @@
       const nextBtn = document.getElementById('btn-next-payment');
 
       // Robust Date Validation: Must be YYYY-MM-DD (10 chars)
-      if (!dateInput.value || dateInput.value.length < 10) return;
+      if (!dateInput.value) return;
 
-      // Specifically check if year is valid (e.g. >= 2024) to avoid "0020" fetches
-      const year = parseInt(dateInput.value.split('-')[0]);
-      if (year < 2024) return;
+      const yearStr = dateInput.value.split('-')[0];
+      const year = parseInt(yearStr);
+
+      // 1. Check Length (Must be complete date)
+      if (dateInput.value.length < 10) return;
+
+      // 2. Check Year Range (e.g. 2025 - 2100)
+      if (year < 2024) { // Allow late 2024 for testing, but mostly future
+        container.innerHTML = `<div class="p-4 text-center text-amber-600 bg-amber-50 rounded">
+            <p class="font-bold">Invalid Date</p>
+            <p class="text-sm">Please select a date in the future.</p>
+          </div>`;
+        return;
+      }
+      if (year > 2100) {
+        container.innerHTML = `<div class="p-4 text-center text-amber-600 bg-amber-50 rounded">
+            <p class="font-bold">Invalid Year</p>
+            <p class="text-sm">Please select a valid year.</p>
+          </div>`;
+        return;
+      }
 
       container.innerHTML = '<i class="fas fa-circle-notch fa-spin text-gray-400"></i> Loading availability...';
 
