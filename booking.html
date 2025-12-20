@@ -97,7 +97,8 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Home Address</label>
-                <input type="text" id="parentAddress" required class="form-input" placeholder="Street, City, Zip">
+                <input type="text" id="parentAddress" required class="form-input" placeholder="Street, City, Zip"
+                  autocomplete="off">
               </div>
 
               <!-- Baby Info -->
@@ -473,24 +474,34 @@
     }
   </script>
 
-  <!-- Google Maps API -->
-  <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk9l_s9sLgM60sH1a_FoTTWYZkYsgAg8Q&libraries=places,geometry&callback=initMap"
-    async defer></script>
+
+
+  <style>
+    /* Ensure Google Maps Autocomplete dropdown is visible on top of everything */
+    .pac-container {
+      z-index: 10000 !important;
+    }
+  </style>
 
   <script>
     // --- Google Maps Location Validator ---
     const CHELSEA_ORIGIN = '10011'; // Chelsea, NY
 
-    function initMap() {
+    // DATA LAYER: Ensure initMap is globally available for the API callback
+    window.initMap = function () {
+      console.log("Google Maps API loaded. Initializing...");
+
       const addressInput = document.getElementById('parentAddress');
-      // Find the button inside step-1. Current structure: #step-1 form button
       const nextBtn = document.querySelector('#step-1 button[type="submit"]');
 
-      if (!addressInput || !nextBtn) return;
+      if (!addressInput || !nextBtn) {
+        console.error("Critical elements not found for Google Maps init.");
+        return;
+      }
 
-      // Hide Next button initially until address is validated
-      nextBtn.style.display = 'none';
+      // Disable Next button initially
+      nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      nextBtn.disabled = true;
 
       // Add feedback container
       let feedbackDiv = document.getElementById('address-feedback');
@@ -501,46 +512,62 @@
         addressInput.parentNode.appendChild(feedbackDiv);
       }
 
-      const autocomplete = new google.maps.places.Autocomplete(addressInput, {
-        componentRestrictions: { country: "us" },
-        fields: ["geometry", "formatted_address", "address_components"]
+      try {
+        const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+          componentRestrictions: { country: "us" },
+          fields: ["geometry", "formatted_address", "address_components"]
+        });
+
+        console.log("Autocomplete initialized on input.");
+
+        autocomplete.addListener('place_changed', function () {
+          const place = autocomplete.getPlace();
+          validatePlace(place, feedbackDiv, nextBtn, addressInput);
+        });
+      } catch (e) {
+        console.error("Error initializing Autocomplete:", e);
+      }
+
+      // Prevent submit on Enter
+      addressInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') e.preventDefault();
       });
 
-      autocomplete.addListener('place_changed', function () {
-        const place = autocomplete.getPlace();
+      // Reset validation on manual edits
+      addressInput.addEventListener('input', function () {
+        nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        nextBtn.disabled = true;
+        feedbackDiv.classList.add('hidden');
+      });
+    };
 
-        if (!place.geometry) {
-          showFeedback(feedbackDiv, 'Please select a valid address from the list.', 'error');
-          nextBtn.style.display = 'none';
-          return;
-        }
+    function validatePlace(place, feedbackDiv, nextBtn, addressInput) {
+      if (!place.geometry) {
+        showFeedback(feedbackDiv, 'Please select a valid address from the list.', 'error');
+        return;
+      }
 
-        // Check Manhattan first via address components
-        let isManhattan = false;
+      let isManhattan = false;
+      if (place.address_components) {
         for (const component of place.address_components) {
-          // New York County is Manhattan
           if (component.long_name === 'New York County' ||
             (component.short_name === 'New York' && component.types.includes('locality'))) {
             isManhattan = true;
           }
-          // Also check for 'Manhattan' in sublocality if available
           if (component.long_name === 'Manhattan') isManhattan = true;
         }
+      }
 
-        calculateDistance(place.formatted_address, feedbackDiv, nextBtn, isManhattan);
-      });
-
-      // Prevent form submission on Enter key in address field (triggers autocomplete select instead)
-      addressInput.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter') e.preventDefault();
-      });
+      calculateDistance(place.formatted_address, feedbackDiv, nextBtn, isManhattan);
     }
 
     function calculateDistance(destination, feedbackDiv, nextBtn, isManhattan) {
       const service = new google.maps.DistanceMatrixService();
 
       showFeedback(feedbackDiv, 'Calculating distance...', 'info');
-      nextBtn.style.display = 'none';
+      // nextBtn.style.display = 'none'; // OLD
+      nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      nextBtn.disabled = true;
 
       service.getDistanceMatrix({
         origins: [CHELSEA_ORIGIN],
@@ -555,7 +582,7 @@
 
         const results = response.rows[0].elements[0];
         if (results.status !== 'OK') {
-          showFeedback(feedbackDiv, 'Unable to calculate route to this address.', 'error');
+          showFeedback(feedbackDiv, 'Unable to calculate route to this address. Please try another.', 'error');
           return;
         }
 
@@ -570,18 +597,25 @@
           // Zone 1
           bookingData.price = 150.00;
           showFeedback(feedbackDiv, `Great! You are in our primary service area.`, 'success');
-          nextBtn.style.display = 'block';
+          enableNextBtn(nextBtn);
         } else if (isManhattan) {
           // Zone 2 (Manhattan but > 30 mins)
           bookingData.price = 180.00;
           showFeedback(feedbackDiv, `You are outside our primary service area but we can visit you! Please note a $30 travel fee will be added to your booking.`, 'warning');
-          nextBtn.style.display = 'block';
+          enableNextBtn(nextBtn);
         } else {
           // Zone 3
           showFeedback(feedbackDiv, `We're sorry, that's a bit too far for an in-home visit. <a href="contact.html" class="underline text-blue-600">Click Here</a> to book a Virtual Consultation instead.`, 'error');
-          nextBtn.style.display = 'none';
+          nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          nextBtn.disabled = true;
         }
       });
+    }
+
+    function enableNextBtn(btn) {
+      btn.classList.remove('opacity-50', 'cursor-not-allowed');
+      btn.disabled = false;
+      btn.style.display = 'block'; // Ensure visibility
     }
 
     function showFeedback(el, msg, type) {
@@ -596,6 +630,11 @@
       el.classList.remove('hidden');
     }
   </script>
+
+  <!-- Google Maps API: Loaded AFTER initMap is defined -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk9l_s9sLgM60sH1a_FoTTWYZkYsgAg8Q&libraries=places,geometry&callback=initMap"
+    async defer></script>
 </body>
 
 </html>
