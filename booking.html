@@ -843,35 +843,7 @@
       }
     }
 
-    // --- DEBUG / TESTING ONLY ---
-    // Uncomment/Call this to skip to Step 3
-    function debugJumpToStep3() {
-      console.warn("DEBUG: Jumping to Step 3");
-
-      // Mock Data
-      bookingData.parentName = "Test Parent";
-      bookingData.parentEmail = "sasha.codes+test@gmail.com";
-      bookingData.babyName = "Test Baby";
-      bookingData.babyDob = "2024-01-01";
-      bookingData.parentAddress = "350 Fifth Avenue, New York, NY";
-      bookingData.parentPhone = "555-0123";
-      bookingData.serviceType = "in-home";
-      bookingData.price = 150.00;
-
-      // Hide others / Show Step 3
-      document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
-      document.getElementById('step-3').classList.remove('hidden');
-      updateProgress(3);
-
-      // IMPORTANT: Set step0Valid so nextStep checks pass if we go back
-      step0Valid = true;
-    }
-
-    // Auto-Run for User Request
-    document.addEventListener('DOMContentLoaded', () => {
-      // Short delay to ensure other inits are done
-      setTimeout(debugJumpToStep3, 500);
-    });
+    // --- END DEBUG CODE ---
 
   </script>
 
