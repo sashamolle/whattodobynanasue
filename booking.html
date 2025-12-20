@@ -443,15 +443,20 @@
           const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
           const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=8f9e8b&hide_event_type_details=1&hide_gdpr_banner=1`;
 
-          if (window.Calendly) {
-            window.Calendly.initInlineWidget({
-              url: baseUrl + params,
-              parentElement: calContainer
-            });
-          } else {
-            console.error("Calendly script not loaded yet.");
-            calContainer.innerHTML = '<p class="text-center text-red-500">Calendar failed to load. Please refresh.</p>';
+          // Safety: Check if Calendly is loaded, if not, wait a bit
+          function initCalendly() {
+            if (window.Calendly) {
+              window.Calendly.initInlineWidget({
+                url: baseUrl + params,
+                parentElement: calContainer
+              });
+            } else {
+              console.warn("Calendly script not ready. Retrying in 500ms...");
+              setTimeout(initCalendly, 500);
+            }
           }
+
+          initCalendly();
         }
       }
 
