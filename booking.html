@@ -390,14 +390,14 @@
 
           console.log("Calendly booking success detected via permissive check!");
 
-          // Try to extract time from payload if available (often requires API, but we'll try)
-          // e.data.payload might contain info.
-          if (e.data.payload && e.data.payload.event && e.data.payload.event.start_time) {
-            // This is a guess at structure, fallback is safe
-            try {
-              const dateObj = new Date(e.data.payload.event.start_time);
-              bookingData.appointmentTime = dateObj.toLocaleString();
-            } catch (err) { console.log("Time parse error", err); }
+          // Try to extract event URI from payload
+          if (e.data.payload && e.data.payload.invitee && e.data.payload.invitee.uri) {
+            // Store the URI for backend fetching
+            bookingData.eventURI = e.data.payload.invitee.uri;
+            console.log("Captured Calendly URI:", bookingData.eventURI);
+          } else if (e.data.payload && e.data.payload.event && e.data.payload.event.uri) {
+            bookingData.eventURI = e.data.payload.event.uri;
+            console.log("Captured Calendly URI:", bookingData.eventURI);
           }
 
           // 1. Immediate UI Feedback (Optimistic)
