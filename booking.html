@@ -472,6 +472,130 @@
       }
     }
   </script>
+
+  <!-- Google Maps API -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBk9l_s9sLgM60sH1a_FoTTWYZkYsgAg8Q&libraries=places,geometry&callback=initMap"
+    async defer></script>
+
+  <script>
+    // --- Google Maps Location Validator ---
+    const CHELSEA_ORIGIN = '10011'; // Chelsea, NY
+
+    function initMap() {
+      const addressInput = document.getElementById('parentAddress');
+      // Find the button inside step-1. Current structure: #step-1 form button
+      const nextBtn = document.querySelector('#step-1 button[type="submit"]');
+
+      if (!addressInput || !nextBtn) return;
+
+      // Hide Next button initially until address is validated
+      nextBtn.style.display = 'none';
+
+      // Add feedback container
+      let feedbackDiv = document.getElementById('address-feedback');
+      if (!feedbackDiv) {
+        feedbackDiv = document.createElement('div');
+        feedbackDiv.id = 'address-feedback';
+        feedbackDiv.className = 'mt-2 text-sm font-medium p-3 rounded hidden';
+        addressInput.parentNode.appendChild(feedbackDiv);
+      }
+
+      const autocomplete = new google.maps.places.Autocomplete(addressInput, {
+        componentRestrictions: { country: "us" },
+        fields: ["geometry", "formatted_address", "address_components"]
+      });
+
+      autocomplete.addListener('place_changed', function () {
+        const place = autocomplete.getPlace();
+
+        if (!place.geometry) {
+          showFeedback(feedbackDiv, 'Please select a valid address from the list.', 'error');
+          nextBtn.style.display = 'none';
+          return;
+        }
+
+        // Check Manhattan first via address components
+        let isManhattan = false;
+        for (const component of place.address_components) {
+          // New York County is Manhattan
+          if (component.long_name === 'New York County' ||
+            (component.short_name === 'New York' && component.types.includes('locality'))) {
+            isManhattan = true;
+          }
+          // Also check for 'Manhattan' in sublocality if available
+          if (component.long_name === 'Manhattan') isManhattan = true;
+        }
+
+        calculateDistance(place.formatted_address, feedbackDiv, nextBtn, isManhattan);
+      });
+
+      // Prevent form submission on Enter key in address field (triggers autocomplete select instead)
+      addressInput.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') e.preventDefault();
+      });
+    }
+
+    function calculateDistance(destination, feedbackDiv, nextBtn, isManhattan) {
+      const service = new google.maps.DistanceMatrixService();
+
+      showFeedback(feedbackDiv, 'Calculating distance...', 'info');
+      nextBtn.style.display = 'none';
+
+      service.getDistanceMatrix({
+        origins: [CHELSEA_ORIGIN],
+        destinations: [destination],
+        travelMode: google.maps.TravelMode.WALKING,
+        unitSystem: google.maps.UnitSystem.IMPERIAL
+      }, (response, status) => {
+        if (status !== 'OK') {
+          showFeedback(feedbackDiv, 'Error calculating distance. Please try again.', 'error');
+          return;
+        }
+
+        const results = response.rows[0].elements[0];
+        if (results.status !== 'OK') {
+          showFeedback(feedbackDiv, 'Unable to calculate route to this address.', 'error');
+          return;
+        }
+
+        const durationText = results.duration.text;
+        const durationValue = results.duration.value; // Seconds
+        const minutes = durationValue / 60;
+
+        console.log(`Walking duration: ${minutes} mins. Manhattan: ${isManhattan}`);
+
+        // Zone Logic
+        if (minutes <= 30) {
+          // Zone 1
+          bookingData.price = 150.00;
+          showFeedback(feedbackDiv, `Great! You are in our primary service area.`, 'success');
+          nextBtn.style.display = 'block';
+        } else if (isManhattan) {
+          // Zone 2 (Manhattan but > 30 mins)
+          bookingData.price = 180.00;
+          showFeedback(feedbackDiv, `You are outside our primary service area but we can visit you! Please note a $30 travel fee will be added to your booking.`, 'warning');
+          nextBtn.style.display = 'block';
+        } else {
+          // Zone 3
+          showFeedback(feedbackDiv, `We're sorry, that's a bit too far for an in-home visit. <a href="contact.html" class="underline text-blue-600">Click Here</a> to book a Virtual Consultation instead.`, 'error');
+          nextBtn.style.display = 'none';
+        }
+      });
+    }
+
+    function showFeedback(el, msg, type) {
+      el.innerHTML = msg;
+      el.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800', 'bg-blue-100', 'text-blue-800');
+
+      if (type === 'success') el.classList.add('bg-green-100', 'text-green-800');
+      else if (type === 'error') el.classList.add('bg-red-100', 'text-red-800');
+      else if (type === 'warning') el.classList.add('bg-yellow-100', 'text-yellow-800');
+      else el.classList.add('bg-blue-100', 'text-blue-800');
+
+      el.classList.remove('hidden');
+    }
+  </script>
 </body>
 
 </html>
