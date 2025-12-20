@@ -68,11 +68,19 @@
             <span class="text-xs font-medium text-gray-500">Schedule</span>
           </div>
 
-          <!-- Step 5 (Done) -->
+          <!-- Step 5 (Payment) -->
           <div class="flex flex-col items-center bg-gray-50 px-2">
             <div
               class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
               id="step-4-indicator">5</div>
+            <span class="text-xs font-medium text-gray-500">Payment</span>
+          </div>
+
+          <!-- Step 6 (Done) -->
+          <div class="flex flex-col items-center bg-gray-50 px-2">
+            <div
+              class="step-circle w-10 h-10 rounded-full border-2 border-gray-300 bg-white flex items-center justify-center font-bold text-gray-400 mb-1"
+              id="step-5-indicator">6</div>
             <span class="text-xs font-medium text-gray-500">Done</span>
           </div>
         </div>
@@ -234,22 +242,103 @@
           </form>
         </div>
 
-        <!-- STEP 3: PAYMENT -->
+        <!-- STEP 3: SCHEDULE -->
         <div id="step-3" class="hidden fade-in">
+          <h2 class="text-2xl font-bold text-gray-800 mb-2">Select a Time</h2>
+          <p class="text-gray-500 mb-6">Choose a date and time for your in-home visit.</p>
 
-          <!-- Calendly Inline Widget -->
-          <div id="calendly-embed" style="min-width:320px;height:700px;" class="-mt-6"></div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Date Picker (Simple Native Input for MVP, styled) -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+              <input type="date" id="visit-date" class="form-input" onchange="fetchTimeSlots()">
+              <p class="text-xs text-gray-400 mt-2">Available Mon-Fri, 9am - 5pm</p>
+            </div>
 
-          <div class="flex justify-start mt-8">
-            <button type="button" onclick="prevStep(2)"
-              class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
-              Back
+            <!-- Time Slots -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Available Times (ET)</label>
+              <div id="slots-container" class="grid grid-cols-2 gap-3">
+                <p class="text-sm text-gray-400 col-span-2">Please select a date first.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hidden Inputs for logic -->
+          <input type="hidden" id="selected-start-time">
+          <input type="hidden" id="selected-end-time">
+
+          <div class="mt-8 flex justify-between items-center">
+            <button type="button" onclick="prevStep(2)" class="text-gray-500 hover:text-gray-700 font-medium">
+              <i class="fas fa-arrow-left mr-2"></i> Back
+            </button>
+
+            <button type="button" id="btn-next-payment" onclick="nextStep(4)" disabled
+              class="btn-primary opacity-50 cursor-not-allowed">
+              Next: Payment <i class="fas fa-arrow-right ml-2"></i>
             </button>
           </div>
         </div>
 
-        <!-- STEP 4: CONFIRMATION -->
-        <div id="step-4" class="hidden fade-in text-center py-10">
+        <!-- STEP 4: MOCK PAYMENT -->
+        <div id="step-4" class="hidden fade-in">
+          <h2 class="text-2xl font-bold text-gray-800 mb-6">Secure Payment</h2>
+
+          <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+              <span class="text-lg font-medium text-gray-700">Total Due:</span>
+              <span class="text-2xl font-bold text-gray-900" id="payment-display-price">$150.00</span>
+            </div>
+
+            <form id="payment-form" onsubmit="event.preventDefault(); processMockPayment();">
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Cardholder Name</label>
+                <input type="text" class="form-input" placeholder="Name on Card" required>
+              </div>
+              <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Card Number</label>
+                <div class="relative">
+                  <input type="text" class="form-input pl-10" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                  <i class="fas fa-credit-card absolute left-3 top-3 text-gray-400"></i>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Expiry Date</label>
+                  <input type="text" class="form-input" placeholder="MM/YY" maxlength="5" required>
+                </div>
+                <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">CVC</label>
+                  <div class="relative">
+                    <input type="text" class="form-input pl-10" placeholder="123" maxlength="3" required>
+                    <i class="fas fa-lock absolute left-3 top-3 text-gray-400"></i>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-8 flex justify-between items-center">
+                <!-- Back button goes to Step 3 (Schedule) -->
+                <!-- Actually, usually hitting back from payment to calendar is weird if calendar is just an iframe. 
+                        But we can implement basic back logic. -->
+                <!-- Wait, Step 3 is Calendly. If we go back, it re-renders. That's fine. -->
+                <button type="button" onclick="prevStep(3)" class="text-gray-500 hover:text-gray-700 font-medium">
+                  <i class="fas fa-arrow-left mr-2"></i> Back
+                </button>
+
+                <button type="submit" id="btn-pay-now" class="btn-primary w-2/3">
+                  Pay Now <i class="fas fa-lock ml-2"></i>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <p class="text-center text-xs text-gray-400 mt-4">
+            <i class="fas fa-shield-alt mr-1"></i> Payments are secure and encrypted.
+          </p>
+        </div>
+
+        <!-- STEP 5: CONFIRMATION -->
+        <div id="step-5" class="hidden fade-in text-center py-10">
           <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <i class="fas fa-check text-3xl text-green-600"></i>
           </div>
@@ -284,7 +373,21 @@
     // const API_BASE = ... (removed to fix mixed content/CORS issues)
 
     // Store data as we go
-    let bookingData = {
+    // --- API CONFIGURATION ---
+    // Determine the Backend URL based on the current environment
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+    // If local, assume Backend is on port 3001. If production, use relative path (or specific URL if CORS)
+    const API_BASE = isLocal ? 'http://localhost:3001' : '';
+
+    // --- Booking Data State ---
+    const bookingData = {
+      id: "temp_" + Date.now(), // Temporary ID until saved
+      serviceType: 'in-home', // Default
+      step0Valid: false,
+      price: 150.00,
+      waiverAgreed: false,
+      // ... other fields populated later
+      bookingComplete: false, // flag
       parentName: '',
       parentEmail: '',
       parentPhone: '',
@@ -293,11 +396,8 @@
       babyDob: '',
       concerns: '',
       preferredSlots: [],
-      waiverAgreed: false,
       waiverVersion: '',
-      price: 150.00,
       appointmentTime: 'As Scheduled',
-      bookingComplete: false
     };
 
     // Load Waiver on Startup
@@ -326,7 +426,7 @@
       }
 
       try {
-        const response = await fetch(`/api/waiver/latest`);
+        const response = await fetch(`${API_BASE}/api/waiver/latest`);
         if (response.ok) {
           const data = await response.json();
           waiverContainer.innerHTML = data.text;
@@ -396,7 +496,6 @@
       // --- Transition: Step 1 (Details) -> Step 2 (Waiver) ---
       if (step === 2) {
         if (!validateStep1()) {
-          // Should be handled by button state, but safety guard
           alert("Please fill in all required fields.");
           return;
         }
@@ -407,60 +506,42 @@
         bookingData.babyName = document.getElementById('babyName').value;
         bookingData.babyDob = document.getElementById('babyDob').value;
         bookingData.concerns = document.getElementById('concerns').value;
-        // Price is already set in Step 0, DO NOT overwrite it here
       }
 
       // --- Transition: Step 2 (Waiver) -> Step 3 (Schedule) ---
       if (step === 3) {
         bookingData.waiverAgreed = document.getElementById('waiver-agree').checked;
 
-        // Show loading on the Next button to prevent double clicks
-        const btn = document.querySelector('#waiver-form button[type="submit"]');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Saving...';
-        btn.disabled = true;
+        // Reset Time Picker UI for fresh state
+        const dateInput = document.getElementById('visit-date');
+        if (dateInput) dateInput.value = '';
 
-        isSubmitting = true;
+        const slotsContainer = document.getElementById('slots-container');
+        if (slotsContainer) slotsContainer.innerHTML = '<p class="text-sm text-gray-400 col-span-2">Please select a date first.</p>';
 
-        const saved = await saveBookingData();
-
-        isSubmitting = false;
-
-        if (!saved) {
-          btn.innerHTML = originalText;
-          btn.disabled = false;
-          return; // Stop if save failed
-        }
-
-        // Reset button state so it's ready if they click Back
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-
-        const calContainer = document.getElementById('calendly-embed');
-        if (calContainer) {
-          calContainer.innerHTML = ''; // Clear to prevent duplicates
-
-          const baseUrl = 'https://calendly.com/whattodobynanasue/private-mobility-class';
-          const params = `?name=${encodeURIComponent(bookingData.parentName)}&email=${encodeURIComponent(bookingData.parentEmail)}&utm_content=${encodeURIComponent(bookingData.id)}&primary_color=8f9e8b&hide_event_type_details=1&hide_gdpr_banner=1`;
-
-          // Safety: Check if Calendly is loaded, if not, wait a bit
-          function initCalendly() {
-            if (window.Calendly) {
-              window.Calendly.initInlineWidget({
-                url: baseUrl + params,
-                parentElement: calContainer
-              });
-            } else {
-              console.warn("Calendly script not ready. Retrying in 500ms...");
-              setTimeout(initCalendly, 500);
-            }
-          }
-
-          initCalendly();
+        const nextPayment = document.getElementById('btn-next-payment');
+        if (nextPayment) {
+          nextPayment.disabled = true;
+          nextPayment.classList.add('opacity-50', 'cursor-not-allowed');
         }
       }
 
+      // --- Transition: Step 3 (Schedule) -> Step 4 (Payment) ---
       if (step === 4) {
+        // Step 3 Validation: Ensure time selected (implicit by button state, but good to check)
+        if (!bookingData.startTime || !bookingData.endTime) {
+          alert("Please select a time slot.");
+          return;
+        }
+
+        // Update Payment Display Price
+        const payDisplay = document.getElementById('payment-display-price');
+        if (payDisplay && bookingData.price) {
+          payDisplay.textContent = `$${bookingData.price.toFixed(2)}`;
+        }
+      }
+
+      if (step === 5) {
         // Populate confirmation details
         const emailSpan = document.getElementById('confirm-email');
         if (emailSpan) {
@@ -481,20 +562,130 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // --- CUSTOM TIME PICKER FUNCTIONS ---
+    async function fetchTimeSlots() {
+      const dateInput = document.getElementById('visit-date');
+      const container = document.getElementById('slots-container');
+      const nextBtn = document.getElementById('btn-next-payment');
+
+      // Robust Date Validation: Must be YYYY-MM-DD (10 chars)
+      if (!dateInput.value || dateInput.value.length < 10) return;
+
+      // Specifically check if year is valid (e.g. >= 2024) to avoid "0020" fetches
+      const year = parseInt(dateInput.value.split('-')[0]);
+      if (year < 2024) return;
+
+      container.innerHTML = '<i class="fas fa-circle-notch fa-spin text-gray-400"></i> Loading availability...';
+
+      // Reset selection
+      document.getElementById('selected-start-time').value = '';
+      document.getElementById('selected-end-time').value = '';
+      nextBtn.disabled = true;
+      nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+
+      const fetchUrl = `${API_BASE}/api/booking/slots?date=${dateInput.value}`;
+      console.log(`Fetching slots from: ${fetchUrl}`);
+
+      try {
+        // Debounce / Check abort controller if needed, but for now just validation helps
+        const response = await fetch(fetchUrl);
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(`Server Error (${response.status}): ${text}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) throw new Error(data.error);
+
+        renderTimeSlots(data.busy, data.workHours, dateInput.value, data.timeZone);
+      } catch (err) {
+        console.error(err);
+        // Show detailed error to user for debugging
+        container.innerHTML = `<div class="p-3 bg-red-100 text-red-700 rounded text-sm break-all">
+            <p class="font-bold">Error loading times</p>
+            <p><strong>URL:</strong> ${fetchUrl}</p>
+            <p><strong>Message:</strong> ${err.message}</p>
+            <p class="text-xs text-gray-500 mt-1">${err.stack || ''}</p>
+        </div>`;
+      }
+    }
+
+    function renderTimeSlots(busySlots, workHours, dateStr, timeZone) {
+      const container = document.getElementById('slots-container');
+      container.innerHTML = '';
+
+      const slots = [];
+      // Generate 60-min slots from 9am to 5pm
+      for (let hour = workHours.start; hour < workHours.end; hour++) {
+        const slotStartIso = `${dateStr}T${hour.toString().padStart(2, '0')}:00:00`;
+        const slotEndIso = `${dateStr}T${(hour + 1).toString().padStart(2, '0')}:00:00`;
+
+        // Availability Check
+        const isBusy = busySlots.some(b => {
+          // Simple overlap logic - for MVP we assume strict slot alignment or just check if busy block exists
+          return false; // TODO: Implement robust overlap
+        });
+
+        if (!isBusy) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'w-full py-2 px-3 text-sm font-medium border border-[var(--sage-green)] text-[var(--sage-green)] rounded hover:bg-[var(--sage-green)] hover:text-white transition-colors focus:ring-2 focus:ring-offset-1 focus:ring-[var(--sage-green)]';
+
+          const dispStart = hour > 12 ? hour - 12 : hour;
+          const dispAmPm = hour >= 12 ? 'PM' : 'AM';
+          btn.textContent = `${dispStart}:00 ${dispAmPm}`;
+
+          btn.onclick = () => selectTimeSlot(btn, slotStartIso, slotEndIso);
+          container.appendChild(btn);
+        }
+      }
+
+      if (container.children.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-sm col-span-2">No available times on this date.</p>';
+      }
+    }
+
+    function selectTimeSlot(btn, start, end) {
+      // Visual Selection
+      const container = document.getElementById('slots-container');
+      Array.from(container.children).forEach(c => {
+        c.classList.remove('bg-[var(--sage-green)]', 'text-white');
+        c.classList.add('text-[var(--sage-green)]');
+      });
+
+      btn.classList.remove('text-[var(--sage-green)]');
+      btn.classList.add('bg-[var(--sage-green)]', 'text-white');
+
+      // Logic
+      document.getElementById('selected-start-time').value = start;
+      document.getElementById('selected-end-time').value = end;
+
+      const dt = new Date(start);
+      bookingData.startTime = dt.toISOString();
+      bookingData.endTime = new Date(end).toISOString();
+
+      // Enable Next
+      const nextBtn = document.getElementById('btn-next-payment');
+      nextBtn.disabled = false;
+      nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+    }
+
     function prevStep(step) {
       document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
       document.getElementById(`step-${step}`).classList.remove('hidden');
       updateProgress(step);
     }
 
-    // Updated for 0-4 range
+    // Updated for 0-5 range (6 steps)
     function updateProgress(step) {
-      // Step ranges from 0 to 4
-      const progress = (step / 4) * 100;
+      // Step ranges from 0 to 5
+      const progress = (step / 5) * 100;
       document.getElementById('progress-line').style.width = `${progress}%`;
 
-      // Update circles (indicator IDs are 0 to 4)
-      for (let i = 0; i <= 4; i++) {
+      // Update circles (indicator IDs are 0 to 5)
+      for (let i = 0; i <= 5; i++) {
         const circle = document.getElementById(`step-${i}-indicator`);
         if (!circle) continue;
 
@@ -504,12 +695,40 @@
           circle.classList.remove('active');
         } else if (i === step) {
           circle.classList.add('active');
-          circle.innerHTML = i + 1; // Display 1-5 visually
+          circle.innerHTML = i + 1; // Display 1-6 visually
           circle.classList.remove('completed');
         } else {
           circle.classList.remove('active', 'completed');
-          circle.innerHTML = i + 1; // Display 1-5 visually
+          circle.innerHTML = i + 1; // Display 1-6 visually
         }
+      }
+    }
+
+    // --- Mock Payment Processor ---
+    async function processMockPayment() {
+      const btn = document.getElementById('btn-pay-now');
+      const originalText = btn.innerHTML;
+
+      // 1. Loading State
+      btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
+      btn.disabled = true;
+      btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+      // 2. Simulate Network Delay (1.5s)
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      // 3. Save Data (Complete Booking)
+      bookingData.bookingComplete = true; // Now we are actually done
+      const saved = await saveBookingData();
+
+      if (saved) {
+        // Success! Go to Confirmation (Step 5)
+        nextStep(5);
+      } else {
+        // Error handling
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
       }
     }
 
@@ -581,16 +800,14 @@
             console.log("Captured Calendly URI:", bookingData.eventURI);
           }
 
-          // 1. Immediate UI Feedback (Optimistic)
+          // 1. Advance to PAYMENT (Step 4)
+          // Do NOT save yet. We wait for payment.
           nextStep(4);
-          window.scrollTo({ top: 0, behavior: 'smooth' });
 
-          // 2. Background Save to trigger email
-          bookingData.bookingComplete = true;
-          saveBookingData().catch(err => console.error("Background save failed:", err));
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         }
       } catch (err) {
-        // Ignore json stringify errors for circular structures etc
+        console.error("Calendly Event Check Error:", err);
       }
     });
 
@@ -599,7 +816,7 @@
     // Save Data to Backend (Replacing processPayment)
     async function saveBookingData() {
       try {
-        const response = await fetch(`/api/booking`, {
+        const response = await fetch(`${API_BASE}/api/booking`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -625,6 +842,37 @@
         return false;
       }
     }
+
+    // --- DEBUG / TESTING ONLY ---
+    // Uncomment/Call this to skip to Step 3
+    function debugJumpToStep3() {
+      console.warn("DEBUG: Jumping to Step 3");
+
+      // Mock Data
+      bookingData.parentName = "Test Parent";
+      bookingData.parentEmail = "sasha.codes+test@gmail.com";
+      bookingData.babyName = "Test Baby";
+      bookingData.babyDob = "2024-01-01";
+      bookingData.parentAddress = "350 Fifth Avenue, New York, NY";
+      bookingData.parentPhone = "555-0123";
+      bookingData.serviceType = "in-home";
+      bookingData.price = 150.00;
+
+      // Hide others / Show Step 3
+      document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+      document.getElementById('step-3').classList.remove('hidden');
+      updateProgress(3);
+
+      // IMPORTANT: Set step0Valid so nextStep checks pass if we go back
+      step0Valid = true;
+    }
+
+    // Auto-Run for User Request
+    document.addEventListener('DOMContentLoaded', () => {
+      // Short delay to ensure other inits are done
+      setTimeout(debugJumpToStep3, 500);
+    });
+
   </script>
 
 
