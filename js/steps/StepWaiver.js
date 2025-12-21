@@ -7,38 +7,47 @@ export class StepWaiver extends HTMLElement {
 
   render() {
     this.innerHTML = `
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Waiver & Release of Liability</h2>
+        <div class="fade-in max-w-3xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[var(--dark-heading)] mb-3">Waiver & Release</h2>
+                <p class="text-gray-500">Please review and agree to the terms of service to continue.</p>
+            </div>
 
-        <div id="waiver-content"
-          class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6 h-64 overflow-y-auto text-sm text-gray-600 leading-relaxed">
-          <div class="flex items-center justify-center h-full">
-            <i class="fas fa-circle-notch fa-spin text-gray-400 text-2xl"></i>
-            <span class="ml-3 text-gray-500">Loading waiver...</span>
-          </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+                <!-- Waiver Content Box -->
+                <div id="waiver-content"
+                  class="bg-gray-50 border-0 ring-1 ring-gray-100 rounded-xl p-6 mb-8 h-64 overflow-y-auto text-sm text-gray-600 leading-relaxed shadow-inner custom-scrollbar">
+                  <div class="flex items-center justify-center h-full">
+                    <i class="fas fa-circle-notch fa-spin text-gray-300 text-3xl"></i>
+                    <span class="ml-3 text-gray-400 font-medium">Loading waiver...</span>
+                  </div>
+                </div>
+
+                <form id="waiver-form">
+                  <div class="flex items-start mb-10 p-4 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onclick="document.getElementById('waiver-agree').click()">
+                    <div class="flex items-center h-6">
+                      <input id="waiver-agree" type="checkbox" required
+                        class="w-5 h-5 text-[var(--sage-green)] border-gray-300 rounded focus:ring-[var(--sage-green)] focus:ring-2 cursor-pointer transition-all">
+                    </div>
+                    <div class="ml-4 text-sm">
+                      <label for="waiver-agree" class="font-medium text-gray-800 cursor-pointer text-base">I have read and agree to the Liability Waiver</label>
+                      <p class="text-gray-500 mt-1">You must acknowledge this agreement to proceed with booking.</p>
+                    </div>
+                  </div>
+
+                  <div class="flex justify-between items-center pt-6 border-t border-gray-100">
+                    <button type="button" id="btn-step-2-back" 
+                        class="text-gray-500 font-medium hover:text-[var(--dark-heading)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                        <i class="fas fa-arrow-left text-sm"></i> Back
+                    </button>
+                    <button type="submit" 
+                        class="bg-[var(--sage-green)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
+                        Next: Select Time <i class="fas fa-arrow-right text-sm"></i>
+                    </button>
+                  </div>
+                </form>
+            </div>
         </div>
-
-        <form id="waiver-form">
-          <div class="flex items-start mb-8">
-            <div class="flex items-center h-5">
-              <input id="waiver-agree" type="checkbox" required
-                class="focus:ring-[var(--sage-green)] h-4 w-4 text-[var(--sage-green)] border-gray-300 rounded">
-            </div>
-            <div class="ml-3 text-sm">
-              <label for="waiver-agree" class="font-medium text-gray-700">I have read and agree to the Liability Waiver</label>
-              <p class="text-gray-500">You must agree to continue.</p>
-            </div>
-          </div>
-
-          <div class="flex justify-between mt-8">
-            <button type="button" id="btn-step-2-back"
-              class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
-              Back
-            </button>
-            <button type="submit" class="btn-primary">
-              Next: Select Time <i class="fas fa-arrow-right ml-2"></i>
-            </button>
-          </div>
-        </form>
       `;
   }
 
@@ -63,13 +72,10 @@ export class StepWaiver extends HTMLElement {
     } catch (err) {
       console.error("[StepWaiver] Error:", err);
       container.innerHTML = `
-            <div class="text-red-500 text-center p-4">
-                <p class="font-bold">Failed to load waiver.</p>
-                <p class="text-xs mt-2 text-gray-400 font-mono text-left bg-gray-100 p-2 rounded">
-                    Error: ${err.message}<br>
-                    URL: ${API_BASE}/api/waiver/latest
-                </p>
-                <button onclick="this.closest('step-waiver').fetchWaiver()" class="mt-4 text-blue-500 text-xs underline">Retry</button>
+            <div class="text-red-500 text-center p-4 flex flex-col items-center justify-center h-full">
+                <i class="fas fa-exclamation-circle text-2xl mb-2 text-rose-400"></i>
+                <p class="font-bold text-gray-700">Failed to load waiver.</p>
+                <button onclick="this.closest('step-waiver').fetchWaiver()" class="mt-4 text-blue-500 text-sm font-medium hover:underline">Tap to Retry</button>
             </div>`;
     }
   }
