@@ -12,79 +12,136 @@ export class StepIntake extends HTMLElement {
 
   render() {
     this.innerHTML = `
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Intake Details</h2>
-        <form id="step1-form">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-            <!-- Parent Info -->
-            <div class="col-span-1 md:col-span-2">
-              <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Parent Information</h3>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
-              <input type="text" id="parentName" required class="form-input" placeholder="First & Last Name">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-              <input type="email" id="parentEmail" required class="form-input" placeholder="you@example.com">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-              <input type="tel" id="parentPhone" required class="form-input" placeholder="(555) 123-4567">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Home Address <span class="text-xs text-gray-400 font-normal">(Locked)</span></label>
-              <input type="text" id="parentAddress" class="form-input bg-gray-100 text-gray-500 cursor-not-allowed" placeholder="Street, City, Zip" readonly>
+        <div class="fade-in max-w-3xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[var(--dark-heading)] mb-3">Intake Details</h2>
+                <p class="text-gray-500">Tell us a little about you and your baby so we can prepare.</p>
             </div>
 
-            <!-- Baby Info -->
-            <div class="col-span-1 md:col-span-2 mt-2">
-              <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4 border-b pb-2">Baby's Information</h3>
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Baby's Name</label>
-              <input type="text" id="babyName" required class="form-input" placeholder="Baby's Name">
-            </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
-              <input type="date" id="babyDob" required class="form-input">
-            </div>
+            <form id="step1-form">
+                <div class="space-y-10">
+                    
+                    <!-- Parent Info Section -->
+                    <div class="bg-white rounded-xl">
+                        <h3 class="flex items-center text-lg font-semibold text-[var(--dark-heading)] mb-6">
+                            <div class="w-8 h-8 rounded-full bg-[var(--sage-green-light)] text-[var(--sage-green)] flex items-center justify-center mr-3">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            Parent Information
+                        </h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Your Name</label>
+                                <input type="text" id="parentName" required 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    placeholder="First & Last Name">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Email Address</label>
+                                <input type="email" id="parentEmail" required 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    placeholder="you@example.com">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Phone Number</label>
+                                <input type="tel" id="parentPhone" required 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    placeholder="(555) 123-4567">
+                            </div>
+                            <!-- Address Field Container (Hidden if Virtual) -->
+                            <div id="address-container">
+                                <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Home Address <span class="text-xs text-gray-400 font-normal ml-1">(From Step 1)</span></label>
+                                <div class="relative">
+                                    <input type="text" id="parentAddress" 
+                                        class="w-full px-4 py-3 rounded-xl border-0 ring-1 ring-gray-100 bg-gray-50 text-gray-500 cursor-not-allowed outline-none shadow-sm" 
+                                        placeholder="Address not provided" readonly>
+                                    <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                        <i class="fas fa-lock"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
-            <!-- Concerns -->
-            <div class="col-span-1 md:col-span-2">
-              <label class="block text-sm font-medium text-gray-700 mb-1">Primary Concerns / Goals</label>
-              <textarea id="concerns" rows="3" class="form-input" placeholder="What specific milestones are you working on?"></textarea>
-            </div>
-          </div>
+                    <div class="border-t border-gray-100"></div>
 
-          <div class="mt-8 flex justify-between">
-            <button type="button" id="btn-step-1-back" class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
-              Back
-            </button>
-            <button type="submit" class="btn-primary">
-              Next: Waiver <i class="fas fa-arrow-right ml-2"></i>
-            </button>
-          </div>
-        </form>
+                    <!-- Baby Info Section -->
+                    <div class="bg-white rounded-xl">
+                        <h3 class="flex items-center text-lg font-semibold text-[var(--dark-heading)] mb-6">
+                            <div class="w-8 h-8 rounded-full bg-[var(--sage-green-light)] text-[var(--sage-green)] flex items-center justify-center mr-3">
+                                <i class="fas fa-baby"></i>
+                            </div>
+                            Baby's Information
+                        </h3>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Baby's Name</label>
+                                <input type="text" id="babyName" required 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    placeholder="Baby's Name">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Date of Birth</label>
+                                <input type="date" id="babyDob" required 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400">
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Primary Concerns / Goals</label>
+                                <textarea id="concerns" rows="3" 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 resize-none" 
+                                    placeholder="What specific milestones are you working on? (e.g., rolling over, crawling, walking)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-10 flex justify-between items-center pt-6 border-t border-gray-100">
+                    <button type="button" id="btn-step-1-back" 
+                        class="text-gray-500 font-medium hover:text-[var(--dark-heading)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                        <i class="fas fa-arrow-left text-sm"></i> Back
+                    </button>
+                    <button type="submit" 
+                        class="bg-[var(--sage-green)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
+                        Next: Waiver <i class="fas fa-arrow-right text-sm"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
       `;
   }
 
   hydrate() {
-    // 1. Address is special - comes from Step 0 state
+    // 1. Address Logic: Hide if Virtual
+    const addrContainer = this.querySelector('#address-container');
     const addrField = this.querySelector('#parentAddress');
-    // Use in-memory bookingData. Clears on refresh.
-    if (window.bookingData && window.bookingData.parentAddress) {
-      addrField.value = window.bookingData.parentAddress;
+
+    // Check global bookingData for service type
+    const isVirtual = window.bookingData && window.bookingData.serviceType === 'virtual';
+
+    if (isVirtual) {
+      addrContainer.classList.add('hidden');
+    } else {
+      addrContainer.classList.remove('hidden');
+      if (window.bookingData && window.bookingData.parentAddress) {
+        addrField.value = window.bookingData.parentAddress;
+      } else {
+        addrField.value = ''; // Should be filled if not virtual, but safe fallback
+      }
     }
 
     // 2. Others from Memory (bookingData)
     const load = (id, key) => {
       if (window.bookingData && window.bookingData[key]) {
         const val = window.bookingData[key];
-        this.querySelector(`#${id}`).value = val;
+        const el = this.querySelector(`#${id}`);
+        if (el) el.value = val;
       }
     };
 
-    // Keys map to window.bookingData properties
     load('parentName', 'parentName');
     load('parentEmail', 'parentEmail');
     load('parentPhone', 'parentPhone');
@@ -109,7 +166,10 @@ export class StepIntake extends HTMLElement {
       e.preventDefault();
 
       // Save Data
-      const getVal = (id) => this.querySelector(`#${id}`).value;
+      const getVal = (id) => {
+        const el = this.querySelector(`#${id}`);
+        return el ? el.value : '';
+      };
 
       window.bookingData.parentName = getVal('parentName');
       window.bookingData.parentEmail = getVal('parentEmail');
@@ -117,12 +177,6 @@ export class StepIntake extends HTMLElement {
       window.bookingData.babyName = getVal('babyName');
       window.bookingData.babyDob = getVal('babyDob');
       window.bookingData.concerns = getVal('concerns');
-      // Address is already in bookingData from Step 0, or ReadOnly field logic?
-      // If user navigates back to 0 and changes it, Step 0 updates it.
-      // Step 1 just displays it.
-
-      // Persistence: In-Memory only (window.bookingData is already updated above)
-      // Removed localStorage calls to ensure data clears on refresh.
 
       this.dispatchEvent(new CustomEvent('step-complete', {
         detail: { step: 1 },
