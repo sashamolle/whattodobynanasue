@@ -151,6 +151,10 @@ export class StepIntake extends HTMLElement {
   }
 
   setupListeners() {
+    const form = this.querySelector('#step1-form');
+    const backBtn = this.querySelector('#btn-step-1-back');
+    const submitBtn = this.querySelector('#btn-step-1-next');
+
     const checkValidity = () => {
       if (form.checkValidity()) {
         // Enable
