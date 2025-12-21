@@ -158,5 +158,7 @@ h4 {
 
 /* Hidden Utilities */
 .hidden { display: none; }
-.fade-in { animation: fadeIn 0.5s ease-in-out; }
+.fade-in { animation: fadeIn 0.3s ease-out; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+.bg-rose-light { background-color: #FFF5F5; border-color: #FED7D7; color: #742A2A; }

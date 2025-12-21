@@ -1108,7 +1108,7 @@
 
       function calculateDistance(destination, isManhattan) {
         const service = new google.maps.DistanceMatrixService();
-        showFeedback('Calculating distance... <i class="fas fa-spinner fa-spin"></i>', 'info');
+        showFeedback('Checking availability at this location... <i class="fas fa-spinner fa-spin ml-2"></i>', 'info');
         validateStep0(false);
 
         console.log(`[Distance] Calculating from ${CHELSEA_ORIGIN} to ${destination}`);
@@ -1155,33 +1155,70 @@
 
           // Zone Logic
           if (minutes <= 30) {
-            // Zone 1
+            // Zone 1: Success
             updatePrice(150.00);
-            showFeedback('Great! You are in our primary service area.', 'success');
+            showFeedback('Great news! You are in our primary service area.', 'success');
             addressInput.dataset.valid = 'true';
             validateStep0(true);
           } else if (isManhattan) {
-            // Zone 2
+            // Zone 2: Travel Fee
             updatePrice(180.00, 'Includes $30 Travel Fee');
-            showFeedback('You are outside our primary service area. A $30 travel fee applies.', 'warning');
+            showFeedback('We can visit you! Just a heads up, a small travel fee ($30) will be added for this location.', 'warning');
             addressInput.dataset.valid = 'true';
             validateStep0(true);
           } else {
-            // Zone 3
-            showFeedback(`We're sorry, that's a bit too far (${Math.ceil(minutes)} mins). <a href="#" onclick="document.getElementById('service-virtual').click()" class="underline">Switch to Virtual Visit</a>?`, 'error');
+            // Zone 3: Denial with Pivot
+            showFeedback(`That address is outside our travel radius, but we can still support you! <a href="#" onclick="switchVirtual(); return false;" class="font-bold underline text-[#742A2A] hover:text-red-900 ml-1">Switch to Virtual Visit</a>`, 'denial');
             addressInput.dataset.valid = 'false';
             validateStep0(false);
           }
         });
       }
 
+      function switchVirtual() {
+        document.getElementById('service-virtual').click();
+        // Clear error manually after switch
+        feedbackDiv.classList.add('hidden');
+        addressInput.value = ''; // Clear invalid address to reset state
+      }
+
       function showFeedback(msg, type) {
-        feedbackDiv.innerHTML = msg;
-        feedbackDiv.classList.remove('hidden', 'bg-green-100', 'text-green-800', 'bg-red-100', 'text-red-800', 'bg-yellow-100', 'text-yellow-800', 'bg-blue-100', 'text-blue-800');
-        if (type === 'success') feedbackDiv.classList.add('bg-green-100', 'text-green-800');
-        else if (type === 'error') feedbackDiv.classList.add('bg-red-100', 'text-red-800');
-        else if (type === 'warning') feedbackDiv.classList.add('bg-yellow-100', 'text-yellow-800');
-        else feedbackDiv.classList.add('bg-blue-100', 'text-blue-800');
+        feedbackDiv.innerHTML = '';
+        // Reset base classes
+        feedbackDiv.className = "mt-4 p-4 rounded-lg flex items-start gap-3 text-sm font-medium fade-in border transition-all duration-300";
+
+        let iconHtml = '';
+
+        // State Styles
+        if (type === 'success') {
+          // Zone 1: Sage Green Light + Sage Border + Checkmark
+          feedbackDiv.classList.add('bg-[var(--sage-green-light)]', 'text-[var(--dark-heading)]', 'border-[var(--sage-green)]');
+          iconHtml = `<div class="mt-0.5 min-w-[20px] text-[var(--sage-green)]"><i class="fas fa-check-circle text-lg"></i></div>`;
+        }
+        else if (type === 'warning') {
+          // Zone 2: Warm Beige + Subtle Border + Car/Pin
+          feedbackDiv.style.backgroundColor = '#FFFDF5'; // Warm Beige
+          feedbackDiv.style.borderColor = '#E5E1D6';
+          feedbackDiv.style.color = 'var(--dark-heading)';
+          iconHtml = `<div class="mt-0.5 min-w-[20px] text-[#D4AF37]"><i class="fas fa-car text-lg"></i></div>`; // Gold/Muted
+        }
+        else if (type === 'denial') {
+          // Zone 3: Soft Rose + Red Border + Video Icon
+          feedbackDiv.classList.add('bg-rose-light'); // Uses our new utility class
+          iconHtml = `<div class="mt-0.5 min-w-[20px] text-[#742A2A]"><i class="fas fa-video text-lg"></i></div>`;
+        }
+        else if (type === 'info') {
+          // Loading
+          feedbackDiv.classList.add('bg-blue-50', 'text-blue-800', 'border-blue-200');
+          iconHtml = `<div class="mt-0.5 min-w-[20px]"><i class="fas fa-info-circle text-lg"></i></div>`;
+        }
+        else {
+          // Generic Error
+          feedbackDiv.classList.add('bg-red-100', 'text-red-800', 'border-red-200');
+          iconHtml = `<div class="mt-0.5 min-w-[20px]"><i class="fas fa-exclamation-circle text-lg"></i></div>`;
+        }
+
+        feedbackDiv.innerHTML = iconHtml + `<div>${msg}</div>`;
         feedbackDiv.classList.remove('hidden');
       }
 
