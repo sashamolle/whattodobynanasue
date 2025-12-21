@@ -26,13 +26,13 @@ export class StepService extends HTMLElement {
                                 class="h-full flex flex-col cursor-pointer bg-white border border-gray-200 rounded-xl p-6 shadow-sm transition-all duration-300
                                 hover:-translate-y-0.5 hover:shadow-md
                                 peer-checked:border-[var(--sage-green)] peer-checked:ring-1 peer-checked:ring-[var(--sage-green)] peer-checked:bg-[var(--sage-green-light)]">
-                                <div class="flex items-start gap-4 mb-4">
-                                    <div class="w-12 h-12 rounded-full bg-white border border-gray-100 flex items-center justify-center shadow-sm text-[var(--sage-green)] text-xl flex-shrink-0">
+                                <div class="flex flex-col items-center text-center gap-4 mb-4">
+                                    <div class="w-14 h-14 rounded-full bg-white border border-gray-100 flex items-center justify-center shadow-sm text-[var(--sage-green)] text-2xl flex-shrink-0">
                                         <i class="fas fa-child"></i>
                                     </div>
                                     <div>
                                         <h3 class="font-bold text-[var(--dark-heading)] text-lg">1:1 Mobility Class</h3>
-                                        <p class="text-sm text-gray-500 mt-1 leading-relaxed">Parent-led guidance to help your baby master milestones like rolling, crawling, and walking.</p>
+                                        <p class="text-sm text-gray-500 mt-2 leading-relaxed">Parent-led guidance to help your baby master milestones like rolling, crawling, and walking.</p>
                                     </div>
                                 </div>
                                 <div class="mt-auto pt-4 border-t border-gray-100/50 w-full flex items-center justify-between">
@@ -42,18 +42,18 @@ export class StepService extends HTMLElement {
                             </label>
                         </div>
 
-                        <!-- Option B: Pediatric PT (Coming Soon) -->
+                        <!-- Option B: Pediatric Chiropractic Visit (Coming Soon) -->
                         <div class="relative group">
                             <input type="radio" name="serviceCategory" id="cat-pt" value="pt" class="peer hidden" disabled>
                             <label for="cat-pt"
                                 class="h-full flex flex-col cursor-not-allowed bg-white border border-gray-200 rounded-xl p-6 shadow-sm transition-all duration-300 opacity-60 grayscale relative">
-                                <div class="flex items-start gap-4 mb-4">
-                                    <div class="w-12 h-12 rounded-full bg-white border border-gray-100 flex items-center justify-center shadow-sm text-[var(--sage-green)] text-xl flex-shrink-0">
+                                <div class="flex flex-col items-center text-center gap-4 mb-4">
+                                    <div class="w-14 h-14 rounded-full bg-white border border-gray-100 flex items-center justify-center shadow-sm text-[var(--sage-green)] text-2xl flex-shrink-0">
                                         <i class="fas fa-user-md"></i>
                                     </div>
                                     <div>
-                                        <h3 class="font-bold text-[var(--dark-heading)] text-lg">Pediatric Therapy</h3>
-                                        <p class="text-sm text-gray-500 mt-1 leading-relaxed">Hands-on evaluation and treatment for specific developmental concerns or diagnosis.</p>
+                                        <h3 class="font-bold text-[var(--dark-heading)] text-lg">Pediatric Chiropractic Visit</h3>
+                                        <p class="text-sm text-gray-500 mt-2 leading-relaxed">Gentle, specialized hands-on care to release tension and improve nervous system function. Ideal for babies with physical discomfort or developmental restrictions.</p>
                                     </div>
                                 </div>
                                 <div class="mt-auto pt-4 border-t border-gray-100/50 w-full flex items-center justify-end">
@@ -94,14 +94,14 @@ export class StepService extends HTMLElement {
                             </label>
                         </div>
 
-                        <!-- In-Office (Coming Soon) -->
+                        <!-- At Office (Coming Soon) -->
                         <div class="relative group">
                             <input type="radio" name="serviceType" id="service-office" value="office" class="peer hidden" disabled>
                             <label for="service-office"
                                 class="h-full flex flex-col items-center justify-center text-center cursor-not-allowed bg-white border border-gray-200 rounded-xl p-4 shadow-sm transition-all duration-300 opacity-60 grayscale relative">
                                 <span class="absolute top-2 right-2 bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Coming Soon</span>
                                 <i class="fas fa-building text-2xl mb-2 text-gray-400"></i>
-                                <span class="font-semibold text-sm">In-Office</span>
+                                <span class="font-semibold text-sm">At Office</span>
                             </label>
                         </div>
 
