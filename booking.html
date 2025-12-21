@@ -571,41 +571,41 @@
         initCalendar();
         window.calendarInitialized = true;
       }
-    }
 
-    // --- Transition: Step 3 (Schedule) -> Step 4 (Payment) ---
-    if (step === 4) {
-      if (!bookingData.startTime || !bookingData.endTime) {
-        alert("Please select a time slot.");
-        return;
+
+      // --- Transition: Step 3 (Schedule) -> Step 4 (Payment) ---
+      if (step === 4) {
+        if (!bookingData.startTime || !bookingData.endTime) {
+          alert("Please select a time slot.");
+          return;
+        }
+
+        // Update Payment Display Price
+        const payDisplay = document.getElementById('payment-display-price');
+        if (payDisplay && bookingData.price) {
+          payDisplay.textContent = `$${bookingData.price.toFixed(2)}`;
+        }
       }
 
-      // Update Payment Display Price
-      const payDisplay = document.getElementById('payment-display-price');
-      if (payDisplay && bookingData.price) {
-        payDisplay.textContent = `$${bookingData.price.toFixed(2)}`;
+      if (step === 5) {
+        // Populate confirmation details
+        const emailSpan = document.getElementById('confirm-email');
+        if (emailSpan) {
+          emailSpan.textContent = bookingData.parentEmail || "your email";
+        }
       }
-    }
 
-    if (step === 5) {
-      // Populate confirmation details
-      const emailSpan = document.getElementById('confirm-email');
-      if (emailSpan) {
-        emailSpan.textContent = bookingData.parentEmail || "your email";
-      }
-    }
+      // Hide all steps
+      document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
 
-    // Hide all steps
-    document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+      // Show target step
+      document.getElementById(`step-${step}`).classList.remove('hidden');
 
-    // Show target step
-    document.getElementById(`step-${step}`).classList.remove('hidden');
+      // Update Indicators
+      updateProgress(step);
 
-    // Update Indicators
-    updateProgress(step);
-
-    // Scroll to top
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Scroll to top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     // --- CUSTOM CALENDAR LOGIC ---
