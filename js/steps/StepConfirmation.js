@@ -13,21 +13,43 @@ export class StepConfirmation extends HTMLElement {
 
   render() {
     this.innerHTML = `
-        <div class="text-center py-10">
-          <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <i class="fas fa-check text-3xl text-green-600"></i>
-          </div>
-          <h2 class="text-3xl font-bold text-gray-900 mb-4">Booking Confirmed!</h2>
-          <p class="text-xl text-gray-600 mb-8 max-w-md mx-auto">
-            Thank you! Your appointment has been scheduled.
-          </p>
+        <div class="fade-in max-w-3xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[var(--dark-heading)] mb-3">You're All Set!</h2>
+                <p class="text-gray-500">Your appointment has been successfully scheduled.</p>
+            </div>
 
-          <div class="bg-gray-50 rounded-xl p-6 mb-8 text-left max-w-md mx-auto border border-gray-200">
-            <p class="mb-2"><strong class="text-gray-800">Confirmation Sent To:</strong> <span id="confirm-email" class="text-gray-600">...</span></p>
-            <p class="text-[var(--sage-green)] font-medium mt-4"><i class="fas fa-wallet mr-2"></i>Payment of $150.00 is due in person.</p>
-          </div>
+            <div class="bg-white rounded-2xl p-8 md:p-12 border border-gray-100 shadow-sm relative overflow-hidden text-center">
+                <!-- Decorative background element -->
+                <div class="absolute top-0 left-0 w-40 h-40 bg-[var(--sage-green-light)] rounded-br-full opacity-50 -ml-10 -mt-10 pointer-events-none"></div>
+                <div class="absolute bottom-0 right-0 w-40 h-40 bg-[var(--sage-green-light)] rounded-tl-full opacity-50 -mr-10 -mb-10 pointer-events-none"></div>
 
-          <a href="index.html" class="btn-secondary">Back to Home</a>
+                <div class="relative z-10">
+                    <div class="w-24 h-24 bg-[var(--sage-green-light)] rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+                        <i class="fas fa-check text-4xl text-[var(--sage-green)]"></i>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold text-[var(--dark-heading)] mb-4">Booking Confirmed!</h2>
+                    <p class="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
+                        Thank you for booking with What To Do by Nana Sue. We're looking forward to meeting you and your little one!
+                    </p>
+
+                    <div class="bg-gray-50 rounded-xl p-6 mb-10 max-w-md mx-auto border border-gray-100 shadow-sm">
+                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 border-dashed">
+                            <span class="text-gray-500 font-medium text-sm uppercase tracking-wide">Confirmation Sent To</span>
+                            <span id="confirm-email" class="text-[var(--dark-heading)] font-bold text-sm">...</span>
+                        </div>
+                         <div class="flex items-center justify-center gap-2 text-[var(--sage-green)] font-semibold bg-white py-3 px-4 rounded-lg border border-[var(--sage-green-light)]">
+                            <i class="fas fa-wallet"></i>
+                            <span>Payment of $150.00 is due in person.</span>
+                        </div>
+                    </div>
+
+                    <a href="index.html" class="inline-flex items-center justify-center bg-[var(--sage-green)] text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 min-w-[200px]">
+                        Back to Home <i class="fas fa-home ml-2 text-sm opacity-80"></i>
+                    </a>
+                </div>
+            </div>
         </div>
       `;
   }
