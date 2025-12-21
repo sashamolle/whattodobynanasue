@@ -89,10 +89,20 @@ export class StepWaiver extends HTMLElement {
     }
   }
 
+  // Public method for visibility updates
+  updateDisplay() {
+    // Re-check scroll when component becomes visible
+    // Small timeout to ensure layout is applied after class removal
+    setTimeout(() => this.checkScroll(), 50);
+  }
+
   // Separate method to unlock if conditions met
   checkScroll() {
     const content = this.querySelector('#waiver-content');
     if (!content) return;
+
+    // IMPORTANT: If hidden, dimensions are 0. Do not unlock.
+    if (content.clientHeight === 0) return;
 
     // Tolerance of 5px to account for sub-pixel rendering or padding
     const isAtBottom = content.scrollHeight - content.scrollTop <= content.clientHeight + 5;
