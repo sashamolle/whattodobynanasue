@@ -181,6 +181,8 @@ export class StepWaiver extends HTMLElement {
       // Only toggle if we didn't click the checkbox directly (to avoid double toggle)
       if (e.target !== checkbox) {
         checkbox.checked = !checkbox.checked;
+        // Trigger change event to update button state
+        checkbox.dispatchEvent(new Event('change'));
       }
     };
 
