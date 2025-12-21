@@ -32,11 +32,11 @@ export class StepService extends HTMLElement {
                                     </div>
                                     <div>
                                         <h3 class="font-bold text-[var(--dark-heading)] text-lg">1:1 Mobility Class</h3>
-                                        <p class="text-sm text-gray-500 mt-2 leading-relaxed">Parent-led guidance to help your baby master milestones like rolling, crawling, and walking.</p>
+                                        <p class="text-sm text-gray-500 mt-2 leading-relaxed">Personalized support to address your baby's unique movement patterns. We'll work together on tummy time, rolling and crawling, to build strength and coordination.</p>
                                     </div>
                                 </div>
                                 <div class="mt-auto pt-4 border-t border-gray-100/50 w-full flex items-center justify-between">
-                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Starting At</span>
+                                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">From</span>
                                     <span class="text-xl font-bold text-[var(--sage-green)]">$150.00</span>
                                 </div>
                             </label>
@@ -342,7 +342,7 @@ export class StepService extends HTMLElement {
                 } else if (isManhattan) {
                     // Zone 2
                     this.updatePrice(basePrice + 30, 'In-Home (Travel Fee Included)');
-                    this.showFeedback('We can visit you! Just a heads up, a small travel fee ($30) will be added for this location.', 'warning');
+                    this.showFeedback('We can visit you! Just a heads up, a travel fee ($30) will be added for this location.', 'warning');
                     addressInput.dataset.valid = 'true';
                     window.bookingData.parentAddress = destination;
                     this.validateStep0(true);
