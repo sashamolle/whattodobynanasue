@@ -1,15 +1,18 @@
 export class StepConfirmation extends HTMLElement {
-    connectedCallback() {
-        this.render();
-        // Populate email if data exists
-        if (window.bookingData && window.bookingData.parentEmail) {
-            const el = this.querySelector('#confirm-email');
-            if (el) el.textContent = window.bookingData.parentEmail;
-        }
-    }
+  connectedCallback() {
+    this.render();
+    this.updateDisplay();
+  }
 
-    render() {
-        this.innerHTML = `
+  updateDisplay() {
+    if (window.bookingData && window.bookingData.parentEmail) {
+      const el = this.querySelector('#confirm-email');
+      if (el) el.textContent = window.bookingData.parentEmail;
+    }
+  }
+
+  render() {
+    this.innerHTML = `
         <div class="text-center py-10">
           <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <i class="fas fa-check text-3xl text-green-600"></i>
@@ -27,6 +30,6 @@ export class StepConfirmation extends HTMLElement {
           <a href="index.html" class="btn-secondary">Back to Home</a>
         </div>
       `;
-    }
+  }
 }
 customElements.define('step-confirmation', StepConfirmation);

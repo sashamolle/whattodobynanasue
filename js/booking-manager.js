@@ -62,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Submit Logic (Step 4 -> 5) ---
     async function submitBooking() {
         try {
+            console.log("[BookingManager] Submitting Booking Data:", window.bookingData);
             const response = await fetch(`${window.API_BASE}/api/booking`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -95,6 +96,11 @@ document.addEventListener('DOMContentLoaded', () => {
         if (stepIdx === 4) {
             const success = await submitBooking();
             if (success) {
+                // Update Confirmation Screen with latest data (email)
+                const confirmStep = document.getElementById('step5');
+                if (confirmStep && confirmStep.updateDisplay) {
+                    confirmStep.updateDisplay();
+                }
                 showStep(5);
             } else {
                 // Determine how to reset button state in component? 

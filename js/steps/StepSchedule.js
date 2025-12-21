@@ -53,7 +53,6 @@ export class StepSchedule extends HTMLElement {
           <!-- Time Slots Panel -->
           <div id="time-panel" class="hidden bg-gray-50 rounded-2xl p-6 h-full min-h-[400px] flex flex-col justify-center">
              <div class="text-center mb-6">
-               <h3 class="text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Passaic, NJ (ET)</h3>
                <h2 id="selected-date-header" class="text-xl font-bold text-gray-800">Select Date</h2>
              </div>
              <div id="slots-container" class="space-y-3 px-4 max-h-[350px] overflow-y-auto custom-scrollbar">
@@ -228,13 +227,13 @@ export class StepSchedule extends HTMLElement {
             const dh = hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr);
 
             btn.textContent = `${dh}:${m} ${ampm}`;
-            btn.className = "w-full py-3 px-6 text-center border-2 border-transparent bg-gray-50 text-gray-600 rounded-full hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-semibold text-sm";
+            btn.className = "w-full py-3 px-6 text-center border-2 border-transparent bg-gray-50 text-gray-600 rounded-lg hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-semibold text-sm";
 
             btn.onclick = () => {
                 // Reset others
-                Array.from(container.children).forEach(c => c.className = "w-full py-3 px-6 text-center border-2 border-transparent bg-gray-50 text-gray-600 rounded-full hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-semibold text-sm");
+                Array.from(container.children).forEach(c => c.className = "w-full py-3 px-6 text-center border-2 border-transparent bg-gray-50 text-gray-600 rounded-lg hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-semibold text-sm");
                 // Active
-                btn.className = "w-full py-3 px-6 text-center border-2 border-[var(--sage-green)] bg-[var(--sage-green)] text-white rounded-full shadow-lg transform scale-[1.02] transition-all font-bold text-sm";
+                btn.className = "w-full py-3 px-6 text-center border-2 border-[var(--sage-green)] bg-[var(--sage-green)] text-white rounded-lg shadow-lg transform scale-[1.02] transition-all font-bold text-sm";
 
                 // Save
                 // Raw Time "09:30" + Date "2025-01-01" -> ISO Logic
