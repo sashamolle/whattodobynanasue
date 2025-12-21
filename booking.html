@@ -247,21 +247,62 @@
           <h2 class="text-2xl font-bold text-gray-800 mb-2">Select a Time</h2>
           <p class="text-gray-500 mb-6">Choose a date and time for your in-home visit.</p>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <!-- Date Picker (Simple Native Input for MVP, styled) -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
-              <input type="date" id="visit-date" class="form-input" max="2100-12-31">
-              <p class="text-xs text-gray-400 mt-2">Available Mon-Fri, 9am - 5pm</p>
-            </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
-            <!-- Time Slots -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Available Times (ET)</label>
-              <div id="slots-container" class="grid grid-cols-2 gap-3">
-                <p class="text-sm text-gray-400 col-span-2">Please select a date first.</p>
+            <!-- Custom Calendar Grid -->
+            <div id="calendar-wrapper" class="border rounded-xl p-6 bg-white shadow-sm">
+
+              <!-- Month Header -->
+              <div class="flex justify-between items-center mb-6">
+                <button type="button" id="cal-prev"
+                  class="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" disabled>
+                  <i class="fas fa-chevron-left"></i>
+                </button>
+                <h3 id="cal-month-title" class="font-bold text-lg text-gray-800">Loading...</h3>
+                <button type="button" id="cal-next"
+                  class="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors">
+                  <i class="fas fa-chevron-right"></i>
+                </button>
+              </div>
+
+              <!-- Days Header -->
+              <div
+                class="grid grid-cols-7 gap-1 mb-2 text-center text-xs font-bold text-gray-400 uppercase tracking-wide">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+              </div>
+
+              <!-- Days Grid -->
+              <div id="cal-grid" class="grid grid-cols-7 gap-1">
+                <!-- Dynamic Days -->
+              </div>
+
+              <!-- Legend -->
+              <div class="mt-4 flex items-center justify-center gap-4 text-xs text-gray-400">
+                <div class="flex items-center gap-1">
+                  <div class="w-2 h-2 rounded-full border border-[var(--sage-green)]"></div> Available
+                </div>
+                <div class="flex items-center gap-1">
+                  <div class="w-2 h-2 rounded-full bg-[var(--sage-green)]"></div> Selected
+                </div>
               </div>
             </div>
+
+            <!-- Time Slots Panel (Shows when date selected) -->
+            <div id="time-panel"
+              class="hidden border rounded-xl p-6 bg-white shadow-sm h-full max-h-[450px] overflow-y-auto">
+              <h4 id="selected-date-header"
+                class="font-bold text-lg mb-4 text-gray-800 sticky top-0 bg-white pb-2 border-b">Select Time</h4>
+              <div id="slots-container" class="grid grid-cols-1 gap-2">
+                <!-- Dynamic Slots -->
+              </div>
+            </div>
+
           </div>
 
           <!-- Hidden Inputs for logic -->
@@ -525,161 +566,254 @@
         bookingData.concerns = document.getElementById('concerns').value;
       }
 
-      // --- Transition: Step 2 (Waiver) -> Step 3 (Schedule) ---
-      if (step === 3) {
-        bookingData.waiverAgreed = document.getElementById('waiver-agree').checked;
-
-        // Reset Time Picker UI for fresh state
-        const dateInput = document.getElementById('visit-date');
-        if (dateInput) dateInput.value = '';
-
-        const slotsContainer = document.getElementById('slots-container');
-        if (slotsContainer) slotsContainer.innerHTML = '<p class="text-sm text-gray-400 col-span-2">Please select a date first.</p>';
-
-        const nextPayment = document.getElementById('btn-next-payment');
-        if (nextPayment) {
-          nextPayment.disabled = true;
-          nextPayment.classList.add('opacity-50', 'cursor-not-allowed');
-        }
+      // Re-Init Calendar (fetch fresh slots)
+      if (!window.calendarInitialized) {
+        initCalendar();
+        window.calendarInitialized = true;
       }
-
-      // --- Transition: Step 3 (Schedule) -> Step 4 (Payment) ---
-      if (step === 4) {
-        // Step 3 Validation: Ensure time selected (implicit by button state, but good to check)
-        if (!bookingData.startTime || !bookingData.endTime) {
-          alert("Please select a time slot.");
-          return;
-        }
-
-        // Update Payment Display Price
-        const payDisplay = document.getElementById('payment-display-price');
-        if (payDisplay && bookingData.price) {
-          payDisplay.textContent = `$${bookingData.price.toFixed(2)}`;
-        }
-      }
-
-      if (step === 5) {
-        // Populate confirmation details
-        const emailSpan = document.getElementById('confirm-email');
-        if (emailSpan) {
-          emailSpan.textContent = bookingData.parentEmail || "your email";
-        }
-      }
-
-      // Hide all steps
-      document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
-
-      // Show target step
-      document.getElementById(`step-${step}`).classList.remove('hidden');
-
-      // Update Indicators
-      updateProgress(step);
-
-      // Scroll to top
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // --- CUSTOM TIME PICKER FUNCTIONS ---
-    async function fetchTimeSlots() {
-      const dateInput = document.getElementById('visit-date');
-      const container = document.getElementById('slots-container');
-      const nextBtn = document.getElementById('btn-next-payment');
-
-      // Robust Date Validation: Must be YYYY-MM-DD (10 chars)
-      if (!dateInput.value) return;
-
-      const yearStr = dateInput.value.split('-')[0];
-      const year = parseInt(yearStr);
-
-      // 1. Check Length (Must be complete date)
-      if (dateInput.value.length < 10) return;
-
-      // 2. Check Year Range (e.g. 2025 - 2100)
-      if (year < 2024) { // Allow late 2024 for testing, but mostly future
-        container.innerHTML = `<div class="p-4 text-center text-amber-600 bg-amber-50 rounded">
-            <p class="font-bold">Invalid Date</p>
-            <p class="text-sm">Please select a date in the future.</p>
-          </div>`;
-        return;
-      }
-      if (year > 2100) {
-        container.innerHTML = `<div class="p-4 text-center text-amber-600 bg-amber-50 rounded">
-            <p class="font-bold">Invalid Year</p>
-            <p class="text-sm">Please select a valid year.</p>
-          </div>`;
+    // --- Transition: Step 3 (Schedule) -> Step 4 (Payment) ---
+    if (step === 4) {
+      if (!bookingData.startTime || !bookingData.endTime) {
+        alert("Please select a time slot.");
         return;
       }
 
-      container.innerHTML = '<i class="fas fa-circle-notch fa-spin text-gray-400"></i> Loading availability...';
+      // Update Payment Display Price
+      const payDisplay = document.getElementById('payment-display-price');
+      if (payDisplay && bookingData.price) {
+        payDisplay.textContent = `$${bookingData.price.toFixed(2)}`;
+      }
+    }
 
-      // Reset selection
-      document.getElementById('selected-start-time').value = '';
-      document.getElementById('selected-end-time').value = '';
-      nextBtn.disabled = true;
-      nextBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    if (step === 5) {
+      // Populate confirmation details
+      const emailSpan = document.getElementById('confirm-email');
+      if (emailSpan) {
+        emailSpan.textContent = bookingData.parentEmail || "your email";
+      }
+    }
 
-      const fetchUrl = `${API_BASE}/api/booking/slots?date=${dateInput.value}`;
-      console.log(`Fetching slots from: ${fetchUrl}`);
+    // Hide all steps
+    document.querySelectorAll('[id^="step-"]').forEach(el => el.classList.add('hidden'));
+
+    // Show target step
+    document.getElementById(`step-${step}`).classList.remove('hidden');
+
+    // Update Indicators
+    updateProgress(step);
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- CUSTOM CALENDAR LOGIC ---
+
+    let calendarData = {}; // { "2025-01-01": { status: 'available', slots: [] } }
+    let currentMonthDate = new Date(); // Tracks currently viewed month
+    let selectedDateStr = null;
+
+    async function initCalendar() {
+      const grid = document.getElementById('cal-grid');
+      grid.innerHTML = '<div class="col-span-7 py-8 text-center text-gray-400"><i class="fas fa-circle-notch fa-spin"></i> Loading availability...</div>';
 
       try {
-        // Debounce / Check abort controller if needed, but for now just validation helps
-        const response = await fetch(fetchUrl);
+        const res = await fetch(`${API_BASE}/api/booking/slots`);
+        if (!res.ok) throw new Error("Failed to load slots");
+        calendarData = await res.json();
 
-        if (!response.ok) {
-          const text = await response.text();
-          throw new Error(`Server Error (${response.status}): ${text}`);
+        // Auto-Jump to first available month
+        const firstAvailableCb = Object.entries(calendarData).find(([k, v]) => v.status === 'available');
+        if (firstAvailableCb) {
+          // Parse YYYY-MM-DD
+          const parts = firstAvailableCb[0].split('-'); // [2025, 01, 15]
+          currentMonthDate = new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, 1);
+        } else {
+          currentMonthDate = new Date(); // Default today
         }
 
-        const data = await response.json();
+        setupCalendarNav();
+        renderMonth();
 
-        if (data.error) throw new Error(data.error);
-
-        renderTimeSlots(data.busy, data.workHours, dateInput.value, data.timeZone);
       } catch (err) {
-        console.error(err);
-        // Show detailed error to user for debugging
-        container.innerHTML = `<div class="p-3 bg-red-100 text-red-700 rounded text-sm break-all">
-            <p class="font-bold">Error loading times</p>
-            <p><strong>URL:</strong> ${fetchUrl}</p>
-            <p><strong>Message:</strong> ${err.message}</p>
-            <p class="text-xs text-gray-500 mt-1">${err.stack || ''}</p>
-        </div>`;
+        console.error("Calendar Init Error:", err);
+        grid.innerHTML = '<div class="col-span-7 py-8 text-center text-red-400 text-sm">Error loading calendar.<br>Please refresh page.</div>';
       }
     }
 
-    function renderTimeSlots(busySlots, workHours, dateStr, timeZone) {
+    function setupCalendarNav() {
+      document.getElementById('cal-prev').onclick = () => changeMonth(-1);
+      document.getElementById('cal-next').onclick = () => changeMonth(1);
+    }
+
+    function changeMonth(offset) {
+      currentMonthDate.setMonth(currentMonthDate.getMonth() + offset);
+      renderMonth();
+    }
+
+    function renderMonth() {
+      const year = currentMonthDate.getFullYear();
+      const month = currentMonthDate.getMonth();
+
+      // Update Title
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      document.getElementById('cal-month-title').textContent = `${monthNames[month]} ${year}`;
+
+      const grid = document.getElementById('cal-grid');
+      grid.innerHTML = '';
+
+      // Calculate Days
+      const firstDay = new Date(year, month, 1);
+      const lastDay = new Date(year, month + 1, 0);
+
+      const daysInMonth = lastDay.getDate();
+      const startDayOfWeek = firstDay.getDay(); // 0 (Sun) - 6 (Sat)
+
+      // Padding (Empty slots before 1st)
+      for (let i = 0; i < startDayOfWeek; i++) {
+        const empty = document.createElement('div');
+        grid.appendChild(empty);
+      }
+
+      // Days
+      for (let day = 1; day <= daysInMonth; day++) {
+        // Construct YYYY-MM-DD key using padded local values
+        const dStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.textContent = day;
+        btn.className = "h-10 w-10 mx-auto flex items-center justify-center rounded-full text-sm font-medium transition-all duration-200";
+
+        const dayData = calendarData[dStr];
+
+        // Check if past
+        // Simple check: Is dStr < TodayStr?
+        // Or rely on dayData status. API returns unavailable if not in 60 day range usually?
+        // Let's assume dayData handles logic.
+
+        if (!dayData || dayData.status === 'unavailable' || dayData.status === 'full') {
+          // Disabled
+          btn.classList.add('text-gray-300', 'cursor-not-allowed');
+          btn.disabled = true;
+        } else {
+          // Available
+          btn.classList.add('text-[var(--sage-green)]', 'bg-emerald-50', 'hover:bg-[var(--sage-green)]', 'hover:text-white', 'border', 'border-[var(--sage-green)]/30');
+          if (selectedDateStr === dStr) {
+            btn.classList.add('bg-[var(--sage-green)]', 'text-white', 'ring-2', 'ring-offset-1', 'ring-[var(--sage-green)]');
+            btn.classList.remove('bg-emerald-50', 'text-[var(--sage-green)]');
+          }
+          btn.onclick = () => selectDate(dStr);
+        }
+
+        grid.appendChild(btn);
+      }
+    }
+
+    function selectDate(dateStr) {
+      selectedDateStr = dateStr;
+      renderMonth(); // Re-render to update selection style
+      renderSlots(dateStr);
+    }
+
+    function renderSlots(dateStr) {
+      const panel = document.getElementById('time-panel');
       const container = document.getElementById('slots-container');
+      const header = document.getElementById('selected-date-header');
+
+      panel.classList.remove('hidden');
+
+      // Format Header Date
+      const dateObj = new Date(dateStr + "T12:00:00"); // Safe parse for header
+      const options = { weekday: 'long', month: 'long', day: 'numeric' };
+      header.textContent = dateObj.toLocaleDateString('en-US', options);
+
       container.innerHTML = '';
 
-      const slots = [];
-      // Generate 60-min slots from 9am to 5pm
-      for (let hour = workHours.start; hour < workHours.end; hour++) {
-        const slotStartIso = `${dateStr}T${hour.toString().padStart(2, '0')}:00:00`;
-        const slotEndIso = `${dateStr}T${(hour + 1).toString().padStart(2, '0')}:00:00`;
+      const slotList = calendarData[dateStr].slots || [];
 
-        // Availability Check
-        const isBusy = busySlots.some(b => {
-          // Simple overlap logic - for MVP we assume strict slot alignment or just check if busy block exists
-          return false; // TODO: Implement robust overlap
-        });
-
-        if (!isBusy) {
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'w-full py-2 px-3 text-sm font-medium border border-[var(--sage-green)] text-[var(--sage-green)] rounded hover:bg-[var(--sage-green)] hover:text-white transition-colors focus:ring-2 focus:ring-offset-1 focus:ring-[var(--sage-green)]';
-
-          const dispStart = hour > 12 ? hour - 12 : hour;
-          const dispAmPm = hour >= 12 ? 'PM' : 'AM';
-          btn.textContent = `${dispStart}:00 ${dispAmPm}`;
-
-          btn.onclick = () => selectTimeSlot(btn, slotStartIso, slotEndIso);
-          container.appendChild(btn);
-        }
+      if (slotList.length === 0) {
+        container.innerHTML = '<p class="text-center text-gray-400 my-4">No slots available</p>';
+        return;
       }
 
-      if (container.children.length === 0) {
-        container.innerHTML = '<p class="text-gray-500 text-sm col-span-2">No available times on this date.</p>';
+      slotList.forEach(timeStr => {
+        // timeStr is "09:00"
+        const btn = document.createElement('button');
+        btn.type = 'button';
+
+        // Convert to AM/PM for display
+        const [h, m] = timeStr.split(':');
+        const hour = parseInt(h);
+        const ampm = hour >= 12 ? 'PM' : 'AM';
+        const dispLat = hour > 12 ? hour - 12 : hour; // 13:00 -> 1:00
+        const dispH = dispLat === 0 ? 12 : dispLat; // 00:00 -> 12:00? No, range is 9-17
+        const label = `${dispH}:${m} ${ampm}`;
+
+        btn.textContent = label;
+        btn.className = "w-full py-3 px-4 text-center border rounded-lg text-gray-600 hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-medium";
+
+        // Logic to Select
+        btn.onclick = () => selectTimeSlotNew(btn, dateStr, timeStr);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectTimeSlotNew(btn, dateStr, timeStr) {
+      // Visuals
+      const container = document.getElementById('slots-container');
+      Array.from(container.children).forEach(c => {
+        c.classList.remove('border-[var(--sage-green)]', 'bg-[var(--sage-green)]', 'text-white');
+        c.classList.add('text-gray-600', 'border-gray-200');
+      });
+
+      btn.classList.remove('text-gray-600', 'border-gray-200', 'hover:text-[var(--sage-green)]');
+      btn.classList.add('bg-[var(--sage-green)]', 'text-white', 'border-[var(--sage-green)]');
+
+      // Data Update
+      // Need to construct ISO strings for Backend
+      // dateStr "2025-01-01", timeStr "09:30"
+      const startIso = `${dateStr}T${timeStr}:00`;
+      // End is +45 mins
+      // Easy calc:
+      const d = new Date(startIso); // Parsing local string -> Local Date
+      // Construct standard ISO? No, backend expects what we send.
+      // Backend `insertCalendarEvent` takes the string directly for `dateTime`.
+      // GCal requires correct Offset if ISO.
+      // Chrome `new Date("2025-01-01T09:30:00")` uses Viewer's Browser Timezone.
+      // If Viewer is in California (PST), 9:30 is 9:30 PST. 
+      // But Nana Sue is in New York (EST).
+      // 9:30 PST is 12:30 EST.
+      // If we send "2025-01-01T09:30:00" (no Z, no offset) to Backend?
+      // Backend `insertCalendarEvent` does: `dateTime: bookingData.startTime`.
+      // If string has no offset, GCal assumes... ? 
+      // `insertCalendarEvent` HARDCODES `timeZone: 'America/New_York'` in the event resource.
+      // Google API says: If `dateTime` has no offset, it uses `timeZone` field.
+      // YES! So we SHOULD send "2025-01-01T09:30:00" WITHOUT 'Z' or offset, and let GCal interpret it as NY time.
+      // Perfect.
+
+      bookingData.startTime = startIso;
+
+      // Calc End Time string
+      // We can't use Date object easily without risking TZ injection.
+      // 45 mins math on string:
+      let [hh, mm] = timeStr.split(':').map(Number);
+      mm += 45;
+      if (mm >= 60) {
+        hh += 1;
+        mm -= 60;
       }
+      const endH = hh.toString().padStart(2, '0');
+      const endM = mm.toString().padStart(2, '0');
+      bookingData.endTime = `${dateStr}T${endH}:${endM}:00`;
+
+      console.log("Selected:", bookingData.startTime, "to", bookingData.endTime);
+
+      // Enable Next
+      const nextBtn = document.getElementById('btn-next-payment');
+      nextBtn.disabled = false;
+      nextBtn.classList.remove('opacity-50', 'cursor-not-allowed');
     }
 
     function selectTimeSlot(btn, start, end) {
