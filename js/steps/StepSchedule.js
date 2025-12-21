@@ -9,66 +9,77 @@ export class StepSchedule extends HTMLElement {
         };
         // Init
         this.setupListeners();
-        // Auto-load if visible? Or wait for "show" event?
-        // Since components are hidden/shown via CSS, existing DOM is live.
-        // We can trigger initCalendar when connected, but better lazily or if visible.
-        // For simplicity, we can just init. 
         this.initCalendar();
     }
 
     render() {
         this.innerHTML = `
-        <h2 class="text-2xl font-bold text-gray-800 mb-2">Select a Time</h2>
-        <p class="text-gray-500 mb-6">Choose a date and time for your in-home visit.</p>
+        <div class="fade-in max-w-4xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[var(--dark-heading)] mb-3">Select a Time</h2>
+                <p class="text-gray-500">Choose a date and time that works best for your family.</p>
+            </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-          
-          <!-- Calendar Grid -->
-          <div id="calendar-wrapper" class="border-0 rounded-2xl p-6 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
-             <div class="flex justify-between items-center mb-6">
-                <button type="button" id="cal-prev" class="p-2 hover:bg-gray-50 rounded-full text-gray-400 hover:text-gray-800 disabled:opacity-30">
-                  <i class="fas fa-chevron-left text-sm"></i>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+            
+            <!-- Calendar Grid -->
+            <div id="calendar-wrapper" class="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+                <div class="flex justify-between items-center mb-6">
+                    <button type="button" id="cal-prev" class="w-8 h-8 flex items-center justify-center hover:bg-gray-50 rounded-full text-gray-400 hover:text-[var(--dark-heading)] disabled:opacity-30 transition-colors">
+                    <i class="fas fa-chevron-left text-sm"></i>
+                    </button>
+                    <h3 id="cal-month-title" class="font-bold text-lg text-[var(--dark-heading)] font-[Poppins]">Loading...</h3>
+                    <button type="button" id="cal-next" class="w-8 h-8 flex items-center justify-center hover:bg-gray-50 rounded-full text-gray-400 hover:text-[var(--dark-heading)] transition-colors">
+                    <i class="fas fa-chevron-right text-sm"></i>
+                    </button>
+                </div>
+
+                <!-- Days Header -->
+                <div class="grid grid-cols-7 gap-y-4 gap-x-1 mb-4 text-center text-[11px] font-bold text-gray-400 uppercase tracking-widest font-[Poppins]">
+                    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+                </div>
+
+                <!-- Grid -->
+                <div id="cal-grid" class="grid grid-cols-7 gap-y-2 gap-x-1"></div>
+
+                <!-- Legend -->
+                <div class="mt-8 flex items-center justify-center gap-6 text-[10px] uppercase tracking-wide font-bold text-gray-400 border-t border-gray-50 pt-4">
+                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-[var(--sage-green)]"></div> Available</div>
+                <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-gray-200"></div> Booked</div>
+                </div>
+            </div>
+
+            <!-- Time Slots Panel -->
+            <div id="time-panel" class="hidden bg-white border border-gray-100 rounded-2xl p-6 shadow-sm h-full min-h-[420px] flex flex-col relative">
+                <div class="text-center mb-6 sticky top-0 bg-white z-10 pb-2 border-b border-gray-50">
+                <h2 id="selected-date-header" class="text-xl font-bold text-[var(--dark-heading)]">Select Date</h2>
+                <p class="text-xs text-gray-400 font-medium uppercase tracking-wide mt-1">Available Times</p>
+                </div>
+                <div id="slots-container" class="space-y-3 px-1 overflow-y-auto custom-scrollbar flex-grow">
+                    <!-- Slots injected here -->
+                </div>
+            </div>
+
+            <!-- Placeholder for when no date is selected -->
+            <div id="time-panel-placeholder" class="bg-gray-50 border border-gray-100 rounded-2xl p-6 h-full min-h-[420px] flex flex-col justify-center items-center text-center">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-sm mb-4">
+                    <i class="far fa-calendar-alt text-2xl text-gray-300"></i>
+                </div>
+                <p class="text-gray-500 font-medium">Select a date to see available times</p>
+            </div>
+
+            </div>
+
+            <div class="mt-10 flex justify-between items-center pt-6 border-t border-gray-100">
+                <button type="button" id="btn-step-3-back" 
+                    class="text-gray-500 font-medium hover:text-[var(--dark-heading)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                    <i class="fas fa-arrow-left text-sm"></i> Back
                 </button>
-                <h3 id="cal-month-title" class="font-bold text-lg text-gray-800 font-[Poppins]">Loading...</h3>
-                <button type="button" id="cal-next" class="p-2 hover:bg-gray-50 rounded-full text-gray-400 hover:text-gray-800">
-                  <i class="fas fa-chevron-right text-sm"></i>
+                <button type="button" id="btn-step-3-next" 
+                    class="hidden bg-[var(--sage-green)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
+                    Next: Payment <i class="fas fa-credit-card text-sm"></i>
                 </button>
-             </div>
-
-             <!-- Days Header -->
-             <div class="grid grid-cols-7 gap-y-4 gap-x-1 mb-2 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest font-[Poppins]">
-                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
-             </div>
-
-             <!-- Grid -->
-             <div id="cal-grid" class="grid grid-cols-7 gap-y-2 gap-x-1"></div>
-
-             <!-- Legend -->
-             <div class="mt-6 flex items-center justify-center gap-6 text-[10px] uppercase tracking-wide font-bold text-gray-400">
-               <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-[var(--sage-green)]"></div> Available</div>
-               <div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-gray-200"></div> Booked</div>
-             </div>
-          </div>
-
-          <!-- Time Slots Panel -->
-          <div id="time-panel" class="hidden bg-gray-50 rounded-2xl p-6 h-full min-h-[400px] flex flex-col justify-center">
-             <div class="text-center mb-6">
-               <h2 id="selected-date-header" class="text-xl font-bold text-gray-800">Select Date</h2>
-             </div>
-             <div id="slots-container" class="space-y-3 px-4 max-h-[350px] overflow-y-auto custom-scrollbar">
-                <!-- Slots injected here -->
-             </div>
-          </div>
-
-        </div>
-
-        <div class="mt-8 flex justify-between">
-            <button type="button" id="btn-step-3-back" class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
-              Back
-            </button>
-            <button type="button" id="btn-step-3-next" class="btn-primary hidden">
-              Next: Payment <i class="fas fa-credit-card ml-2"></i>
-            </button>
+            </div>
         </div>
       `;
     }
@@ -87,7 +98,7 @@ export class StepSchedule extends HTMLElement {
 
         this.querySelector('#btn-step-3-next').onclick = () => {
             if (!window.bookingData.startTime) {
-                alert("Please select a time slot.");
+                // Should be covered by hidden state, but safe guard
                 return;
             }
             this.dispatchEvent(new CustomEvent('step-complete', {
@@ -104,12 +115,11 @@ export class StepSchedule extends HTMLElement {
 
         // API Base
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        // Note: window.API_BASE is now guaranteed by head script, but we keep fallback just in case
         const API_BASE = (typeof window.API_BASE !== 'undefined') ? window.API_BASE : (isLocal ? 'http://localhost:3001' : '');
 
         console.log(`[StepSchedule] Fetching slots from: ${API_BASE}/api/booking/slots`);
 
-        grid.innerHTML = '<div class="col-span-7 py-8 text-center text-gray-400"><i class="fas fa-circle-notch fa-spin"></i> Loading availability...</div>';
+        grid.innerHTML = '<div class="col-span-7 py-12 text-center text-gray-400"><i class="fas fa-circle-notch fa-spin text-2xl mb-2"></i><br>Loading availability...</div>';
 
         try {
             const res = await fetch(`${API_BASE}/api/booking/slots`);
@@ -134,10 +144,10 @@ export class StepSchedule extends HTMLElement {
         } catch (err) {
             console.error("[StepSchedule] Calendar Error", err);
             grid.innerHTML = `
-                <div class="col-span-7 text-center text-red-500 text-xs p-4 bg-red-50 rounded">
+                <div class="col-span-7 text-center text-red-500 text-xs p-4 bg-red-50 rounded-xl">
                     <p class="font-bold">Failed to load calendar.</p>
-                    <p class="font-mono mt-1">${err.message}</p>
-                    <button onclick="this.closest('step-schedule').initCalendar()" class="mt-2 text-blue-500 underline">Retry</button>
+                    <p class="font-mono mt-1 mb-2">${err.message}</p>
+                    <button onclick="this.closest('step-schedule').initCalendar()" class="text-blue-500 underline font-medium">Tap to Retry</button>
                 </div>`;
         }
     }
@@ -173,18 +183,30 @@ export class StepSchedule extends HTMLElement {
             const dStr = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
             const btn = document.createElement('button');
             btn.textContent = day;
-            btn.className = "h-10 w-10 mx-auto flex items-center justify-center rounded-full text-sm font-medium transition-all duration-200";
+            // Base style
+            btn.className = "h-10 w-10 mx-auto flex items-center justify-center rounded-full text-sm font-medium transition-all duration-200 relative";
 
             const dayData = calendarData[dStr];
 
             if (!dayData || dayData.status === 'unavailable' || dayData.status === 'full') {
                 btn.classList.add('text-gray-300', 'cursor-not-allowed');
                 btn.disabled = true;
+                // Optional: Cross-out or minimal visual cue?
             } else {
-                btn.classList.add('text-[var(--sage-green)]', 'bg-[var(--sage-green)]/10', 'hover:bg-[var(--sage-green)]', 'hover:text-white', 'font-bold');
+                // Available
+                // Default available state: Sage text, light bg on hover
+                btn.classList.add('text-gray-600', 'hover:bg-[var(--sage-green-light)]', 'hover:text-[var(--sage-green)]', 'font-semibold');
+
+                // Dot indicator for availability
+                const dot = document.createElement('div');
+                dot.className = "absolute bottom-1 w-1 h-1 rounded-full bg-[var(--sage-green)]";
+                btn.appendChild(dot);
+
                 if (selectedDateStr === dStr) {
-                    btn.classList.remove('bg-[var(--sage-green)]/10', 'text-[var(--sage-green)]');
-                    btn.classList.add('bg-[var(--sage-green)]', 'text-white', 'shadow-md', 'transform', 'scale-110');
+                    btn.classList.remove('text-gray-600', 'hover:bg-[var(--sage-green-light)]', 'hover:text-[var(--sage-green)]');
+                    btn.classList.add('bg-[var(--sage-green)]', 'text-white', 'shadow-md', 'transform', 'scale-105');
+                    // Hide dot on selected to clean up
+                    dot.style.display = 'none';
                 }
                 btn.onclick = () => this.selectDate(dStr);
             }
@@ -200,11 +222,13 @@ export class StepSchedule extends HTMLElement {
 
     renderSlots(dStr) {
         const panel = this.querySelector('#time-panel');
+        const placeholder = this.querySelector('#time-panel-placeholder');
         const container = this.querySelector('#slots-container');
         const header = this.querySelector('#selected-date-header');
         const nextBtn = this.querySelector('#btn-step-3-next');
 
         panel.classList.remove('hidden');
+        placeholder.classList.add('hidden');
         nextBtn.classList.add('hidden'); // Hide until slot picked
 
         const dObj = new Date(dStr + "T12:00:00");
@@ -227,29 +251,22 @@ export class StepSchedule extends HTMLElement {
             const dh = hr > 12 ? hr - 12 : (hr === 0 ? 12 : hr);
 
             btn.textContent = `${dh}:${m} ${ampm}`;
-            btn.className = "w-full py-3 px-6 text-center border-2 border-transparent bg-gray-50 text-gray-600 rounded-lg hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-semibold text-sm";
+            // Slot button base style
+            btn.className = "w-full py-3 px-6 text-center border border-gray-100 bg-white text-gray-600 rounded-xl hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] hover:bg-[var(--sage-green-light)] transition-all font-medium text-sm shadow-sm";
 
             btn.onclick = () => {
                 // Reset others
-                Array.from(container.children).forEach(c => c.className = "w-full py-3 px-6 text-center border-2 border-transparent bg-gray-50 text-gray-600 rounded-lg hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-semibold text-sm");
-                // Active
-                btn.className = "w-full py-3 px-6 text-center border-2 border-[var(--sage-green)] bg-[var(--sage-green)] text-white rounded-lg shadow-lg transform scale-[1.02] transition-all font-bold text-sm";
+                Array.from(container.children).forEach(c => c.className = "w-full py-3 px-6 text-center border border-gray-100 bg-white text-gray-600 rounded-xl hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] hover:bg-[var(--sage-green-light)] transition-all font-medium text-sm shadow-sm");
+                // Active style
+                btn.className = "w-full py-3 px-6 text-center border border-[var(--sage-green)] bg-[var(--sage-green)] text-white rounded-xl shadow-md transform scale-[1.02] transition-all font-bold text-sm";
 
                 // Save
-                // Raw Time "09:30" + Date "2025-01-01" -> ISO Logic
-                // As determined in previous fix, we send "YYYY-MM-DDTHH:mm:00" without Z.
                 window.bookingData.startTime = `${dStr}T${timeStr}:00`;
 
-                // End time +45m logic?
-                // The backend might expect endTime too.
-                // Logic: Start Date object -> add 45m -> format back
-                // Using local Date math is tricky with crossing DST/boundaries if not careful, but simple 45m usually safe.
+                // End time logic
                 const sDate = new Date(window.bookingData.startTime);
-                // Wait, new Date("2025-01-01T09:00:00") in Browser is Local Wall Time.
-                // Add 45 mins
                 sDate.setMinutes(sDate.getMinutes() + 45);
 
-                // Format back to "YYYY-MM-DDTHH:mm:00"
                 const ey = sDate.getFullYear();
                 const em = (sDate.getMonth() + 1).toString().padStart(2, '0');
                 const ed = sDate.getDate().toString().padStart(2, '0');
@@ -259,6 +276,7 @@ export class StepSchedule extends HTMLElement {
 
                 // Show Next Button
                 nextBtn.classList.remove('hidden');
+                nextBtn.classList.add('flex'); // Ensure flex is restored
             };
             container.appendChild(btn);
         });
