@@ -160,7 +160,7 @@ export class StepPayment extends HTMLElement {
     const container = this.querySelector('#payment-container');
     if (!container) return;
 
-    // Use the soft styling we designed earlier
+    // Use the soft styling we designed earlier (bg-white instead of bg-gray-50)
     container.innerHTML = `
         <div class="mb-6 fade-in">
             <div class="mb-4 p-3 bg-blue-50 text-blue-700 text-xs rounded-lg border border-blue-100 flex items-center justify-center gap-2">
@@ -168,7 +168,7 @@ export class StepPayment extends HTMLElement {
             </div>
             <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Card Number</label>
             <div class="relative">
-                <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50 border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="0000 0000 0000 0000" maxlength="19" required>
                 <i class="fas fa-credit-card absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
             </div>
         </div>
@@ -176,12 +176,12 @@ export class StepPayment extends HTMLElement {
         <div class="grid grid-cols-2 gap-6 mb-8 fade-in">
             <div>
                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Expiry Date</label>
-                <input type="text" class="manual-input w-full px-4 py-3 rounded-xl bg-gray-50 border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 text-center font-medium" placeholder="MM/YY" maxlength="5" required>
+                <input type="text" class="manual-input w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 text-center font-medium" placeholder="MM/YY" maxlength="5" required>
             </div>
             <div>
                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">CVC</label>
                 <div class="relative">
-                    <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-gray-50 border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="123" maxlength="3" required>
+                    <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="123" maxlength="3" required>
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 </div>
             </div>
