@@ -47,7 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (i === index) {
                 // Current
                 ind.classList.add('bg-[var(--sage-green)]', 'text-white', 'border-[var(--sage-green)]');
-                ind.innerHTML = (i + 1).toString();
+                // Check if it's the last step
+                if (i === indicators.length - 1) {
+                    ind.innerHTML = '<i class="fas fa-check"></i>';
+                } else {
+                    ind.innerHTML = (i + 1).toString();
+                }
             } else {
                 // Future
                 ind.classList.add('bg-white', 'border-gray-300', 'text-gray-400');
