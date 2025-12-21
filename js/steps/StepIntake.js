@@ -5,6 +5,11 @@ export class StepIntake extends HTMLElement {
     this.setupListeners();
   }
 
+  // Public method for external managers to trigger update
+  updateDisplay() {
+    this.hydrate();
+  }
+
   render() {
     this.innerHTML = `
         <h2 class="text-2xl font-bold text-gray-800 mb-6">Intake Details</h2>

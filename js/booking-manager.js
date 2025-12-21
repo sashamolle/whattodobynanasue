@@ -55,6 +55,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
+        // Update Display if supported (re-hydrate data)
+        if (steps[index] && typeof steps[index].updateDisplay === 'function') {
+            steps[index].updateDisplay();
+        }
+
         currentStepIndex = index;
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -97,10 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const success = await submitBooking();
             if (success) {
                 // Update Confirmation Screen with latest data (email)
-                const confirmStep = document.getElementById('step5');
-                if (confirmStep && confirmStep.updateDisplay) {
-                    confirmStep.updateDisplay();
-                }
+
                 showStep(5);
             } else {
                 // Determine how to reset button state in component? 
