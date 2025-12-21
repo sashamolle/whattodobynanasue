@@ -112,18 +112,29 @@ export class StepSchedule extends HTMLElement {
     }
 
     async initCalendar() {
+        console.log("[StepSchedule] Initializing Calendar...");
         const grid = this.querySelector('#cal-grid');
+
         // API Base
-        // Fix: Explicit undefined check to allow empty string (relative path)
         const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        // Note: window.API_BASE is now guaranteed by head script, but we keep fallback just in case
         const API_BASE = (typeof window.API_BASE !== 'undefined') ? window.API_BASE : (isLocal ? 'http://localhost:3001' : '');
 
-        grid.innerHTML = '<div class="col-span-7 py-8 text-center text-gray-400"><i class="fas fa-circle-notch fa-spin"></i> Loading...</div>';
+        console.log(`[StepSchedule] Fetching slots from: ${API_BASE}/api/booking/slots`);
+
+        grid.innerHTML = '<div class="col-span-7 py-8 text-center text-gray-400"><i class="fas fa-circle-notch fa-spin"></i> Loading availability...</div>';
 
         try {
             const res = await fetch(`${API_BASE}/api/booking/slots`);
-            if (!res.ok) throw new Error("Failed to load slots");
+            console.log(`[StepSchedule] Response status: ${res.status}`);
+
+            if (!res.ok) {
+                const txt = await res.text();
+                throw new Error(`Server returned ${res.status}: ${txt}`);
+            }
+
             this.state.calendarData = await res.json();
+            console.log(`[StepSchedule] Loaded ${Object.keys(this.state.calendarData).length} days of availability.`);
 
             // Auto-Jump Logic
             const firstAvail = Object.entries(this.state.calendarData).find(([k, v]) => v.status === 'available');
@@ -134,8 +145,13 @@ export class StepSchedule extends HTMLElement {
             this.renderMonth();
 
         } catch (err) {
-            console.error("Calendar Error", err);
-            grid.innerHTML = '<div class="col-span-7 text-center text-red-400 text-xs">Failed to load calendar.</div>';
+            console.error("[StepSchedule] Calendar Error", err);
+            grid.innerHTML = `
+                <div class="col-span-7 text-center text-red-500 text-xs p-4 bg-red-50 rounded">
+                    <p class="font-bold">Failed to load calendar.</p>
+                    <p class="font-mono mt-1">${err.message}</p>
+                    <button onclick="this.closest('step-schedule').initCalendar()" class="mt-2 text-blue-500 underline">Retry</button>
+                </div>`;
         }
     }
 
