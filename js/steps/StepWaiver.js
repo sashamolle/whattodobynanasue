@@ -13,10 +13,16 @@ export class StepWaiver extends HTMLElement {
                 <p class="text-gray-500">Please review and agree to the terms of service to continue.</p>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8">
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 md:p-8 relative">
+                
+                <!-- Notification Toast -->
+                <div id="scroll-toast" class="hidden opacity-0 absolute top-4 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-sm font-medium px-4 py-2 rounded-full shadow-lg z-20 transition-all duration-300 flex items-center whitespace-nowrap">
+                    <i class="fas fa-arrow-down mr-2 text-[var(--sage-green)]"></i> Please scroll to the bottom to agree.
+                </div>
+
                 <!-- Waiver Content Box -->
                 <div id="waiver-content"
-                  class="bg-gray-50 border-0 ring-1 ring-gray-100 rounded-xl p-6 mb-8 h-64 overflow-y-auto text-sm text-gray-600 leading-relaxed shadow-inner custom-scrollbar">
+                  class="bg-gray-50 border-0 ring-1 ring-gray-100 rounded-xl p-6 mb-8 h-64 overflow-y-auto text-sm text-gray-600 leading-relaxed shadow-inner custom-scrollbar relative scroll-smooth">
                   <div class="flex items-center justify-center h-full">
                     <i class="fas fa-circle-notch fa-spin text-gray-300 text-3xl"></i>
                     <span class="ml-3 text-gray-400 font-medium">Loading waiver...</span>
@@ -24,13 +30,14 @@ export class StepWaiver extends HTMLElement {
                 </div>
 
                 <form id="waiver-form">
-                  <div class="flex items-start mb-10 p-4 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer" onclick="document.getElementById('waiver-agree').click()">
-                    <div class="flex items-center h-6">
-                      <input id="waiver-agree" type="checkbox" required
-                        class="w-5 h-5 text-[var(--sage-green)] border-gray-300 rounded focus:ring-[var(--sage-green)] focus:ring-2 cursor-pointer transition-all">
+                  <!-- Agreement Container -->
+                  <div id="waiver-agree-container" class="flex items-start mb-10 p-4 rounded-lg transition-all duration-300 cursor-not-allowed opacity-60 grayscale select-none">
+                    <div class="flex items-center h-6 pointer-events-none">
+                      <input id="waiver-agree" type="checkbox" required disabled
+                        class="w-5 h-5 text-[var(--sage-green)] border-gray-300 rounded focus:ring-[var(--sage-green)] focus:ring-2 transition-all">
                     </div>
-                    <div class="ml-4 text-sm">
-                      <label for="waiver-agree" class="font-medium text-gray-800 cursor-pointer text-base">I have read and agree to the Liability Waiver</label>
+                    <div class="ml-4 text-sm pointer-events-none">
+                      <label class="font-medium text-gray-800 text-base">I have read and agree to the Liability Waiver</label>
                       <p class="text-gray-500 mt-1">You must acknowledge this agreement to proceed with booking.</p>
                     </div>
                   </div>
@@ -52,14 +59,12 @@ export class StepWaiver extends HTMLElement {
   }
 
   async fetchWaiver() {
-    // Assuming API_BASE is globally defined or we use relative path
     const API_BASE = (typeof window.API_BASE !== 'undefined') ? window.API_BASE : 'https://nanasue-backend.onrender.com';
     const container = this.querySelector('#waiver-content');
 
     try {
       console.log(`[StepWaiver] Fetching waiver from: ${API_BASE}/api/waiver/latest`);
       const res = await fetch(`${API_BASE}/api/waiver/latest`);
-      console.log(`[StepWaiver] Response status: ${res.status}`);
 
       if (!res.ok) {
         const txt = await res.text();
@@ -68,7 +73,11 @@ export class StepWaiver extends HTMLElement {
 
       const data = await res.json();
       container.innerHTML = data.text.replace(/\n/g, '<br>');
-      window.bookingData.waiverVersion = data.version; // Store version
+      window.bookingData.waiverVersion = data.version;
+
+      // Check if scrolling is even necessary after load (e.g., short waiver)
+      setTimeout(() => this.checkScroll(), 100);
+
     } catch (err) {
       console.error("[StepWaiver] Error:", err);
       container.innerHTML = `
@@ -80,10 +89,51 @@ export class StepWaiver extends HTMLElement {
     }
   }
 
+  // Separate method to unlock if conditions met
+  checkScroll() {
+    const content = this.querySelector('#waiver-content');
+    if (!content) return;
+
+    // Tolerance of 5px to account for sub-pixel rendering or padding
+    const isAtBottom = content.scrollHeight - content.scrollTop <= content.clientHeight + 5;
+
+    if (isAtBottom) {
+      this.unlockAgreement();
+    }
+  }
+
+  unlockAgreement() {
+    if (this.isUnlocked) return;
+    this.isUnlocked = true;
+
+    const checkbox = this.querySelector('#waiver-agree');
+    const container = this.querySelector('#waiver-agree-container');
+    const wrapperDivs = container.querySelectorAll('div');
+
+    checkbox.disabled = false;
+    container.classList.remove('cursor-not-allowed', 'opacity-60', 'grayscale');
+    container.classList.add('cursor-pointer', 'hover:bg-gray-50');
+
+    // Re-enable pointer events for inner elements
+    wrapperDivs.forEach(div => div.classList.remove('pointer-events-none'));
+  }
+
   setupListeners() {
     const form = this.querySelector('#waiver-form');
     const backBtn = this.querySelector('#btn-step-2-back');
+    const content = this.querySelector('#waiver-content');
+    const agreeContainer = this.querySelector('#waiver-agree-container');
+    const toast = this.querySelector('#scroll-toast');
+    const checkbox = this.querySelector('#waiver-agree');
 
+    this.isUnlocked = false;
+
+    // Scroll Listener
+    content.addEventListener('scroll', () => {
+      this.checkScroll();
+    });
+
+    // Back Button
     backBtn.onclick = () => {
       this.dispatchEvent(new CustomEvent('step-back', {
         detail: { step: 2 },
@@ -92,10 +142,37 @@ export class StepWaiver extends HTMLElement {
       }));
     };
 
+    // Container Click Logic (Visual Feedback)
+    agreeContainer.onclick = (e) => {
+      if (!this.isUnlocked) {
+        // Show Toast
+        toast.classList.remove('hidden');
+        // Trigger reflow for transition
+        void toast.offsetWidth;
+        toast.classList.remove('opacity-0');
+
+        // Shake animation on text?
+
+        // Hide after 3s
+        if (this.toastTimeout) clearTimeout(this.toastTimeout);
+        this.toastTimeout = setTimeout(() => {
+          toast.classList.add('opacity-0');
+          setTimeout(() => toast.classList.add('hidden'), 300);
+        }, 3000);
+        return;
+      }
+
+      // Handle Click (Manual toggle since we are clicking a DIV)
+      // Only toggle if we didn't click the checkbox directly (to avoid double toggle)
+      if (e.target !== checkbox) {
+        checkbox.checked = !checkbox.checked;
+      }
+    };
+
+    // Form Submit
     form.onsubmit = (e) => {
       e.preventDefault();
-      const agreed = this.querySelector('#waiver-agree').checked;
-      if (agreed) {
+      if (checkbox.checked) {
         window.bookingData.waiverAgreed = true;
         this.dispatchEvent(new CustomEvent('step-complete', {
           detail: { step: 2 },
