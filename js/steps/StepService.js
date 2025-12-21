@@ -154,12 +154,12 @@ export class StepService extends HTMLElement {
         const SERVICES = {
             'mobility': {
                 'virtual': 150,
-                'in-home': 200,
+                'in-home': 150,
                 'office': null // Disabled
             },
             'pt': {
-                'virtual': 160,
-                'in-home': 225,
+                'virtual': null, // Disabled
+                'in-home': null, // Disabled
                 'office': null // Disabled
             }
         };
