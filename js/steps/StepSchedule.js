@@ -67,18 +67,6 @@ export class StepSchedule extends HTMLElement {
             <button type="button" id="btn-step-3-back" class="btn-secondary border-gray-300 text-gray-500 hover:bg-gray-50">
               Back
             </button>
-            <!-- No Next button here, slot selection triggers Next automatically usually? 
-                 Or explicitly? User asked for multi-step. 
-                 Existing flow: Next is hidden, slot click seems to not auto-advance in HTML, 
-                 but legacy code had `bookingData.startTime`.
-                 Wait, step 3 is final selection before Payment. 
-                 Usually slot selection highlights it, then we need a "Continue to Payment" button?
-                 In existing HTML, Step 3 has NO Next button inside the form/div?
-                 Ah, I see lines 367 in Step 4 (Payment) has Back.
-                 Step 3 ends at line 300?? I need to check where the Next button is for Step 3.
-                 Ah, I see a form around it? No.
-                 Let's add a explicit "Continue" button that appears after slot selection to be safe/clear. 
-            -->
             <button type="button" id="btn-step-3-next" class="btn-primary hidden">
               Next: Payment <i class="fas fa-credit-card ml-2"></i>
             </button>
