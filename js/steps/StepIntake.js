@@ -84,8 +84,14 @@ export class StepIntake extends HTMLElement {
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Date of Birth</label>
-                                <input type="date" id="babyDob" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400">
+                                <div class="relative">
+                                    <input type="date" id="babyDob" required 
+                                        class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 appearance-none min-h-[3rem]"
+                                        style="min-height: 3rem;"> 
+                                    <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-calendar-alt text-gray-400"></i>
+                                    </div>
+                                </div>
                             </div>
                             
                             <div class="md:col-span-2">
