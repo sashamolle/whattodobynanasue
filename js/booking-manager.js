@@ -1,16 +1,10 @@
 
 // booking-manager.js
 
-// Global State
-window.API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:3001' : '';
+// booking-manager.js
 
-window.bookingData = {
-    id: "temp_" + Date.now(),
-    serviceType: 'in-home',
-    price: 150.00,
-    bookingComplete: false
-};
+// Global State is now initialized in booking.html <head> to prevent race conditions.
+// window.API_BASE and window.bookingData are already available.
 
 document.addEventListener('DOMContentLoaded', () => {
     // Component Registry

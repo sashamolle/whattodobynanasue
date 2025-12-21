@@ -12,6 +12,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <script>
+    // Global Configuration
+    // Must run before any modules to prevent race conditions
+    window.API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:3001' : '';
+
+    window.bookingData = {
+      id: "temp_" + Date.now(),
+      serviceType: 'in-home',
+      price: 150.00,
+      bookingComplete: false
+    };
+  </script>
+
   <script src="components.js" defer></script>
 
   <!-- App Modules -->
