@@ -94,14 +94,14 @@ export class StepService extends HTMLElement {
                             </label>
                         </div>
 
-                        <!-- At Office (Coming Soon) -->
+                        <!-- In-Office (Coming Soon) -->
                         <div class="relative group">
                             <input type="radio" name="serviceType" id="service-office" value="office" class="peer hidden" disabled>
                             <label for="service-office"
                                 class="h-full flex flex-col items-center justify-center text-center cursor-not-allowed bg-white border border-gray-200 rounded-xl p-4 shadow-sm transition-all duration-300 opacity-60 grayscale relative">
                                 <span class="absolute top-2 right-2 bg-gray-100 text-gray-500 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wide">Coming Soon</span>
                                 <i class="fas fa-building text-2xl mb-2 text-gray-400"></i>
-                                <span class="font-semibold text-sm">At Office</span>
+                                <span class="font-semibold text-sm">In-Office</span>
                             </label>
                         </div>
 
