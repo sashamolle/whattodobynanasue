@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update Indicators
         indicators.forEach((ind, i) => {
             if (!ind) return;
-            ind.className = "step-circle w-10 h-10 rounded-full border-2 flex items-center justify-center font-bold mb-1 transition-all duration-300";
+            ind.className = "step-circle w-8 h-8 md:w-10 md:h-10 rounded-full border-2 flex items-center justify-center font-bold mb-1 transition-all duration-300 text-xs md:text-base";
             if (i < index) {
                 // Completed
                 ind.classList.add('bg-[var(--sage-green)]', 'text-white', 'border-[var(--sage-green)]');
