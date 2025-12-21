@@ -1097,8 +1097,16 @@
 
       function calculateDistance(destination, isManhattan) {
         const service = new google.maps.DistanceMatrixService();
-        showFeedback('Calculating distance...', 'info');
-        validateStep0(false); // Helper disable
+        showFeedback('Calculating distance... <i class="fas fa-spinner fa-spin"></i>', 'info');
+        validateStep0(false);
+
+        console.log(`[Distance] Calculating from ${CHELSEA_ORIGIN} to ${destination}`);
+
+        // Timeout Fallback (5s) to prevent infinite Spinner
+        const timeoutId = setTimeout(() => {
+          console.warn("[Distance] Timeout hit.");
+          showFeedback('Calculation timed out. Please check your internet or try again.', 'error');
+        }, 5000);
 
         service.getDistanceMatrix({
           origins: [CHELSEA_ORIGIN],
@@ -1106,12 +1114,33 @@
           travelMode: google.maps.TravelMode.WALKING,
           unitSystem: google.maps.UnitSystem.IMPERIAL
         }, (response, status) => {
-          if (status !== 'OK' || response.rows[0].elements[0].status !== 'OK') {
-            showFeedback('Unable to calculate route. Please try another address.', 'error');
+          clearTimeout(timeoutId); // Clear timeout on response
+          console.log(`[Distance] Status: ${status}`, response);
+
+          if (status !== 'OK') {
+            showFeedback(`Error calculating distance (Status: ${status}).`, 'error');
             return;
           }
 
-          const minutes = response.rows[0].elements[0].duration.value / 60;
+          if (!response || !response.rows || response.rows.length === 0) {
+            showFeedback('Error: No route data returned.', 'error');
+            return;
+          }
+
+          const element = response.rows[0].elements[0];
+          if (element.status !== 'OK') {
+            // e.g. ZERO_RESULTS
+            console.warn(`[Distance] Element Status: ${element.status}`);
+            if (element.status === 'ZERO_RESULTS') {
+              showFeedback("No walking route found. Address may be too far or invalid.", 'error');
+            } else {
+              showFeedback(`Route error: ${element.status}`, 'error');
+            }
+            return;
+          }
+
+          const minutes = element.duration.value / 60;
+          console.log(`[Distance] Duration: ${minutes.toFixed(1)} mins`);
 
           // Zone Logic
           if (minutes <= 30) {
@@ -1128,7 +1157,7 @@
             validateStep0(true);
           } else {
             // Zone 3
-            showFeedback(`We're sorry, that's a bit too far. <a href="#" onclick="document.getElementById('service-virtual').click()">Switch to Virtual Visit</a>?`, 'error');
+            showFeedback(`We're sorry, that's a bit too far (${Math.ceil(minutes)} mins). <a href="#" onclick="document.getElementById('service-virtual').click()" class="underline">Switch to Virtual Visit</a>?`, 'error');
             addressInput.dataset.valid = 'false';
             validateStep0(false);
           }
