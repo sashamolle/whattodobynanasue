@@ -14,151 +14,162 @@ body {
   font-family: "Poppins", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: var(--warm-beige); /* Warm beige background */
-  color: var(--dark-text); /* Darker gray for readability */
+  background-color: var(--warm-beige);
+  /* Warm beige background */
+  color: var(--dark-text);
+  /* Darker gray for readability */
 }
+
 h1,
 h2,
 h3,
 h4 {
-  color: var(--dark-heading); /* Darker headings */
+  color: var(--dark-heading);
 }
-/* Custom active state for navigation */
-/* We'll use a class 'active' to highlight the current page */
-.nav-link.active {
-  color: var(--sage-green); /* Sage green accent */
-  border-bottom-width: 2px;
+
+/* --- SERVICE SELECTION CARDS --- */
+/* The hidden radio input controls the state of its sibling label */
+.service-card-input:checked+.service-card {
+  border-color: var(--sage-green);
+  background-color: var(--sage-green-light);
+  box-shadow: 0 4px 12px rgba(163, 184, 165, 0.3);
+}
+
+.service-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid #e5e7eb;
+}
+
+.service-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(163, 184, 165, 0.2);
   border-color: var(--sage-green);
 }
-.mobile-nav-link.active {
-  background-color: var(--sage-green-light); /* Lighter sage */
-  color: var(--sage-green);
+
+/* --- NOTIFICATION CHIPS --- */
+.notification-chip {
+  animation: fadeIn 0.4s ease-out forwards;
 }
 
-/* Hero background shapes - simplified */
-.hero-bg {
-  background: linear-gradient(to top, var(--warm-beige) 0%, #ffffff 100%);
+.bg-rose-light {
+  background-color: #FFF5F5;
+  border-color: #FED7D7;
+  color: #742A2A;
 }
 
-/* Custom button styles */
-.btn-primary {
-  background-color: var(--sage-green); /* Sage green */
-  color: white;
-  padding: 0.8rem 2rem;
-  border-radius: 0.5rem; /* rounded-lg */
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
-  border: 2px solid transparent;
-}
-.btn-primary:hover {
-  background-color: var(--sage-green-dark); /* Darker sage */
-}
-.btn-secondary {
-  background-color: transparent; /* "Ghost" button */
-  color: var(--sage-green);
-  padding: 0.8rem 2rem;
-  border-radius: 0.5rem; /* rounded-lg */
-  font-weight: 500;
-  transition: all 0.2s ease-in-out;
-  border: 2px solid var(--sage-green);
-}
-.btn-secondary:hover {
-  background-color: var(--sage-green-light); /* Light sage on hover */
+.bg-sage-light {
+  background-color: var(--sage-green-light);
+  border-color: var(--sage-green);
+  color: var(--dark-heading);
 }
 
-/* --- ACCORDION ANIMATION STYLES --- */
-
-/* 1. The Hidden Section */
-.card-details {
-  max-height: 0; /* Hidden by default */
-  overflow: hidden; /* Hides content that overflows */
-  transition: max-height 0.4s ease-out; /* Smooth slide animation */
+.bg-warm-beige {
+  background-color: #FFFDF5;
+  border-color: #E5E1D6;
+  color: var(--dark-heading);
 }
 
-/* 2. The Chevron/Arrow Icon Rotation */
-.toggle-icon {
-  transition: transform 0.3s ease;
-}
 
-/* When the card has the 'active' class, rotate the icon */
-/* Note: The Javascript adds the 'active' class to the header parent */
-.class-card .card-header.active .toggle-icon {
-  transform: rotate(180deg);
-}
-
-/* Rotate the arrow 180 degrees when the card is expanded */
-.class-card.active .toggle-icon {
-  transform: rotate(180deg);
-}
-
+/* --- STANDARD COMPONENTS --- */
 .btn-primary {
   background-color: var(--sage-green);
   color: white;
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 2rem;
   border-radius: 9999px;
+  /* Pill shape */
   font-weight: 600;
-  transition: all 0.2s;
-  display: inline-block;
-  border: 2px solid var(--sage-green);
+  transition: all 0.2s ease-in-out;
+  border: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
+
 .btn-primary:hover {
   background-color: var(--sage-green-dark);
-  border-color: var(--sage-green-dark);
 }
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .btn-secondary {
   background-color: transparent;
   color: var(--sage-green);
-  border: 2px solid var(--sage-green);
-  padding: 0.75rem 1.5rem;
+  padding: 0.8rem 2rem;
   border-radius: 9999px;
   font-weight: 600;
-  transition: all 0.2s;
-  display: inline-block;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid var(--sage-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
 }
+
 .btn-secondary:hover {
   background-color: var(--sage-green-light);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: all 0.2s;
+  font-size: 1rem;
+  background-color: #fff;
+}
+
+.form-input:focus {
+  border-color: var(--sage-green);
+  box-shadow: 0 0 0 4px var(--sage-green-light);
 }
 
 /* Progress Bar Styles */
 .step-circle {
   transition: all 0.3s ease;
 }
+
 .step-circle.active {
   background-color: var(--sage-green);
   color: white;
   border-color: var(--sage-green);
 }
+
 .step-circle.completed {
   background-color: var(--sage-green);
   color: white;
   border-color: var(--sage-green);
 }
+
 .step-line {
   transition: all 0.3s ease;
 }
+
 .step-line.active {
   background-color: var(--sage-green);
 }
 
-/* Form Input Styles */
-.form-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  outline: none;
-  transition: border-color 0.2s;
-}
-.form-input:focus {
-  border-color: var(--sage-green);
-  box-shadow: 0 0 0 3px var(--sage-green-light);
+.hidden {
+  display: none;
 }
 
-/* Hidden Utilities */
-.hidden { display: none; }
-.fade-in { animation: fadeIn 0.3s ease-out; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
 
-.bg-rose-light { background-color: #FFF5F5; border-color: #FED7D7; color: #742A2A; }
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
