@@ -8,6 +8,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <script src="components.js" defer></script>
   <!-- Preload Calendly -->
   <link rel="preconnect" href="https://assets.calendly.com">
@@ -250,24 +254,25 @@
           <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
             <!-- Custom Calendar Grid -->
-            <div id="calendar-wrapper" class="border rounded-xl p-6 bg-white shadow-sm">
+            <div id="calendar-wrapper" class="border-0 rounded-2xl p-6 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
 
               <!-- Month Header -->
               <div class="flex justify-between items-center mb-6">
                 <button type="button" id="cal-prev"
-                  class="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors" disabled>
-                  <i class="fas fa-chevron-left"></i>
+                  class="p-2 hover:bg-gray-50 rounded-full text-gray-400 hover:text-gray-800 transition-colors"
+                  disabled>
+                  <i class="fas fa-chevron-left text-sm"></i>
                 </button>
-                <h3 id="cal-month-title" class="font-bold text-lg text-gray-800">Loading...</h3>
+                <h3 id="cal-month-title" class="font-bold text-lg text-gray-800 font-[Poppins]">Loading...</h3>
                 <button type="button" id="cal-next"
-                  class="p-2 hover:bg-gray-100 rounded-full text-gray-600 transition-colors">
-                  <i class="fas fa-chevron-right"></i>
+                  class="p-2 hover:bg-gray-50 rounded-full text-gray-400 hover:text-gray-800 transition-colors">
+                  <i class="fas fa-chevron-right text-sm"></i>
                 </button>
               </div>
 
               <!-- Days Header -->
               <div
-                class="grid grid-cols-7 gap-1 mb-2 text-center text-xs font-bold text-gray-400 uppercase tracking-wide">
+                class="grid grid-cols-7 gap-y-4 gap-x-1 mb-2 text-center text-[10px] font-bold text-gray-400 uppercase tracking-widest font-[Poppins]">
                 <div>Sun</div>
                 <div>Mon</div>
                 <div>Tue</div>
@@ -278,28 +283,30 @@
               </div>
 
               <!-- Days Grid -->
-              <div id="cal-grid" class="grid grid-cols-7 gap-1">
+              <div id="cal-grid" class="grid grid-cols-7 gap-y-2 gap-x-1">
                 <!-- Dynamic Days -->
               </div>
 
               <!-- Legend -->
-              <div class="mt-4 flex items-center justify-center gap-4 text-xs text-gray-400">
-                <div class="flex items-center gap-1">
-                  <div class="w-2 h-2 rounded-full border border-[var(--sage-green)]"></div> Available
+              <div
+                class="mt-6 flex items-center justify-center gap-6 text-[10px] uppercase tracking-wide font-bold text-gray-400">
+                <div class="flex items-center gap-2">
+                  <div class="w-1.5 h-1.5 rounded-full bg-[var(--sage-green)]"></div> Available
                 </div>
-                <div class="flex items-center gap-1">
-                  <div class="w-2 h-2 rounded-full bg-[var(--sage-green)]"></div> Selected
+                <div class="flex items-center gap-2">
+                  <div class="w-1.5 h-1.5 rounded-full bg-gray-200"></div> Booked
                 </div>
               </div>
             </div>
 
             <!-- Time Slots Panel (Shows when date selected) -->
             <div id="time-panel"
-              class="hidden border rounded-xl p-6 bg-white shadow-sm h-full max-h-[450px] overflow-y-auto">
-              <h4 id="selected-date-header"
-                class="font-bold text-lg mb-4 text-gray-800 sticky top-0 bg-white pb-2 border-b">Select Time</h4>
-              <div id="slots-container" class="grid grid-cols-1 gap-2">
-                <!-- Dynamic Slots -->
+              class="hidden border-0 rounded-2xl p-6 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)] h-full min-h-[400px]">
+              <h4 class="font-bold text-lg mb-6 text-gray-800 font-[Poppins] sticky top-0 bg-white pb-2 z-10">
+                <span id="selected-date-header">Select Time</span>
+              </h4>
+              <div id="slots-container" class="flex flex-col gap-3 h-[320px] overflow-y-auto pr-2 custom-scrollbar">
+                <p class="text-sm text-gray-400 italic">Please select a date to see times.</p>
               </div>
             </div>
 
@@ -688,21 +695,19 @@
 
         const dayData = calendarData[dStr];
 
-        // Check if past
-        // Simple check: Is dStr < TodayStr?
-        // Or rely on dayData status. API returns unavailable if not in 60 day range usually?
-        // Let's assume dayData handles logic.
-
+        // Check if past or unavailable
         if (!dayData || dayData.status === 'unavailable' || dayData.status === 'full') {
           // Disabled
-          btn.classList.add('text-gray-300', 'cursor-not-allowed');
+          btn.classList.add('text-gray-300', 'cursor-not-allowed', 'bg-transparent');
           btn.disabled = true;
         } else {
           // Available
-          btn.classList.add('text-[var(--sage-green)]', 'bg-emerald-50', 'hover:bg-[var(--sage-green)]', 'hover:text-white', 'border', 'border-[var(--sage-green)]/30');
+          btn.classList.add('text-[var(--sage-green)]', 'bg-[var(--sage-green)]/10', 'hover:bg-[var(--sage-green)]', 'hover:text-white', 'font-bold');
+
+          // Selected State
           if (selectedDateStr === dStr) {
-            btn.classList.add('bg-[var(--sage-green)]', 'text-white', 'ring-2', 'ring-offset-1', 'ring-[var(--sage-green)]');
-            btn.classList.remove('bg-emerald-50', 'text-[var(--sage-green)]');
+            btn.classList.remove('bg-[var(--sage-green)]/10', 'text-[var(--sage-green)]');
+            btn.classList.add('bg-[var(--sage-green)]', 'text-white', 'shadow-md', 'transform', 'scale-110');
           }
           btn.onclick = () => selectDate(dStr);
         }
@@ -734,7 +739,11 @@
       const slotList = calendarData[dateStr].slots || [];
 
       if (slotList.length === 0) {
-        container.innerHTML = '<p class="text-center text-gray-400 my-4">No slots available</p>';
+        container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-full text-gray-400 py-10">
+                    <i class="far fa-calendar-times text-2xl mb-2"></i>
+                    <p class="text-sm">No available times on this date.</p>
+                </div>`;
         return;
       }
 
@@ -747,12 +756,14 @@
         const [h, m] = timeStr.split(':');
         const hour = parseInt(h);
         const ampm = hour >= 12 ? 'PM' : 'AM';
-        const dispLat = hour > 12 ? hour - 12 : hour; // 13:00 -> 1:00
-        const dispH = dispLat === 0 ? 12 : dispLat; // 00:00 -> 12:00? No, range is 9-17
+        // Logic: 09:00 -> 9:00 AM, 13:00 -> 1:00 PM, 12:00 -> 12:00 PM
+        const dispLat = hour > 12 ? hour - 12 : hour;
+        const dispH = dispLat === 0 ? 12 : dispLat;
         const label = `${dispH}:${m} ${ampm}`;
 
         btn.textContent = label;
-        btn.className = "w-full py-3 px-4 text-center border rounded-lg text-gray-600 hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-medium";
+        // Pill Style: secondary -> primary
+        btn.className = "w-full py-3 px-6 text-center border-2 border-transparent bg-gray-50 text-gray-600 rounded-full hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-semibold text-sm";
 
         // Logic to Select
         btn.onclick = () => selectTimeSlotNew(btn, dateStr, timeStr);
@@ -764,14 +775,14 @@
       // Visuals
       const container = document.getElementById('slots-container');
       Array.from(container.children).forEach(c => {
-        c.classList.remove('border-[var(--sage-green)]', 'bg-[var(--sage-green)]', 'text-white');
-        c.classList.add('text-gray-600', 'border-gray-200');
+        c.className = "w-full py-3 px-6 text-center border-2 border-transparent bg-gray-50 text-gray-600 rounded-full hover:border-[var(--sage-green)] hover:text-[var(--sage-green)] transition-all font-semibold text-sm";
       });
 
-      btn.classList.remove('text-gray-600', 'border-gray-200', 'hover:text-[var(--sage-green)]');
-      btn.classList.add('bg-[var(--sage-green)]', 'text-white', 'border-[var(--sage-green)]');
+      // Active Style
+      btn.className = "w-full py-3 px-6 text-center border-2 border-[var(--sage-green)] bg-[var(--sage-green)] text-white rounded-full shadow-lg transform scale-[1.02] transition-all font-bold text-sm";
 
       // Data Update
+      // Need to construct ISO strings for Backend
       // Need to construct ISO strings for Backend
       // dateStr "2025-01-01", timeStr "09:30"
       const startIso = `${dateStr}T${timeStr}:00`;
