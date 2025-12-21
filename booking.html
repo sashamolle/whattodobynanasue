@@ -805,46 +805,10 @@
         // We call this when entering step 1, but we can also auto-load if we are just refreshing the page and happen to be on step 1?
         // Actually, the user starts at Step 0 usually.
         // But if we want to support refresh persistence for Step 1, we could call it here.
-        // However, Step 0 logic handles the initial load of service/address.
-        // Let's rely on nextStep(1) to trigger loadStep1Data.
       }
     });
 
-    // Listen for Calendly Events (Auto-Advance)
-    window.addEventListener('message', async function (e) {
-      if (!e.data) return;
-
-      // Ultra-permissive check used to ensure cross-browser compatibility
-      // This catches 'calendly.event.scheduled', 'calendly.event_scheduled',
-      // or any other variation, whether it's an object or a string.
-      try {
-        const dataStr = (typeof e.data === 'string') ? e.data : JSON.stringify(e.data);
-
-        if (dataStr.toLowerCase().includes('calendly') &&
-          dataStr.toLowerCase().includes('scheduled')) {
-
-          console.log("Calendly booking success detected via permissive check!");
-
-          // Try to extract event URI from payload
-          if (e.data.payload && e.data.payload.invitee && e.data.payload.invitee.uri) {
-            // Store the URI for backend fetching
-            bookingData.eventURI = e.data.payload.invitee.uri;
-            console.log("Captured Calendly URI:", bookingData.eventURI);
-          } else if (e.data.payload && e.data.payload.event && e.data.payload.event.uri) {
-            bookingData.eventURI = e.data.payload.event.uri;
-            console.log("Captured Calendly URI:", bookingData.eventURI);
-          }
-
-          // 1. Advance to PAYMENT (Step 4)
-          // Do NOT save yet. We wait for payment.
-          nextStep(4);
-
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-      } catch (err) {
-        console.error("Calendly Event Check Error:", err);
-      }
-    });
+    // --- END LEGACY CALENDLY LISTENER ---
 
 
 
