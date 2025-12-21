@@ -76,8 +76,8 @@ export class StepSchedule extends HTMLElement {
                     <i class="fas fa-arrow-left text-sm"></i> Back
                 </button>
                 <button type="button" id="btn-step-3-next" 
-                    class="hidden bg-[var(--sage-green)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
-                    Next: Payment <i class="fas fa-credit-card text-sm"></i>
+                    class="bg-gray-200 text-gray-400 px-8 py-4 rounded-full font-semibold shadow-none cursor-not-allowed transition-all duration-300 flex items-center gap-2" disabled>
+                    Next: Payment <i class="fas fa-arrow-right text-sm"></i>
                 </button>
             </div>
         </div>
@@ -229,7 +229,11 @@ export class StepSchedule extends HTMLElement {
 
         panel.classList.remove('hidden');
         placeholder.classList.add('hidden');
-        nextBtn.classList.add('hidden'); // Hide until slot picked
+
+        // Disable button again when switching days
+        nextBtn.disabled = true;
+        nextBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none', 'transform-none');
+        nextBtn.classList.remove('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer');
 
         const dObj = new Date(dStr + "T12:00:00");
         header.textContent = dObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
@@ -275,8 +279,10 @@ export class StepSchedule extends HTMLElement {
                 window.bookingData.endTime = `${ey}-${em}-${ed}T${eh}:${emm}:00`;
 
                 // Show Next Button
-                nextBtn.classList.remove('hidden');
-                nextBtn.classList.add('flex'); // Ensure flex is restored
+                nextBtn.disabled = false;
+                nextBtn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none', 'transform-none', 'hidden');
+                nextBtn.classList.add('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer', 'flex');
+                // Ensure flex is there (it was in replacement content but removed hidden)
             };
             container.appendChild(btn);
         });

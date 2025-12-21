@@ -47,8 +47,8 @@ export class StepWaiver extends HTMLElement {
                         class="text-gray-500 font-medium hover:text-[var(--dark-heading)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                         <i class="fas fa-arrow-left text-sm"></i> Back
                     </button>
-                    <button type="submit" 
-                        class="bg-[var(--sage-green)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2">
+                    <button type="submit" id="btn-step-2-next"
+                        class="bg-gray-200 text-gray-400 px-8 py-4 rounded-full font-semibold shadow-none cursor-not-allowed transition-all duration-300 flex items-center gap-2" disabled>
                         Next: Select Time <i class="fas fa-arrow-right text-sm"></i>
                     </button>
                   </div>
@@ -125,6 +125,21 @@ export class StepWaiver extends HTMLElement {
     const agreeContainer = this.querySelector('#waiver-agree-container');
     const toast = this.querySelector('#scroll-toast');
     const checkbox = this.querySelector('#waiver-agree');
+    const nextBtn = this.querySelector('#btn-step-2-next');
+
+    // Toggle Button Logic
+    const updateButton = () => {
+      if (checkbox.checked && !checkbox.disabled) {
+        nextBtn.disabled = false;
+        nextBtn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none', 'transform-none');
+        nextBtn.classList.add('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer');
+      } else {
+        nextBtn.disabled = true;
+        nextBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none', 'transform-none');
+        nextBtn.classList.remove('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer');
+      }
+    };
+    checkbox.addEventListener('change', updateButton);
 
     this.isUnlocked = false;
 

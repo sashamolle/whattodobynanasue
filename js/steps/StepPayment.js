@@ -70,8 +70,8 @@ export class StepPayment extends HTMLElement {
                     </button>
 
                     <button type="submit" id="btn-pay-now" 
-                        class="bg-[var(--sage-green)] text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 min-w-[200px] justify-center">
-                      <span>Pay Now</span> <i class="fas fa-lock text-sm opacity-80"></i>
+                        class="bg-gray-200 text-gray-400 px-10 py-4 rounded-full font-semibold shadow-none cursor-not-allowed transition-all duration-300 flex items-center gap-2 min-w-[200px] justify-center" disabled>
+                      <span>Pay Now</span> <i class="fas fa-arrow-right text-sm"></i>
                     </button>
                   </div>
                 </form>
@@ -101,6 +101,28 @@ export class StepPayment extends HTMLElement {
         composed: true
       }));
     };
+
+    // Auto-Enable Logic
+    const inputs = form.querySelectorAll('input');
+    const checkPaymentValid = () => {
+      // Simple check: are all required inputs filled?
+      // In real app, check regex patterns or Stripe element events.
+      const allFilled = Array.from(inputs).every(input => input.value.trim().length >= (input.maxLength > 10 ? 10 : 2)); // rough check
+
+      if (allFilled) {
+        payBtn.disabled = false;
+        payBtn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none', 'transform-none');
+        payBtn.classList.add('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer');
+
+        // Restore lock icon if we want? Or arrow? User asked for Arrow.
+        // "all buttons should use the same icon arrow as the intake has"
+      } else {
+        payBtn.disabled = true;
+        payBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none', 'transform-none');
+        payBtn.classList.remove('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer');
+      }
+    };
+    inputs.forEach(i => i.addEventListener('input', checkPaymentValid));
 
     form.onsubmit = async (e) => {
       e.preventDefault();

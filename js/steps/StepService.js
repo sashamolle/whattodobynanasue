@@ -72,7 +72,7 @@ export class StepService extends HTMLElement {
 
                 <div class="mt-10 flex justify-end">
                     <button type="submit" id="btn-step-0-next" 
-                        class="w-full md:w-auto bg-[var(--dark-heading)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center gap-2" disabled>
+                        class="w-full md:w-auto bg-gray-200 text-gray-400 px-8 py-4 rounded-full font-semibold shadow-none cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2" disabled>
                         Next: Details <i class="fas fa-arrow-right text-sm"></i>
                     </button>
                 </div>
@@ -130,15 +130,13 @@ export class StepService extends HTMLElement {
         this.validateStep0 = (isValid) => {
             step0Valid = isValid;
             if (isValid) {
-                nextBtn0.classList.remove('opacity-50', 'cursor-not-allowed');
                 nextBtn0.disabled = false;
-                nextBtn0.classList.add('bg-[var(--sage-green)]');
-                nextBtn0.classList.remove('bg-[var(--dark-heading)]');
+                nextBtn0.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none', 'transform-none', 'opacity-50');
+                nextBtn0.classList.add('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer');
             } else {
-                nextBtn0.classList.add('opacity-50', 'cursor-not-allowed');
                 nextBtn0.disabled = true;
-                nextBtn0.classList.remove('bg-[var(--sage-green)]');
-                nextBtn0.classList.add('bg-[var(--dark-heading)]');
+                nextBtn0.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none', 'transform-none');
+                nextBtn0.classList.remove('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer', 'opacity-50');
             }
         };
 
