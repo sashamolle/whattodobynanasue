@@ -6,54 +6,79 @@ export class StepService extends HTMLElement {
 
     render() {
         this.innerHTML = `
-        <h2 class="text-2xl font-bold text-gray-800 mb-6">Select Service Type</h2>
-        <form id="step0-form">
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-
-            <!-- In-Home Option -->
-            <div class="relative">
-              <input type="radio" name="serviceType" id="service-in-home" value="in-home" class="peer hidden" checked>
-              <label for="service-in-home"
-                class="service-card block cursor-pointer bg-white p-6 rounded-lg transition-all">
-                <div class="flex flex-col items-center text-center">
-                  <i class="fas fa-home text-3xl text-[var(--sage-green)] mb-3"></i>
-                  <h3 class="font-bold text-gray-800 text-lg">In-Home Visit</h3>
-                  <p class="text-sm text-gray-600 mt-2">We come to you! Available in Manhattan & select areas.</p>
-                  <p class="text-xs text-gray-500 mt-1 font-medium">From $150.00</p>
-                </div>
-              </label>
+        <div class="fade-in max-w-3xl mx-auto">
+            <div class="text-center mb-10">
+                <h2 class="text-3xl font-bold text-[var(--dark-heading)] mb-3">Select Service Type</h2>
+                <p class="text-gray-500">Choose the option that works best for you and your little one.</p>
             </div>
 
-            <!-- Virtual Option -->
-            <div class="relative">
-              <input type="radio" name="serviceType" id="service-virtual" value="virtual" class="peer hidden">
-              <label for="service-virtual"
-                class="service-card block cursor-pointer bg-white p-6 rounded-lg transition-all">
-                <div class="flex flex-col items-center text-center">
-                  <i class="fas fa-video text-3xl text-blue-500 mb-3"></i>
-                  <h3 class="font-bold text-gray-800 text-lg">Virtual Visit</h3>
-                  <p class="text-sm text-gray-600 mt-2">Expert guidance via video call. Available anywhere.</p>
-                  <p class="text-xs text-gray-500 mt-1 font-medium">$150.00 (Flat Rate)</p>
+            <form id="step0-form">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                    <!-- In-Home Option -->
+                    <div class="relative group">
+                        <input type="radio" name="serviceType" id="service-in-home" value="in-home" class="peer hidden" checked>
+                        <label for="service-in-home"
+                            class="h-full block cursor-pointer bg-white border border-gray-200 rounded-xl p-6 shadow-sm transition-all duration-300
+                            hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(86,128,100,0.4)]
+                            peer-checked:border-[var(--sage-green)] peer-checked:border-2 peer-checked:bg-[var(--sage-green-light)]">
+                            
+                            <div class="flex flex-col items-center text-center h-full">
+                                <div class="w-14 h-14 rounded-full bg-white border border-gray-100 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-home text-2xl text-[var(--sage-green)]"></i>
+                                </div>
+                                <h3 class="font-semibold text-[var(--dark-heading)] text-lg mb-2">In-Home Visit</h3>
+                                <p class="text-sm text-[#666] leading-relaxed mb-4 flex-grow">We come to you! Available in Manhattan & select areas.</p>
+                                <div class="text-xs font-medium text-gray-400 uppercase tracking-wide mt-auto pt-4 border-t border-gray-50 w-full">From $150.00</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Virtual Option -->
+                    <div class="relative group">
+                        <input type="radio" name="serviceType" id="service-virtual" value="virtual" class="peer hidden">
+                        <label for="service-virtual"
+                            class="h-full block cursor-pointer bg-white border border-gray-200 rounded-xl p-6 shadow-sm transition-all duration-300
+                            hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(86,128,100,0.4)]
+                            peer-checked:border-[var(--sage-green)] peer-checked:border-2 peer-checked:bg-[var(--sage-green-light)]">
+                            
+                            <div class="flex flex-col items-center text-center h-full">
+                                <div class="w-14 h-14 rounded-full bg-white border border-gray-100 flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-video text-2xl text-[var(--sage-green)]"></i>
+                                </div>
+                                <h3 class="font-semibold text-[var(--dark-heading)] text-lg mb-2">Virtual Visit</h3>
+                                <p class="text-sm text-[#666] leading-relaxed mb-4 flex-grow">Expert guidance via video call. Available anywhere.</p>
+                                <div class="text-xs font-medium text-gray-400 uppercase tracking-wide mt-auto pt-4 border-t border-gray-50 w-full">Flat Rate $150.00</div>
+                            </div>
+                        </label>
+                    </div>
                 </div>
-              </label>
-            </div>
-          </div>
 
-          <!-- Address Input Container (Hidden for Virtual) -->
-          <div id="location-gate-container" class="mb-8">
-            <label class="block text-sm font-medium text-gray-700 mb-1">Enter your Home Address</label>
-            <input type="text" id="GateAddress" class="form-input" placeholder="Street, City, Zip" autocomplete="off">
-            <!-- Feedback container -->
-            <div id="feedback-div" class="hidden mt-4 p-4 rounded-lg flex items-start gap-3 text-sm font-medium fade-in border transition-all duration-300"></div>
-          </div>
+                <!-- Address Input Container -->
+                <div id="location-gate-container" class="mt-8 transition-all duration-500 ease-in-out">
+                     <label for="GateAddress" class="block text-lg font-medium text-[var(--dark-heading)] mb-3 text-center md:text-left">Enter your Home Address</label>
+                     <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-map-marker-alt text-[var(--sage-green)] opacity-50"></i>
+                        </div>
+                        <input type="text" id="GateAddress" 
+                            class="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:border-[var(--sage-green)] focus:ring-2 focus:ring-[var(--sage-green)] focus:ring-opacity-20 outline-none transition-all shadow-sm text-gray-700 font-medium placeholder-gray-400" 
+                            placeholder="Street, City, Zip" autocomplete="off">
+                    </div>
+                    
+                    <!-- Feedback container -->
+                    <div id="feedback-div" class="hidden mt-4 p-4 rounded-lg flex items-start gap-4 text-sm font-medium fade-in border transition-all duration-300"></div>
+                </div>
 
-          <div class="mt-8 flex justify-end">
-            <button type="submit" id="btn-step-0-next" class="btn-primary opacity-50 cursor-not-allowed" disabled>
-              Next: Details <i class="fas fa-arrow-right ml-2"></i>
-            </button>
-          </div>
-        </form>
-      `;
+                <div class="mt-10 flex justify-end">
+                    <button type="submit" id="btn-step-0-next" 
+                        class="w-full md:w-auto bg-[var(--dark-heading)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none flex items-center justify-center gap-2" disabled>
+                        Next: Details <i class="fas fa-arrow-right text-sm"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+        `;
     }
 
     setupLogic() {
@@ -75,25 +100,26 @@ export class StepService extends HTMLElement {
         const updateServiceState = () => {
             if (radioInHome.checked) {
                 selectedService = 'in-home';
-                locationContainer.classList.remove('hidden');
+                locationContainer.classList.remove('hidden', 'opacity-0');
+                locationContainer.classList.add('opacity-100');
+
                 // Re-validate address field
                 if (addressInput.dataset.valid === 'true') {
-                    this.updatePrice(150.00); // Or 180 depending on zone, logic below handles reuse?
-                    this.validateStep0(true);
-                    if (addressInput.value) this.calculateDistance(addressInput.value, false); // Re-check strictly
+                    if (addressInput.value) this.calculateDistance(addressInput.value, false);
                 } else {
+                    // CLEAR LOGIC: If returning to In-Home and address was invalid/denied, clear it.
+                    addressInput.value = '';
+                    feedbackDiv.classList.add('hidden');
                     this.validateStep0(false);
                 }
             } else {
                 selectedService = 'virtual';
-                locationContainer.classList.add('hidden');
+                locationContainer.classList.add('hidden', 'opacity-0');
                 this.updatePrice(150.00, 'Virtual Flat Rate');
-                this.validateStep0(true); // Virtual is always valid
-                addressInput.value = ''; // Clear address
+                this.validateStep0(true);
                 addressInput.dataset.valid = 'false';
                 feedbackDiv.classList.add('hidden');
             }
-            // Persist
             window.bookingData.serviceType = selectedService;
         };
 
@@ -106,18 +132,19 @@ export class StepService extends HTMLElement {
             if (isValid) {
                 nextBtn0.classList.remove('opacity-50', 'cursor-not-allowed');
                 nextBtn0.disabled = false;
+                nextBtn0.classList.add('bg-[var(--sage-green)]');
+                nextBtn0.classList.remove('bg-[var(--dark-heading)]');
             } else {
                 nextBtn0.classList.add('opacity-50', 'cursor-not-allowed');
                 nextBtn0.disabled = true;
+                nextBtn0.classList.remove('bg-[var(--sage-green)]');
+                nextBtn0.classList.add('bg-[var(--dark-heading)]');
             }
         };
 
         // 3. Price Helper
         this.updatePrice = (price, description = '') => {
             window.bookingData.price = price;
-            // Dispatch Event to Header? Or just update global.
-            // For now, update global. Header component might need to listen for changes if we had one.
-            // Shell will handle header updates via event "price-update"
             this.dispatchEvent(new CustomEvent('price-update', {
                 detail: { price, description },
                 bubbles: true
@@ -127,31 +154,42 @@ export class StepService extends HTMLElement {
         // 4. Feedback Helper
         this.showFeedback = (msg, type) => {
             feedbackDiv.innerHTML = '';
-            feedbackDiv.className = "mt-4 p-4 rounded-lg flex items-start gap-3 text-sm font-medium fade-in border transition-all duration-300";
+            // Reset base classes with rounded-lg (8px) and p-4 (1rem)
+            // ALIGNMENT FIX: Changed items-start to items-center
+            feedbackDiv.className = "mt-4 p-4 rounded-lg flex items-center gap-3 text-sm font-medium fade-in border transition-all duration-300 shadow-sm";
+
+            // Clear inline styles
+            feedbackDiv.style = '';
 
             let iconHtml = '';
+            // ALIGNMENT FIX: Removed mt-0.5 from all icons
             if (type === 'success') {
+                // Zone 1: Sage Green
                 feedbackDiv.classList.add('bg-[var(--sage-green-light)]', 'text-[var(--dark-heading)]', 'border-[var(--sage-green)]');
-                iconHtml = `<div class="mt-0.5 min-w-[20px] text-[var(--sage-green)]"><i class="fas fa-check-circle text-lg"></i></div>`;
+                iconHtml = `<div class="min-w-[20px] text-[var(--sage-green)]"><i class="fas fa-check-circle text-lg"></i></div>`;
             } else if (type === 'warning') {
+                // Zone 2: Warm Beige / Muted Gold
                 feedbackDiv.style.backgroundColor = '#FFFDF5';
                 feedbackDiv.style.borderColor = '#E5E1D6';
-                feedbackDiv.style.color = 'var(--dark-heading)';
-                iconHtml = `<div class="mt-0.5 min-w-[20px] text-[#D4AF37]"><i class="fas fa-car text-lg"></i></div>`;
+                feedbackDiv.style.color = '#5C5446';
+                iconHtml = `<div class="min-w-[20px] text-[#A69578]"><i class="fas fa-car text-lg"></i></div>`;
             } else if (type === 'denial') {
-                feedbackDiv.classList.add('bg-rose-light');
-                iconHtml = `<div class="mt-0.5 min-w-[20px] text-[#742A2A]"><i class="fas fa-video text-lg"></i></div>`;
+                // Zone 3: Soft Rose / Video Icon
+                feedbackDiv.style.backgroundColor = '#FFF5F5';
+                feedbackDiv.style.borderColor = '#FED7D7';
+                feedbackDiv.style.color = '#9B2C2C'; // Dark red for readability
+                iconHtml = `<div class="min-w-[20px] text-[#E53E3E]"><i class="fas fa-video text-lg"></i></div>`;
             } else if (type === 'info') {
                 feedbackDiv.classList.add('bg-blue-50', 'text-blue-800', 'border-blue-200');
-                iconHtml = `<div class="mt-0.5 min-w-[20px]"><i class="fas fa-info-circle text-lg"></i></div>`;
+                iconHtml = `<div class="min-w-[20px] text-blue-500"><i class="fas fa-info-circle text-lg"></i></div>`;
             } else {
-                feedbackDiv.classList.add('bg-red-100', 'text-red-800', 'border-red-200');
-                iconHtml = `<div class="mt-0.5 min-w-[20px]"><i class="fas fa-exclamation-circle text-lg"></i></div>`;
+                feedbackDiv.classList.add('bg-red-50', 'text-red-800', 'border-red-100');
+                iconHtml = `<div class="min-w-[20px] text-red-500"><i class="fas fa-exclamation-circle text-lg"></i></div>`;
             }
-            feedbackDiv.innerHTML = iconHtml + `<div>${msg}</div>`;
+            feedbackDiv.innerHTML = iconHtml + `<div class="leading-relaxed">${msg}</div>`;
             feedbackDiv.classList.remove('hidden');
 
-            // Attach Switch Listener
+            // Attach pivot listener
             const link = feedbackDiv.querySelector('a');
             if (link && msg.includes('Switch to Virtual')) {
                 link.onclick = (e) => { e.preventDefault(); radioVirtual.click(); };
@@ -160,12 +198,11 @@ export class StepService extends HTMLElement {
 
         // 5. Google Maps Logic
         this.calculateDistance = (destination, isManhattan) => {
-            if (!window.google) return; // Wait for load?
+            if (!window.google) return;
             const service = new google.maps.DistanceMatrixService();
-            this.showFeedback('Checking availability at this location... <i class="fas fa-spinner fa-spin ml-2"></i>', 'info');
+            this.showFeedback('Checking availability at this location...', 'info');
             this.validateStep0(false);
 
-            // Timeout 5s
             const timeoutId = setTimeout(() => {
                 this.showFeedback('Calculation timed out. Please try again.', 'error');
             }, 5000);
@@ -184,7 +221,7 @@ export class StepService extends HTMLElement {
                 const element = response.rows[0].elements[0];
                 if (element.status !== 'OK') {
                     if (element.status === 'ZERO_RESULTS') {
-                        this.showFeedback("No walking route found. Address may be too far.", 'error');
+                        this.showFeedback("We couldn't find a route to this address. Is it typed correctly?", 'error');
                     } else {
                         this.showFeedback(`Route error: ${element.status}`, 'error');
                     }
@@ -208,7 +245,7 @@ export class StepService extends HTMLElement {
                     this.validateStep0(true);
                 } else {
                     // Zone 3
-                    this.showFeedback(`That address is outside our travel radius, but we can still support you! <a href="#" class="font-bold underline text-[#742A2A] hover:text-red-900 ml-1">Switch to Virtual Visit</a>`, 'denial');
+                    this.showFeedback(`That address is outside our travel radius, but we can still support you! <a href="#" class="font-bold underline text-[#C53030] hover:text-[#9B2C2C] ml-1">Switch to Virtual Visit</a>`, 'denial');
                     addressInput.dataset.valid = 'false';
                     this.validateStep0(false);
                 }
@@ -229,7 +266,7 @@ export class StepService extends HTMLElement {
                     const place = autocomplete.getPlace();
                     if (!place.geometry) {
                         addressInput.dataset.valid = 'false';
-                        this.showFeedback('Please select a valid address.', 'error');
+                        this.showFeedback('Please select a valid address from the list.', 'error');
                         this.validateStep0(false);
                         return;
                     }
@@ -247,11 +284,9 @@ export class StepService extends HTMLElement {
         if (window.google && window.google.maps) {
             this.initMapLogic();
         } else {
-            // Wait for global callback
             document.addEventListener('google-maps-loaded', this.initMapLogic);
         }
 
-        // 6. Submit Handle
         this.querySelector('#step0-form').onsubmit = (e) => {
             e.preventDefault();
             if (step0Valid) {
@@ -263,24 +298,14 @@ export class StepService extends HTMLElement {
             }
         };
 
-        // 7. Initial Load
-        // Pre-fill from Global or default
         if (window.bookingData.serviceType === 'virtual') {
             radioVirtual.click();
         } else {
             radioInHome.click();
             if (window.bookingData.parentAddress) {
                 addressInput.value = window.bookingData.parentAddress;
-                // Trigger validation? Might effectively re-run distance check if we had logic, 
-                // but Autocomplete usually requires user interaction. 
-                // We'll trust stored address for now regarding validity? 
-                // Better to re-validate distance if loaded, but that costs API call.
-                // Let's just trust valid flag if implementing sophisticated storage.
-                // For simplistic approach, re-validation on 'place_changed' is safest.
             }
         }
-
-        // Initial Price
         updateServiceState();
     }
 }
