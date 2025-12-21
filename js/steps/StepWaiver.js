@@ -48,14 +48,29 @@ export class StepWaiver extends HTMLElement {
     const container = this.querySelector('#waiver-content');
 
     try {
+      console.log(`[StepWaiver] Fetching waiver from: ${API_BASE}/api/waiver/latest`);
       const res = await fetch(`${API_BASE}/api/waiver/latest`);
-      if (!res.ok) throw new Error('Failed to load');
+      console.log(`[StepWaiver] Response status: ${res.status}`);
+
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error(`Server returned ${res.status}: ${txt}`);
+      }
+
       const data = await res.json();
       container.innerHTML = data.text.replace(/\n/g, '<br>');
       window.bookingData.waiverVersion = data.version; // Store version
     } catch (err) {
-      container.innerHTML = `<div class="text-red-500 text-center">Failed to load waiver. Please refresh.</div>`;
-      console.error(err);
+      console.error("[StepWaiver] Error:", err);
+      container.innerHTML = `
+            <div class="text-red-500 text-center p-4">
+                <p class="font-bold">Failed to load waiver.</p>
+                <p class="text-xs mt-2 text-gray-400 font-mono text-left bg-gray-100 p-2 rounded">
+                    Error: ${err.message}<br>
+                    URL: ${API_BASE}/api/waiver/latest
+                </p>
+                <button onclick="this.closest('step-waiver').fetchWaiver()" class="mt-4 text-blue-500 text-xs underline">Retry</button>
+            </div>`;
     }
   }
 
