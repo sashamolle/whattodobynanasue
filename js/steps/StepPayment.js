@@ -126,18 +126,45 @@ export class StepPayment extends HTMLElement {
       const { clientSecret } = await response.json();
       console.log("[StepPayment] Client Secret received.");
 
-      // 3. Initialize Elements
+      // 3. Initialize Elements with CUSTOM DESIGN
       this.stripe = Stripe(STRIPE_PK);
+
       const appearance = {
-        theme: 'flat',
+        theme: 'flat', // 'flat' allows more CSS-like customization
         variables: {
-          colorPrimary: '#568064', // Sage Green
+          colorPrimary: '#568064', // Sage Green Focus
           colorBackground: '#ffffff',
           colorText: '#1f2937', // Dark Heading
-          borderRadius: '12px',
+          colorTextPlaceholder: '#9ca3af', // Gray-400
+          borderRadius: '12px', // Matches your inputs
           fontFamily: '"Poppins", sans-serif',
-          spacingUnit: '5px',
+          spacingUnit: '4px',
         },
+        rules: {
+          '.Input': {
+            border: '1px solid transparent',
+            boxShadow: '0 0 0 1px #f3f4f6', // Ring-1 ring-gray-100 equivalent
+            backgroundColor: '#ffffff',
+            padding: '12px 16px',
+            fontSize: '16px',
+            transition: 'box-shadow 0.2s ease',
+          },
+          '.Input:focus': {
+            border: '1px solid transparent',
+            // This simulates: focus:ring-2 focus:ring-[var(--sage-green)]
+            boxShadow: '0 0 0 2px #568064',
+          },
+          '.Input--invalid': {
+            color: '#ef4444',
+            boxShadow: '0 0 0 1px #ef4444',
+          },
+          '.Label': {
+            fontWeight: '500',
+            fontSize: '14px',
+            color: '#1f2937',
+            marginBottom: '8px',
+          }
+        }
       };
       this.elements = this.stripe.elements({ appearance, clientSecret });
 
@@ -160,8 +187,7 @@ export class StepPayment extends HTMLElement {
     const container = this.querySelector('#payment-container');
     if (!container) return;
 
-    // Use the soft styling we designed earlier (bg-white instead of bg-gray-50)
-    // Updated: Softer gray ring for focus instead of sage green, and gray demo banner.
+    // RESTORED GREEN HIGHLIGHT to match Stripe and user preference
     container.innerHTML = `
         <div class="mb-6 fade-in">
             <div class="mb-4 p-3 bg-gray-50 text-gray-500 text-xs rounded-lg border border-gray-100 flex items-center justify-center gap-2">
@@ -169,7 +195,7 @@ export class StepPayment extends HTMLElement {
             </div>
             <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Card Number</label>
             <div class="relative">
-                <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="0000 0000 0000 0000" maxlength="19" required>
                 <i class="fas fa-credit-card absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
             </div>
         </div>
@@ -177,12 +203,12 @@ export class StepPayment extends HTMLElement {
         <div class="grid grid-cols-2 gap-6 mb-8 fade-in">
             <div>
                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Expiry Date</label>
-                <input type="text" class="manual-input w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 text-center font-medium" placeholder="MM/YY" maxlength="5" required>
+                <input type="text" class="manual-input w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 text-center font-medium" placeholder="MM/YY" maxlength="5" required>
             </div>
             <div>
                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">CVC</label>
                 <div class="relative">
-                    <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="123" maxlength="3" required>
+                    <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="123" maxlength="3" required>
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 </div>
             </div>
@@ -255,7 +281,7 @@ export class StepPayment extends HTMLElement {
           this.completeBooking();
         }
       }
-      // 2. Fallback Manual Submit 
+      // 2. Fallback Manual Submit (Demo)
       else {
         await new Promise(r => setTimeout(r, 1500)); // Simulate delay
         this.completeBooking();
