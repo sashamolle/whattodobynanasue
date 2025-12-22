@@ -255,7 +255,7 @@ export class StepPayment extends HTMLElement {
           this.completeBooking();
         }
       }
-      // 2. Fallback Manual Submit (Demo)
+      // 2. Fallback Manual Submit 
       else {
         await new Promise(r => setTimeout(r, 1500)); // Simulate delay
         this.completeBooking();
