@@ -34,19 +34,19 @@ export class StepIntake extends HTMLElement {
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Your Name</label>
                                 <input type="text" id="parentName" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="form-input text-gray-700 placeholder-gray-400" 
                                     placeholder="First & Last Name">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Email Address</label>
                                 <input type="email" id="parentEmail" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="form-input text-gray-700 placeholder-gray-400" 
                                     placeholder="you@example.com">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Phone Number</label>
                                 <input type="tel" id="parentPhone" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="form-input text-gray-700 placeholder-gray-400" 
                                     placeholder="(555) 123-4567">
                             </div>
                             <!-- Address Field Container (Hidden if Virtual) -->
@@ -54,7 +54,7 @@ export class StepIntake extends HTMLElement {
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Home Address <span class="text-xs text-gray-400 font-normal ml-1">(From Step 1)</span></label>
                                 <div class="relative">
                                     <input type="text" id="parentAddress" 
-                                        class="w-full px-4 py-3 rounded-xl border-0 ring-1 ring-gray-100 bg-gray-50 text-gray-500 cursor-not-allowed outline-none shadow-sm" 
+                                        class="form-input bg-gray-50 text-gray-500 cursor-not-allowed shadow-none" 
                                         placeholder="Address not provided" readonly>
                                     <div class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400">
                                         <i class="fas fa-lock"></i>
@@ -79,19 +79,19 @@ export class StepIntake extends HTMLElement {
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Baby's Name</label>
                                 <input type="text" id="babyName" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="form-input text-gray-700 placeholder-gray-400" 
                                     placeholder="Baby's Name">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Date of Birth</label>
                                 <input type="date" id="babyDob" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400">
+                                    class="form-input text-gray-700 placeholder-gray-400">
                             </div>
                             
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Primary Concerns / Goals</label>
                                 <textarea id="concerns" rows="3" 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 resize-none" 
+                                    class="form-input text-gray-700 placeholder-gray-400 resize-none font-sans" 
                                     placeholder="What specific milestones are you working on? (e.g., rolling over, crawling, walking)"></textarea>
                             </div>
                         </div>

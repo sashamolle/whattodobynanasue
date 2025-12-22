@@ -116,7 +116,7 @@ export class StepService extends HTMLElement {
                             <i class="fas fa-map-marker-alt text-[var(--sage-green)] opacity-50"></i>
                         </div>
                         <input type="text" id="GateAddress" 
-                            class="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-200 focus:border-[var(--sage-green)] focus:ring-2 focus:ring-[var(--sage-green)] focus:ring-opacity-20 outline-none transition-all shadow-sm text-gray-700 font-medium placeholder-gray-400" 
+                            class="form-input pl-12 text-gray-700 font-medium placeholder-gray-400" 
                             placeholder="Street, City, Zip" autocomplete="off">
                     </div>
                     
