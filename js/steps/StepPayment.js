@@ -161,14 +161,15 @@ export class StepPayment extends HTMLElement {
     if (!container) return;
 
     // Use the soft styling we designed earlier (bg-white instead of bg-gray-50)
+    // Updated: Softer gray ring for focus instead of sage green, and gray demo banner.
     container.innerHTML = `
         <div class="mb-6 fade-in">
-            <div class="mb-4 p-3 bg-blue-50 text-blue-700 text-xs rounded-lg border border-blue-100 flex items-center justify-center gap-2">
+            <div class="mb-4 p-3 bg-gray-50 text-gray-500 text-xs rounded-lg border border-gray-100 flex items-center justify-center gap-2">
                 <i class="fas fa-info-circle"></i> Demo Mode: Backend not connected. Enter any details.
             </div>
             <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Card Number</label>
             <div class="relative">
-                <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="0000 0000 0000 0000" maxlength="19" required>
+                <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="0000 0000 0000 0000" maxlength="19" required>
                 <i class="fas fa-credit-card absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-lg"></i>
             </div>
         </div>
@@ -176,12 +177,12 @@ export class StepPayment extends HTMLElement {
         <div class="grid grid-cols-2 gap-6 mb-8 fade-in">
             <div>
                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Expiry Date</label>
-                <input type="text" class="manual-input w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 text-center font-medium" placeholder="MM/YY" maxlength="5" required>
+                <input type="text" class="manual-input w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 text-center font-medium" placeholder="MM/YY" maxlength="5" required>
             </div>
             <div>
                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">CVC</label>
                 <div class="relative">
-                    <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="123" maxlength="3" required>
+                    <input type="text" class="manual-input w-full pl-12 pr-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 font-medium" placeholder="123" maxlength="3" required>
                     <i class="fas fa-lock absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
                 </div>
             </div>
