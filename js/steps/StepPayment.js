@@ -44,7 +44,12 @@ export class StepPayment extends HTMLElement {
                     
                     <!-- Express Checkout Container -->
                     <div id="express-checkout-container" class="mb-2"></div>
-                  
+                    
+                    <!-- Divider (Hidden by default, shown if Express Checkout loads) -->
+                    <div id="payment-divider" class="hidden flex items-center justify-between mb-6 mt-4">
+                        <span class="h-px w-full bg-gray-200"></span>
+                        <span class="h-px w-full bg-gray-200"></span>
+                    </div>
 
                     <form id="payment-form" class="min-h-[250px]">
                         
