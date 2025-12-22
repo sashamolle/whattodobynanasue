@@ -173,3 +173,14 @@ h4 {
     transform: translateY(0);
   }
 }
+
+/* --- ACCORDION STYLES --- */
+.card-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out;
+}
+
+.class-card.active .toggle-icon {
+  transform: rotate(180deg);
+}
