@@ -34,19 +34,19 @@ export class StepIntake extends HTMLElement {
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Your Name</label>
                                 <input type="text" id="parentName" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
                                     placeholder="First & Last Name">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Email Address</label>
                                 <input type="email" id="parentEmail" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
                                     placeholder="you@example.com">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Phone Number</label>
                                 <input type="tel" id="parentPhone" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
                                     placeholder="(555) 123-4567">
                             </div>
                             <!-- Address Field Container (Hidden if Virtual) -->
@@ -79,14 +79,14 @@ export class StepIntake extends HTMLElement {
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Baby's Name</label>
                                 <input type="text" id="babyName" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
                                     placeholder="Baby's Name">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Date of Birth</label>
                                 <div class="relative">
                                     <input type="date" id="babyDob" required 
-                                        class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 appearance-none min-h-[3rem]"
+                                        class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 appearance-none min-h-[3rem]"
                                         style="min-height: 3rem;"> 
                                     <div class="absolute inset-y-0 right-4 flex items-center pointer-events-none">
                                         <i class="fas fa-calendar-alt text-gray-400"></i>
@@ -97,7 +97,7 @@ export class StepIntake extends HTMLElement {
                             <div class="md:col-span-2">
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Primary Concerns / Goals</label>
                                 <textarea id="concerns" rows="3" 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-[var(--sage-green)] focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 resize-none" 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400 resize-none" 
                                     placeholder="What specific milestones are you working on? (e.g., rolling over, crawling, walking)"></textarea>
                             </div>
                         </div>
