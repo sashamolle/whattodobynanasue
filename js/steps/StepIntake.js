@@ -34,7 +34,7 @@ export class StepIntake extends HTMLElement {
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Your Name</label>
                                 <input type="text" id="parentName" required 
-                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
+                                    class="w-full px-4 py-3 rounded-xl bg-white border-0 ring-1 ring-gray-100 focus:ring-2 focus:ring-gray-300 focus:bg-white outline-none transition-all shadow-sm text-gray-700 placeholder-gray-400" 
                                     placeholder="First & Last Name">
                             </div>
                             <div>
