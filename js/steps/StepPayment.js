@@ -154,8 +154,13 @@ export class StepPayment extends HTMLElement {
       };
       this.elements = this.stripe.elements({ appearance, clientSecret });
 
-      // A. Create Express Checkout Element (Apple Pay / Google Pay)
-      const expressCheckout = this.elements.create('expressCheckout');
+      // A. Create Express Checkout Element (Apple Pay ONLY)
+      const expressCheckout = this.elements.create('expressCheckout', {
+        wallets: {
+          applePay: 'always',
+          googlePay: 'never'
+        }
+      });
       expressCheckout.mount('#express-checkout-container');
 
       // Check if Express Checkout is actually available (e.g. device supports it)
