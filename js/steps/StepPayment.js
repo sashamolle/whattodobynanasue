@@ -37,10 +37,6 @@ export class StepPayment extends HTMLElement {
                             <span class="text-gray-400 text-sm ml-2">USD</span>
                         </div>
                     </div>
-                    <div class="flex items-center gap-2 text-xs text-gray-400 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-                        <i class="fas fa-lock text-[var(--sage-green)]"></i>
-                        <span>Secure 256-bit SSL Encrypted</span>
-                    </div>
                 </div>
 
                 <!-- Dynamic Container: Will hold either Stripe Element OR Manual Fallback -->
@@ -52,7 +48,6 @@ export class StepPayment extends HTMLElement {
                     <!-- Divider (Hidden by default, shown if Express Checkout loads) -->
                     <div id="payment-divider" class="hidden flex items-center justify-between mb-6 mt-4">
                         <span class="h-px w-full bg-gray-200"></span>
-                        <span class="text-xs text-gray-400 font-medium uppercase px-3 whitespace-nowrap">Or pay with card</span>
                         <span class="h-px w-full bg-gray-200"></span>
                     </div>
 
