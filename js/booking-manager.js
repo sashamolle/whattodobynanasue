@@ -22,8 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('step-1-indicator'),
         document.getElementById('step-2-indicator'),
         document.getElementById('step-3-indicator'),
-        document.getElementById('step-4-indicator'),
-        document.getElementById('step-5-indicator')
+        document.getElementById('step-4-indicator')
     ];
 
     let currentStepIndex = 0;
@@ -40,6 +39,15 @@ document.addEventListener('DOMContentLoaded', () => {
         indicators.forEach((ind, i) => {
             if (!ind) return;
             ind.className = "step-circle w-8 h-8 md:w-10 md:h-10 rounded-full border-2 flex items-center justify-center font-bold mb-1 transition-all duration-300 text-xs md:text-base";
+
+            // Special Case: If we are on Confirmation (index 5) or beyond available indicators
+            if (index >= indicators.length) {
+                // All indicators marked as completed
+                ind.classList.add('bg-[var(--sage-green)]', 'text-white', 'border-[var(--sage-green)]');
+                ind.innerHTML = '<i class="fas fa-check"></i>';
+                return;
+            }
+
             if (i < index) {
                 // Completed
                 ind.classList.add('bg-[var(--sage-green)]', 'text-white', 'border-[var(--sage-green)]');
@@ -49,7 +57,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 ind.classList.add('bg-[var(--sage-green)]', 'text-white', 'border-[var(--sage-green)]');
                 // Check if it's the last step
                 if (i === indicators.length - 1) {
-                    ind.innerHTML = '<i class="fas fa-check"></i>';
+                    ind.innerHTML = (i + 1).toString(); // Keep number for consistency or checkmark? User wants numbering consistency or just current?
+                    // Previous logic: if(i === indicators.last) checkmark.
+                    // But now last step is Payment (4).
+                    // Let's keep it as number to indicate "Step 5" is happening now?
+                    // Actually, if it's the current step, distinct style is enough.
+                    // Let's stick to number.
+                    ind.innerHTML = (i + 1).toString();
                 } else {
                     ind.innerHTML = (i + 1).toString();
                 }
