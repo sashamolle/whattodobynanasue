@@ -129,7 +129,7 @@ export class StepPayment extends HTMLElement {
       // 3. Initialize Elements
       this.stripe = Stripe(STRIPE_PK);
       const appearance = {
-        theme: 'stripe',
+        theme: 'flat',
         variables: {
           colorPrimary: '#568064', // Sage Green
           colorBackground: '#ffffff',
