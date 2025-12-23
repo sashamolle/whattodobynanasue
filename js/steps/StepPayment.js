@@ -181,6 +181,9 @@ export class StepPayment extends HTMLElement {
 
         // Update Global State
         window.bookingData.price = newPrice;
+        window.bookingData.promoCode = code;
+        window.bookingData.originalPrice = this.originalPrice;
+        window.bookingData.discountAmount = (this.originalPrice - newPrice).toFixed(2);
 
         // UI Feedback
         messageEl.textContent = "Code applied successfully!";
