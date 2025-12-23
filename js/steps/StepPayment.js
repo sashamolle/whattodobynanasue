@@ -2,14 +2,51 @@ export class StepPayment extends HTMLElement {
   connectedCallback() {
     this.stripe = null;
     this.elements = null;
-    this.originalPrice = window.bookingData ? window.bookingData.price : 150.00; // Store original for display
+    // Fix: If originalPrice is already stored (from previous visit), use it. 
+    // Otherwise fallback to current price (first visit) or 150 default.
+    this.originalPrice = (window.bookingData && window.bookingData.originalPrice)
+      ? window.bookingData.originalPrice
+      : (window.bookingData ? window.bookingData.price : 150.00);
+
     this.render();
     this.setupListeners();
     this.setupDiscountLogic();
     this.updateDisplay();
 
+    // Auto-Populate Promo State if returning
+    if (window.bookingData && window.bookingData.promoCode) {
+      this.restorePromoState(window.bookingData.promoCode);
+    }
+
     // Initialize Stripe Logic
     this.initStripe();
+  }
+
+  restorePromoState(code) {
+    const input = this.querySelector('#promo-input');
+    const container = this.querySelector('#promo-container');
+    const toggleBtn = this.querySelector('#toggle-promo');
+    const applyBtn = this.querySelector('#apply-promo-btn');
+    const messageEl = this.querySelector('#promo-message');
+
+    // Expand Container
+    container.classList.remove('hidden');
+    toggleBtn.classList.add('hidden');
+
+    // Fill Input
+    input.value = code;
+    input.disabled = true;
+    input.classList.add('bg-gray-50', 'text-gray-500');
+
+    // Update Button
+    applyBtn.textContent = 'Applied';
+    applyBtn.classList.add('bg-[var(--sage-green)]', 'pointer-events-none');
+    applyBtn.classList.remove('bg-gray-800');
+
+    // Show Message
+    messageEl.textContent = "Code applied successfully!";
+    messageEl.classList.add('text-[var(--sage-green)]');
+    messageEl.classList.remove('text-red-500', 'hidden');
   }
 
   updateDisplay() {
