@@ -253,6 +253,15 @@ export class StepService extends HTMLElement {
             window.bookingData.serviceCategory = selectedCategory;
             window.bookingData.serviceType = selectedLocation;
 
+            // Reset Discount State if price changes (prevents stale originalPrice)
+            if (window.bookingData.promoCode) {
+                delete window.bookingData.promoCode;
+                delete window.bookingData.originalPrice;
+                delete window.bookingData.discountAmount;
+                // Also verify we aren't carrying over weird states.
+                console.log("[StepService] Price changed. Cleared discount state.");
+            }
+
             this.dispatchEvent(new CustomEvent('price-update', {
                 detail: { price, description },
                 bubbles: true
