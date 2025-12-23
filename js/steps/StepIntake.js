@@ -148,6 +148,26 @@ export class StepIntake extends HTMLElement {
     load('babyName', 'babyName');
     load('babyDob', 'babyDob');
     load('concerns', 'concerns');
+
+    // 3. Set Max Date for DOB to Today (Prevent future dates & 6-digit years)
+    const dobInput = this.querySelector('#babyDob');
+    if (dobInput) {
+      const today = new Date().toISOString().split('T')[0];
+      dobInput.max = today;
+      // Optional: Year 2000 reasonable min?
+      dobInput.min = "2020-01-01";
+
+      // Force 4 digit year on manual entry if browser allows
+      dobInput.addEventListener('input', (e) => {
+        const val = e.target.value;
+        if (val) {
+          const year = val.split('-')[0];
+          if (year.length > 4) {
+            e.target.value = val.substring(0, 10); // Standard YYYY-MM-DD length
+          }
+        }
+      });
+    }
   }
 
   setupListeners() {
