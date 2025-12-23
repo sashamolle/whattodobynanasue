@@ -184,6 +184,7 @@ h4 {
 .class-card.active .toggle-icon {
   transform: rotate(180deg);
 }
+
 /* --- DATE INPUT PLACEHOLDER FIX --- */
 /* Native date inputs don't show placeholders by default. 
    This trick uses ::before to simulate one when the value is invalid (empty + required). */
@@ -198,14 +199,17 @@ h4 {
 
 .date-input:invalid::before {
   content: attr(placeholder);
-  color: #9ca3af; /* Matches placeholder-gray-400 */
+  color: #9ca3af;
+  /* Matches placeholder-gray-400 */
   position: absolute;
-  left: 1rem; /* Matches padding */
+  left: 1rem;
+  /* Matches padding */
   pointer-events: none;
 }
 
 /* Ensure consistent height/appearance on iOS */
 input[type="date"] {
-  min-height: 52px; /* Approx 42px + padding, matching text inputs */
+  min-height: 52px;
+  /* Approx 42px + padding, matching text inputs */
   -webkit-appearance: none;
 }
