@@ -84,11 +84,9 @@ export class StepIntake extends HTMLElement {
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-[var(--dark-heading)] mb-2">Date of Birth</label>
-                                <input type="text" id="babyDob" required 
-                                    class="form-input text-gray-700 placeholder-gray-400"
-                                    placeholder="Date of Birth"
-                                    onfocus="(this.type='date')"
-                                    onblur="(this.value ? this.type='date' : this.type='text')">
+                                <input type="date" id="babyDob" required 
+                                    class="form-input date-input text-gray-700 placeholder-gray-400"
+                                    placeholder="Date of Birth">
                             </div>
                             
                             <div class="md:col-span-2">
@@ -155,12 +153,6 @@ export class StepIntake extends HTMLElement {
     // 3. Set Max Date for DOB to Today (Prevent future dates & 6-digit years)
     const dobInput = this.querySelector('#babyDob');
     if (dobInput) {
-      // UX Fix: If value exists, ensure it's a date input so it formats correctly
-      // If no value, leave as text (from render) so placeholder shows
-      if (dobInput.value) {
-        dobInput.type = 'date';
-      }
-
       const today = new Date().toISOString().split('T')[0];
       dobInput.max = today;
       // Optional: Year 2000 reasonable min?
