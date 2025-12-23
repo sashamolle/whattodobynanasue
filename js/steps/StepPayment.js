@@ -486,95 +486,60 @@ export class StepPayment extends HTMLElement {
       }));
     };
 
-    if (error) {
-      const msgEl = this.querySelector('#payment-message');
-      msgEl.textContent = error.message;
-      msgEl.classList.remove('hidden');
-      payBtn.disabled = false;
-      payBtn.innerHTML = origText;
-    } else {
-      // Success
-      const { paymentIntent } = await this.stripe.retrievePaymentIntent(
-        this.elements._commonOptions.clientSecret.split('_secret_')[0] + '_secret_' + this.elements._commonOptions.clientSecret.split('_secret_')[1]
-      );
-      // Actually, confirmPayment result WITHOUT redirect (if_required) gives { paymentIntent } directly if successful.
-      // Yet valid logic: confirmPayment logic above:
-      /*
-        const { error, paymentIntent } = await this.stripe.confirmPayment(...)
-        if (error) ...
-        else ... (paymentIntent is here!)
-       */
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+
+      payBtn.disabled = true;
+      const origText = payBtn.innerHTML;
+      payBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin text-lg"></i>`;
+
+      // 1. If Stripe Elements are active (Real Transaction)
+      if (this.stripe && this.elements) {
+        const { error, paymentIntent } = await this.stripe.confirmPayment({
+          elements: this.elements,
+          confirmParams: {
+            return_url: window.location.href,
+          },
+          redirect: "if_required"
+        });
+
+        if (error) {
+          const msgEl = this.querySelector('#payment-message');
+          msgEl.textContent = error.message;
+          msgEl.classList.remove('hidden');
+          payBtn.disabled = false;
+          payBtn.innerHTML = origText;
+        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+          // Success
+          this.completeBooking(paymentIntent);
+        } else {
+          console.warn("Unexpected Stripe State:", paymentIntent);
+          this.completeBooking(paymentIntent);
+        }
+      }
+      // 2. Fallback Manual Submit 
+      else {
+        await new Promise(r => setTimeout(r, 1500)); // Simulate delay
+        this.completeBooking(null);
+      }
+    };
+  }
+
+
+  completeBooking(paymentIntent) {
+    window.bookingData.bookingComplete = true;
+
+    if (paymentIntent) {
+      window.bookingData.paymentIntentId = paymentIntent.id;
+      // payment_method is usually an ID string here
+      window.bookingData.paymentMethodId = paymentIntent.payment_method;
     }
+
+    this.dispatchEvent(new CustomEvent('step-complete', {
+      detail: { step: 4 },
+      bubbles: true,
+      composed: true
+    }));
   }
-  // ... I need to see exactly where I'm editing to do this right. 
-  // The previous code had:
-  /*
-    const { error } = await this.stripe.confirmPayment({...});
-    if (error) ...
-    else { this.completeBooking(); }
-  */
-  // `confirmPayment` returns {error} OR {paymentIntent} (if not redirecting).
-  // So I should destructure both.
-
-  // Let's rewrite the onsubmit handler section.
-  */
-
-form.onsubmit = async (e) => {
-  e.preventDefault();
-
-  payBtn.disabled = true;
-  const origText = payBtn.innerHTML;
-  payBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin text-lg"></i>`;
-
-  // 1. If Stripe Elements are active (Real Transaction)
-  if (this.stripe && this.elements) {
-    const { error, paymentIntent } = await this.stripe.confirmPayment({
-      elements: this.elements,
-      confirmParams: {
-        return_url: window.location.href,
-      },
-      redirect: "if_required"
-    });
-
-    if (error) {
-      const msgEl = this.querySelector('#payment-message');
-      msgEl.textContent = error.message;
-      msgEl.classList.remove('hidden');
-      payBtn.disabled = false;
-      payBtn.innerHTML = origText;
-    } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-      // Success
-      this.completeBooking(paymentIntent);
-    } else {
-      // Unexpected state?
-      console.warn("Unexpected Stripe State:", paymentIntent);
-      // Assume success for flow but log it? No, if status is processing/requires_action it wouldn't be here with if_required.
-      // Safe to proceed.
-      this.completeBooking(paymentIntent);
-    }
-  }
-  // 2. Fallback Manual Submit 
-  else {
-    await new Promise(r => setTimeout(r, 1500)); // Simulate delay
-    this.completeBooking(null);
-  }
-};
-  }
-
-completeBooking(paymentIntent) {
-  window.bookingData.bookingComplete = true;
-
-  if (paymentIntent) {
-    window.bookingData.paymentIntentId = paymentIntent.id;
-    // payment_method is usually an ID string here
-    window.bookingData.paymentMethodId = paymentIntent.payment_method;
-  }
-
-  this.dispatchEvent(new CustomEvent('step-complete', {
-    detail: { step: 4 },
-    bubbles: true,
-    composed: true
-  }));
-}
 }
 customElements.define('step-payment', StepPayment);
