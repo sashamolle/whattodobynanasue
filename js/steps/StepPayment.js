@@ -20,6 +20,50 @@ export class StepPayment extends HTMLElement {
 
     // Initialize Stripe Logic
     this.initStripe();
+
+    // Listen for Price Updates from StepService
+    // This fixes the bug where originalPrice was stale (e.g. 150) if StepPayment loaded before Price Update.
+    window.addEventListener('price-update', (e) => {
+      console.log("[StepPayment] Received price update:", e.detail.price);
+      this.originalPrice = e.detail.price;
+
+      // If Discount was cleared by StepService, reflect that in UI
+      if (!window.bookingData.promoCode) {
+        this.resetPromoUI();
+        this.updateDisplay(); // Shows new standard price
+        // Re-init Stripe to update amount
+        if (this.stripe) this.initStripe();
+      }
+    });
+  }
+
+  resetPromoUI() {
+    const input = this.querySelector('#promo-input');
+    const container = this.querySelector('#promo-container');
+    const toggleBtn = this.querySelector('#toggle-promo');
+    const applyBtn = this.querySelector('#apply-promo-btn');
+    const messageEl = this.querySelector('#promo-message');
+
+    // Reset Input
+    input.value = '';
+    input.disabled = false;
+    input.classList.remove('bg-gray-50', 'text-gray-500');
+
+    // Reset Button
+    applyBtn.textContent = 'Apply';
+    applyBtn.classList.remove('bg-[var(--sage-green)]', 'pointer-events-none');
+    applyBtn.classList.add('bg-gray-800');
+
+    // Hide Message
+    messageEl.textContent = '';
+    messageEl.classList.add('hidden');
+
+    // Reset Container Visibility (Optional: Keep it open or close it? Let's close it cleanly)
+    // container.classList.add('hidden'); 
+    // toggleBtn.classList.remove('hidden');
+    // Actually, let's keep it open if the user had it open? No, standard reset is safer.
+    container.classList.add('hidden');
+    toggleBtn.classList.remove('hidden');
   }
 
   restorePromoState(code) {
