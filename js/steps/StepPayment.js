@@ -246,7 +246,8 @@ export class StepPayment extends HTMLElement {
       const CODES = {
         'FRIENDS20': { type: 'percent', value: 0.20 },
         'NANASUE': { type: 'fixed', value: 20.00 },
-        'WELCOME10': { type: 'fixed', value: 10.00 }
+        'WELCOME10': { type: 'fixed', value: 10.00 },
+        'HRPMAMASQ2': { type: 'fixed', value: 30.00 }
       };
 
       if (CODES[code]) {
