@@ -193,11 +193,11 @@ h4 {
   position: relative;
 }
 
-.date-input:invalid::-webkit-datetime-edit {
+.date-input:invalid:not(:focus)::-webkit-datetime-edit {
   color: transparent;
 }
 
-.date-input:invalid::before {
+.date-input:invalid:not(:focus)::before {
   content: attr(placeholder);
   color: #9ca3af;
   /* Matches placeholder-gray-400 */
