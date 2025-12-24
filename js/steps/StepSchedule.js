@@ -114,7 +114,7 @@ export class StepSchedule extends HTMLElement {
         const grid = this.querySelector('#cal-grid');
 
         // API Base
-        const API_BASE = (window.ENV && window.ENV.API_BASE) ? window.ENV.API_BASE : 'https://nanasue-backend.onrender.com';
+        const API_BASE = window.ENV.API_BASE;
 
         console.log(`[StepSchedule] Fetching slots from: ${API_BASE}/api/booking/slots`);
 
