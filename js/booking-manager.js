@@ -87,7 +87,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function submitBooking() {
         try {
             console.log("[BookingManager] Submitting Booking Data:", window.bookingData);
-            const response = await fetch(`${window.API_BASE}/api/booking`, {
+            const apiBase = (window.ENV && window.ENV.API_BASE) ? window.ENV.API_BASE : 'https://nanasue-backend.onrender.com';
+            const response = await fetch(`${apiBase}/api/booking`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(window.bookingData)

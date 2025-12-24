@@ -334,7 +334,7 @@ export class StepPayment extends HTMLElement {
   }
 
   async initializePaymentIntent() {
-    const API_BASE = (typeof window.API_BASE !== 'undefined') ? window.API_BASE : '';
+    const API_BASE = (window.ENV && window.ENV.API_BASE) ? window.ENV.API_BASE : 'https://nanasue-backend.onrender.com';
     const STRIPE_PK = 'pk_test_51Sgmzs0JW9TGIeXSW1dfxballtkTvMzEbGAHSB0pwrwiOlLQmO1IpXayh8sIv5GA20k9QuvDMRy3ml97q9gEnxi600kEZ6CtSx';
 
     try {

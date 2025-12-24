@@ -59,7 +59,8 @@ export class StepWaiver extends HTMLElement {
   }
 
   async fetchWaiver() {
-    const API_BASE = (typeof window.API_BASE !== 'undefined') ? window.API_BASE : 'https://nanasue-backend.onrender.com';
+    // API_BASE from config.js (handles localhost vs production)
+    const API_BASE = (window.ENV && window.ENV.API_BASE) ? window.ENV.API_BASE : 'https://nanasue-backend.onrender.com';
     const container = this.querySelector('#waiver-content');
 
     try {
