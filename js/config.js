@@ -8,9 +8,9 @@ window.ENV = {
 
     // API Base URL (Differentiates Localhost vs Production)
     // If hostname is localhost, use port 3001. Otherwise, use relative path (proxy).
-    API_BASE: (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
+    API_BASE: (window.location.hostname === 'localhost')
         ? 'http://localhost:3001'
-        : 'https://nanasue-backend.onrender.com'
+        : ''
 };
 
 // Freeze object to prevent accidental modification
