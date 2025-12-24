@@ -51,6 +51,40 @@ class SiteHeader extends HTMLElement {
 
     this.highlightActiveLink();
     this.initMobileMenu();
+    this.loadGoogleAnalytics();
+  }
+
+  loadGoogleAnalytics() {
+    // Prevent duplicate injection
+    if (window.googleAnalyticsLoaded) return;
+
+    // Get ID from Config
+    const gaId = window.ENV ? window.ENV.GA4_MEASUREMENT_ID : null;
+
+    if (!gaId) {
+      console.warn("GA4 ID not found in window.ENV");
+      return;
+    }
+
+    // 1. Create Script Tag (gtag.js)
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${gaId}`;
+    document.head.appendChild(script);
+
+    // 2. Initialize DataLayer
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    // Expose gtag globally just in case
+    window.gtag = gtag;
+
+    gtag('js', new Date());
+    gtag('config', gaId, {
+      'page_path': window.location.pathname // Redact PII
+    });
+
+    window.googleAnalyticsLoaded = true;
+    // console.log(`[Analytics] GA4 Initialized with ID: ${gaId}`);
   }
 
   highlightActiveLink() {

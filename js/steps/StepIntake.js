@@ -18,7 +18,7 @@ export class StepIntake extends HTMLElement {
                 <p class="text-gray-500">Tell us a little about you and your baby so we can prepare.</p>
             </div>
 
-            <form id="step1-form">
+            <form id="step1-form" method="POST">
                 <div class="space-y-10">
                     
                     <!-- Parent Info Section -->

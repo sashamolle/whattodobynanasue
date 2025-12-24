@@ -498,7 +498,7 @@ export class StepPayment extends HTMLElement {
         const { error, paymentIntent } = await this.stripe.confirmPayment({
           elements: this.elements,
           confirmParams: {
-            return_url: window.location.href,
+            return_url: window.location.origin + window.location.pathname,
           },
           redirect: "if_required"
         });
