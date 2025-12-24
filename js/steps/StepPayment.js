@@ -334,98 +334,98 @@ export class StepPayment extends HTMLElement {
   }
 
   async initializePaymentIntent() {
-  async initializePaymentIntent() {
-      const API_BASE = window.ENV.API_BASE;
-      const STRIPE_PK = 'pk_test_51Sgmzs0JW9TGIeXSW1dfxballtkTvMzEbGAHSB0pwrwiOlLQmO1IpXayh8sIv5GA20k9QuvDMRy3ml97q9gEnxi600kEZ6CtSx';
 
-      try {
-        // 2. Fetch Client Secret from Backend
-        // We send the CURRENT price (which might be discounted)
-        const response = await fetch(`${API_BASE}/api/create-payment-intent`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ items: [{ id: "session-fee", amount: window.bookingData.price }] }),
-        });
+    const API_BASE = window.ENV.API_BASE;
+    const STRIPE_PK = 'pk_test_51Sgmzs0JW9TGIeXSW1dfxballtkTvMzEbGAHSB0pwrwiOlLQmO1IpXayh8sIv5GA20k9QuvDMRy3ml97q9gEnxi600kEZ6CtSx';
 
-        if (!response.ok) {
-          throw new Error(`Backend Error: ${response.status}`);
-        }
+    try {
+      // 2. Fetch Client Secret from Backend
+      // We send the CURRENT price (which might be discounted)
+      const response = await fetch(`${API_BASE}/api/create-payment-intent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items: [{ id: "session-fee", amount: window.bookingData.price }] }),
+      });
 
-        const { clientSecret } = await response.json();
-
-        // 3. Initialize Elements
-        // Note: We create a NEW Stripe instance or element group for the new secret
-        this.stripe = Stripe(STRIPE_PK);
-        const appearance = {
-          theme: 'stripe',
-          variables: {
-            colorPrimary: '#568064',
-            colorBackground: '#ffffff',
-            colorText: '#1f2937',
-            borderRadius: '12px',
-            fontFamily: '"Poppins", sans-serif',
-            spacingUnit: '5px',
-          },
-        };
-        this.elements = this.stripe.elements({ appearance, clientSecret });
-
-        // A. Create Express Checkout Element (Apple Pay)
-        // Check if container exists (it might be re-rendering)
-        const expressContainer = this.querySelector('#express-checkout-container');
-        if (expressContainer) {
-          expressContainer.innerHTML = ''; // Clear previous if any
-          const expressCheckout = this.elements.create('expressCheckout', {
-            wallets: { applePay: 'always', googlePay: 'never' }
-          });
-          expressCheckout.mount('#express-checkout-container');
-
-          expressCheckout.on('ready', ({ availablePaymentMethods }) => {
-            if (availablePaymentMethods) {
-              this.querySelector('#payment-divider')?.classList.remove('hidden');
-            }
-          });
-
-          expressCheckout.on('confirm', async (event) => {
-            const { error } = await this.stripe.confirmPayment({
-              elements: this.elements,
-              clientSecret,
-              confirmParams: { return_url: window.location.href },
-            });
-            if (error) {
-              const msgEl = this.querySelector('#payment-message');
-              msgEl.textContent = error.message;
-              msgEl.classList.remove('hidden');
-            } else {
-              this.completeBooking();
-            }
-          });
-        }
-
-        // B. Create Card Element
-        const paymentElement = this.elements.create("payment", {
-          wallets: { applePay: 'never', googlePay: 'never' }
-        });
-
-        // Mount Card Element
-        const container = this.querySelector('#payment-container');
-        if (container) {
-          container.innerHTML = ''; // Clear loading
-          paymentElement.mount("#payment-container");
-        }
-
-      } catch (e) {
-        console.warn("[StepPayment] Backend connection failed or Stripe init error.", e);
-        this.renderManualFallback();
+      if (!response.ok) {
+        throw new Error(`Backend Error: ${response.status}`);
       }
-    }
 
-    // --- FALLBACK LOGIC (For Demo / No Backend) ---
+      const { clientSecret } = await response.json();
 
-    renderManualFallback() {
+      // 3. Initialize Elements
+      // Note: We create a NEW Stripe instance or element group for the new secret
+      this.stripe = Stripe(STRIPE_PK);
+      const appearance = {
+        theme: 'stripe',
+        variables: {
+          colorPrimary: '#568064',
+          colorBackground: '#ffffff',
+          colorText: '#1f2937',
+          borderRadius: '12px',
+          fontFamily: '"Poppins", sans-serif',
+          spacingUnit: '5px',
+        },
+      };
+      this.elements = this.stripe.elements({ appearance, clientSecret });
+
+      // A. Create Express Checkout Element (Apple Pay)
+      // Check if container exists (it might be re-rendering)
+      const expressContainer = this.querySelector('#express-checkout-container');
+      if (expressContainer) {
+        expressContainer.innerHTML = ''; // Clear previous if any
+        const expressCheckout = this.elements.create('expressCheckout', {
+          wallets: { applePay: 'always', googlePay: 'never' }
+        });
+        expressCheckout.mount('#express-checkout-container');
+
+        expressCheckout.on('ready', ({ availablePaymentMethods }) => {
+          if (availablePaymentMethods) {
+            this.querySelector('#payment-divider')?.classList.remove('hidden');
+          }
+        });
+
+        expressCheckout.on('confirm', async (event) => {
+          const { error } = await this.stripe.confirmPayment({
+            elements: this.elements,
+            clientSecret,
+            confirmParams: { return_url: window.location.href },
+          });
+          if (error) {
+            const msgEl = this.querySelector('#payment-message');
+            msgEl.textContent = error.message;
+            msgEl.classList.remove('hidden');
+          } else {
+            this.completeBooking();
+          }
+        });
+      }
+
+      // B. Create Card Element
+      const paymentElement = this.elements.create("payment", {
+        wallets: { applePay: 'never', googlePay: 'never' }
+      });
+
+      // Mount Card Element
       const container = this.querySelector('#payment-container');
-      if (!container) return;
+      if (container) {
+        container.innerHTML = ''; // Clear loading
+        paymentElement.mount("#payment-container");
+      }
 
-      container.innerHTML = `
+    } catch (e) {
+      console.warn("[StepPayment] Backend connection failed or Stripe init error.", e);
+      this.renderManualFallback();
+    }
+  }
+
+  // --- FALLBACK LOGIC (For Demo / No Backend) ---
+
+  renderManualFallback() {
+    const container = this.querySelector('#payment-container');
+    if (!container) return;
+
+    container.innerHTML = `
         <div class="mb-6 fade-in">
             <div class="mb-4 p-3 bg-gray-50 text-gray-500 text-xs rounded-lg border border-gray-100 flex items-center justify-center gap-2">
                 <i class="fas fa-info-circle"></i> Demo Mode: Backend not connected. Enter any details.
@@ -452,95 +452,95 @@ export class StepPayment extends HTMLElement {
         </div>
     `;
 
-      // Re-attach validation logic for manual inputs
-      const inputs = container.querySelectorAll('.manual-input');
-      const payBtn = this.querySelector('#btn-pay-now');
+    // Re-attach validation logic for manual inputs
+    const inputs = container.querySelectorAll('.manual-input');
+    const payBtn = this.querySelector('#btn-pay-now');
 
-      payBtn.disabled = true;
-      payBtn.classList.add('opacity-50', 'cursor-not-allowed');
+    payBtn.disabled = true;
+    payBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
-      const checkValid = () => {
-        const allFilled = Array.from(inputs).every(i => i.value.length > 2);
-        if (allFilled) {
-          payBtn.disabled = false;
-          payBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        } else {
-          payBtn.disabled = true;
-          payBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        }
-      };
-      inputs.forEach(i => i.addEventListener('input', checkValid));
-    }
-
-    // --- SUBMIT HANDLING ---
-
-    setupListeners() {
-      const form = this.querySelector('#payment-form');
-      const backBtn = this.querySelector('#btn-step-4-back');
-      const payBtn = this.querySelector('#btn-pay-now');
-
-      backBtn.onclick = () => {
-        this.dispatchEvent(new CustomEvent('step-back', {
-          detail: { step: 4 },
-          bubbles: true,
-          composed: true
-        }));
-      };
-
-      form.onsubmit = async (e) => {
-        e.preventDefault();
-
+    const checkValid = () => {
+      const allFilled = Array.from(inputs).every(i => i.value.length > 2);
+      if (allFilled) {
+        payBtn.disabled = false;
+        payBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      } else {
         payBtn.disabled = true;
-        const origText = payBtn.innerHTML;
-        payBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin text-lg"></i>`;
-
-        // 1. If Stripe Elements are active (Real Transaction)
-        if (this.stripe && this.elements) {
-          const { error, paymentIntent } = await this.stripe.confirmPayment({
-            elements: this.elements,
-            confirmParams: {
-              return_url: window.location.origin + window.location.pathname,
-            },
-            redirect: "if_required"
-          });
-
-          if (error) {
-            const msgEl = this.querySelector('#payment-message');
-            msgEl.textContent = error.message;
-            msgEl.classList.remove('hidden');
-            payBtn.disabled = false;
-            payBtn.innerHTML = origText;
-          } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-            // Success
-            this.completeBooking(paymentIntent);
-          } else {
-            console.warn("Unexpected Stripe State:", paymentIntent);
-            this.completeBooking(paymentIntent);
-          }
-        }
-        // 2. Fallback Manual Submit 
-        else {
-          await new Promise(r => setTimeout(r, 1500)); // Simulate delay
-          this.completeBooking(null);
-        }
-      };
-    }
-
-
-    completeBooking(paymentIntent) {
-      window.bookingData.bookingComplete = true;
-
-      if (paymentIntent) {
-        window.bookingData.paymentIntentId = paymentIntent.id;
-        // payment_method is usually an ID string here
-        window.bookingData.paymentMethodId = paymentIntent.payment_method;
+        payBtn.classList.add('opacity-50', 'cursor-not-allowed');
       }
+    };
+    inputs.forEach(i => i.addEventListener('input', checkValid));
+  }
 
-      this.dispatchEvent(new CustomEvent('step-complete', {
+  // --- SUBMIT HANDLING ---
+
+  setupListeners() {
+    const form = this.querySelector('#payment-form');
+    const backBtn = this.querySelector('#btn-step-4-back');
+    const payBtn = this.querySelector('#btn-pay-now');
+
+    backBtn.onclick = () => {
+      this.dispatchEvent(new CustomEvent('step-back', {
         detail: { step: 4 },
         bubbles: true,
         composed: true
       }));
-    }
+    };
+
+    form.onsubmit = async (e) => {
+      e.preventDefault();
+
+      payBtn.disabled = true;
+      const origText = payBtn.innerHTML;
+      payBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin text-lg"></i>`;
+
+      // 1. If Stripe Elements are active (Real Transaction)
+      if (this.stripe && this.elements) {
+        const { error, paymentIntent } = await this.stripe.confirmPayment({
+          elements: this.elements,
+          confirmParams: {
+            return_url: window.location.origin + window.location.pathname,
+          },
+          redirect: "if_required"
+        });
+
+        if (error) {
+          const msgEl = this.querySelector('#payment-message');
+          msgEl.textContent = error.message;
+          msgEl.classList.remove('hidden');
+          payBtn.disabled = false;
+          payBtn.innerHTML = origText;
+        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+          // Success
+          this.completeBooking(paymentIntent);
+        } else {
+          console.warn("Unexpected Stripe State:", paymentIntent);
+          this.completeBooking(paymentIntent);
+        }
+      }
+      // 2. Fallback Manual Submit 
+      else {
+        await new Promise(r => setTimeout(r, 1500)); // Simulate delay
+        this.completeBooking(null);
+      }
+    };
   }
+
+
+  completeBooking(paymentIntent) {
+    window.bookingData.bookingComplete = true;
+
+    if (paymentIntent) {
+      window.bookingData.paymentIntentId = paymentIntent.id;
+      // payment_method is usually an ID string here
+      window.bookingData.paymentMethodId = paymentIntent.payment_method;
+    }
+
+    this.dispatchEvent(new CustomEvent('step-complete', {
+      detail: { step: 4 },
+      bubbles: true,
+      composed: true
+    }));
+  }
+}
 customElements.define('step-payment', StepPayment);
