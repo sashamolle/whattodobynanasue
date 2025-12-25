@@ -35,9 +35,9 @@ export class StepConfirmation extends HTMLElement {
                     </p>
 
                     <div class="bg-gray-50 rounded-xl p-6 mb-10 max-w-md mx-auto border border-gray-100 shadow-sm">
-                        <div class="flex items-center justify-between mb-4 pb-4 border-b border-gray-200 border-dashed">
-                            <span class="text-gray-500 font-medium text-sm uppercase tracking-wide">Confirmation Sent To</span>
-                            <span id="confirm-email" class="text-[var(--dark-heading)] font-bold text-sm">...</span>
+                        <div class="flex flex-col md:flex-row items-center justify-between gap-2 mb-4 pb-4 border-b border-gray-200 border-dashed text-center md:text-left">
+                            <span class="text-gray-500 font-medium text-sm uppercase tracking-wide whitespace-nowrap">Confirmation Sent To</span>
+                            <span id="confirm-email" class="text-[var(--dark-heading)] font-bold text-sm break-all">...</span>
                         </div>
                          <div class="flex items-center justify-center gap-2 text-[var(--sage-green)] font-semibold bg-white py-3 px-4 rounded-lg border border-[var(--sage-green-light)]">
                             <i class="fas fa-receipt"></i>
