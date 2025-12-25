@@ -350,19 +350,23 @@ export class StepService extends HTMLElement {
 
                 if (minutes <= 30) {
                     // Zone 1
+                    // [FIX] Update State FIRST to safely trigger events
+                    window.bookingData.parentAddress = destination;
+                    window.bookingData.travelZone = 'zone1';
+
                     this.updatePrice(basePrice, 'In-Home Visit');
                     this.showFeedback('Great news! You are in our primary service area.', 'success');
                     addressInput.dataset.valid = 'true';
-                    window.bookingData.parentAddress = destination;
-                    window.bookingData.travelZone = 'zone1';
                     this.validateStep0(true);
                 } else if (isManhattan) {
                     // Zone 2
+                    // [FIX] Update State FIRST
+                    window.bookingData.parentAddress = destination;
+                    window.bookingData.travelZone = 'zone2';
+
                     this.updatePrice(basePrice + 30, 'In-Home (Travel Fee Included)');
                     this.showFeedback('We can visit you! Just a heads up, a travel fee ($30) will be added for this location.', 'warning');
                     addressInput.dataset.valid = 'true';
-                    window.bookingData.parentAddress = destination;
-                    window.bookingData.travelZone = 'zone2';
                     this.validateStep0(true);
                 } else {
                     // Zone 3
