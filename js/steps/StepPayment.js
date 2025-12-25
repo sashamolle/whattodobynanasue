@@ -336,7 +336,7 @@ export class StepPayment extends HTMLElement {
   async initializePaymentIntent() {
 
     const API_BASE = window.ENV.API_BASE;
-    const STRIPE_PK = 'pk_test_51Sgmzs0JW9TGIeXSW1dfxballtkTvMzEbGAHSB0pwrwiOlLQmO1IpXayh8sIv5GA20k9QuvDMRy3ml97q9gEnxi600kEZ6CtSx';
+    const STRIPE_PK = window.ENV.STRIPE_PK;
 
     try {
       // 2. Fetch Client Secret from Backend
