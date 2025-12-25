@@ -193,14 +193,14 @@ export class StepPayment extends HTMLElement {
                         <div id="payment-message" class="hidden mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg text-center border border-red-100"></div>
 
                         <!-- Button Row -->
-                        <div class="mt-8 flex justify-between items-center pt-6 border-t border-gray-100">
+                        <div class="mt-8 flex flex-col-reverse md:flex-row justify-between items-center gap-4 pt-6 border-t border-gray-100">
                             <button type="button" id="btn-step-4-back" 
-                                class="text-gray-500 font-medium hover:text-[var(--dark-heading)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
+                                class="w-full md:w-auto text-gray-500 font-medium hover:text-[var(--dark-heading)] px-4 py-3 md:py-2 rounded-lg transition-colors flex items-center justify-center gap-2">
                                 <i class="fas fa-arrow-left text-sm"></i> Back
                             </button>
 
                             <button type="submit" id="btn-pay-now" 
-                                class="bg-[var(--sage-green)] text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 min-w-[200px] justify-center disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
+                                class="w-full md:w-auto bg-[var(--sage-green)] text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 min-w-[200px] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
                             <span>Pay Now</span> <i class="fas fa-lock text-sm opacity-80"></i>
                             </button>
                         </div>
