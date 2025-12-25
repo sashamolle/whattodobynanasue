@@ -223,13 +223,14 @@ export class StepService extends HTMLElement {
 
                 // Set Price
                 const price = SERVICES[selectedCategory][selectedLocation];
-                this.updatePrice(price, `${selectedCategory} - ${selectedLocation}`);
 
-                // [FIX] Explicitly save Service Type/Category/Zone to Global State for Virtual
+                // [FIX] Explicitly save Service Type/Category/Zone to Global State BEFORE triggering Price Update
+                // This ensures StepPayment reads the correct data when it catches the event
                 window.bookingData.serviceCategory = selectedCategory;
                 window.bookingData.serviceType = selectedLocation;
                 window.bookingData.travelZone = 'zone1';
 
+                this.updatePrice(price, `${selectedCategory} - ${selectedLocation}`);
                 this.validateStep0(true);
             }
         };
