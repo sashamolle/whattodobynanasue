@@ -224,13 +224,12 @@ export class StepService extends HTMLElement {
                 // Set Price
                 const price = SERVICES[selectedCategory][selectedLocation];
                 this.updatePrice(price, `${selectedCategory} - ${selectedLocation}`);
-                // Default Zone for Virtual/Office
 
-                // [FIX] Explicitly save Service Type/Category to Global State
+                // [FIX] Explicitly save Service Type/Category/Zone to Global State for Virtual
                 window.bookingData.serviceCategory = selectedCategory;
                 window.bookingData.serviceType = selectedLocation;
-
                 window.bookingData.travelZone = 'zone1';
+
                 this.validateStep0(true);
             }
         };
