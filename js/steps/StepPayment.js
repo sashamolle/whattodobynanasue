@@ -362,7 +362,6 @@ export class StepPayment extends HTMLElement {
         serviceType: window.bookingData.serviceType,
         travelZone: window.bookingData.travelZone
       };
-      console.log("[StepPayment] Sending Payment Intent Payload:", payload);
 
       const response = await fetch(`${API_BASE}/api/create-payment-intent`, {
         method: "POST",
