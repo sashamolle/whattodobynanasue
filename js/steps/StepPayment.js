@@ -428,6 +428,24 @@ export class StepPayment extends HTMLElement {
         wallets: { applePay: 'never', googlePay: 'never' }
       });
 
+      // Auto-Disable/Enable Pay Button based on validity
+      const payBtn = this.querySelector('#btn-pay-now');
+      if (payBtn) {
+        payBtn.disabled = true;
+        payBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+
+      paymentElement.on('change', (event) => {
+        if (payBtn) {
+          payBtn.disabled = !event.complete;
+          if (event.complete) {
+            payBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+          } else {
+            payBtn.classList.add('opacity-50', 'cursor-not-allowed');
+          }
+        }
+      });
+
       // Mount Card Element
       const container = this.querySelector('#payment-container');
       if (container) {
