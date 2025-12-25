@@ -224,6 +224,8 @@ export class StepService extends HTMLElement {
                 // Set Price
                 const price = SERVICES[selectedCategory][selectedLocation];
                 this.updatePrice(price, `${selectedCategory} - ${selectedLocation}`);
+                // Default Zone for Virtual/Office
+                window.bookingData.travelZone = 'zone1';
                 this.validateStep0(true);
             }
         };
@@ -347,6 +349,7 @@ export class StepService extends HTMLElement {
                     this.showFeedback('Great news! You are in our primary service area.', 'success');
                     addressInput.dataset.valid = 'true';
                     window.bookingData.parentAddress = destination;
+                    window.bookingData.travelZone = 'zone1';
                     this.validateStep0(true);
                 } else if (isManhattan) {
                     // Zone 2
@@ -354,6 +357,7 @@ export class StepService extends HTMLElement {
                     this.showFeedback('We can visit you! Just a heads up, a travel fee ($30) will be added for this location.', 'warning');
                     addressInput.dataset.valid = 'true';
                     window.bookingData.parentAddress = destination;
+                    window.bookingData.travelZone = 'zone2';
                     this.validateStep0(true);
                 } else {
                     // Zone 3

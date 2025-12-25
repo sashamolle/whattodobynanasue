@@ -344,7 +344,13 @@ export class StepPayment extends HTMLElement {
       const response = await fetch(`${API_BASE}/api/create-payment-intent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: [{ id: "session-fee", amount: window.bookingData.price }] }),
+        body: JSON.stringify({
+          items: [{ id: "session-fee", amount: window.bookingData.price }],
+          promoCode: window.bookingData.promoCode,
+          serviceCategory: window.bookingData.serviceCategory, // 'mobility'
+          serviceType: window.bookingData.serviceType,         // 'in-home', 'virtual'
+          travelZone: window.bookingData.travelZone            // 'zone1', 'zone2'
+        }),
       });
 
       if (!response.ok) {
