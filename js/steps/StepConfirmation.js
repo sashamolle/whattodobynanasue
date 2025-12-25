@@ -39,8 +39,8 @@ export class StepConfirmation extends HTMLElement {
                             <span class="text-gray-500 font-medium text-sm uppercase tracking-wide whitespace-nowrap">Confirmation Sent To</span>
                             <span id="confirm-email" class="text-[var(--dark-heading)] font-bold text-sm break-all">...</span>
                         </div>
-                         <div class="flex items-center justify-center gap-2 text-[var(--sage-green)] font-semibold bg-white py-3 px-4 rounded-lg border border-[var(--sage-green-light)]">
-                            <i class="fas fa-receipt"></i>
+                         <div class="flex flex-col md:flex-row items-center justify-center gap-2 md:gap-3 text-[var(--sage-green)] font-semibold bg-white py-4 px-4 rounded-lg border border-[var(--sage-green-light)] text-center">
+                            <i class="fas fa-receipt text-xl md:text-base mb-1 md:mb-0"></i>
                             <span>Payment Received. Receipt sent to email.</span>
                         </div>
                     </div>
