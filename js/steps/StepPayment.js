@@ -238,74 +238,84 @@ export class StepPayment extends HTMLElement {
     };
 
     // Apply Code
-    const handleApply = () => {
+    const handleApply = async () => {
       const code = input.value.trim().toUpperCase();
       messageEl.className = "text-xs mt-2 font-medium ml-1 block"; // Reset classes
+      messageEl.textContent = "Verifying...";
+      messageEl.classList.remove('text-red-500', 'text-[var(--sage-green)]');
+      messageEl.classList.add('text-gray-500');
 
-      // --- CODES CONFIGURATION ---
-      const CODES = {
-        'FRIENDS20': { type: 'percent', value: 0.20 },
-        'NANASUE': { type: 'fixed', value: 20.00 },
-        'WELCOME10': { type: 'fixed', value: 10.00 },
-        'HRPMAMASQ2': { type: 'fixed', value: 30.00 },
-        'TEST': { type: 'override', value: 1.00 },
-        'HACKER': { type: 'override', value: 5.00 }
-      };
+      try {
+        const API_BASE = window.ENV.API_BASE;
+        const res = await fetch(`${API_BASE}/api/verify-promo`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code })
+        });
 
-      if (CODES[code]) {
-        // Calculate Discount
-        const discount = CODES[code];
-        let newPrice = this.originalPrice;
+        const data = await res.json();
 
-        if (discount.type === 'percent') {
-          newPrice = this.originalPrice * (1 - discount.value);
-        } else if (discount.type === 'override') {
-          newPrice = discount.value;
+        if (data.valid) {
+          // Valid Code
+          let newPrice = this.originalPrice;
+          if (data.type === 'percent') {
+            newPrice = this.originalPrice * (1 - (data.value / 100)); // Backend returns value as number (e.g. 20 for 20%)? Or 0.2?
+            // Wait, looking at pricing.js: { type: 'percent', value: 0.20 } -> 0.20
+            // { type: 'fixed', value: 20.00 }
+            // { type: 'override', value: 5.00 }
+            // Let's assume backend returns exactly our object.
+            if (data.value <= 1) newPrice = this.originalPrice * (1 - data.value); // Handle 0.20
+            else newPrice = this.originalPrice * (1 - (data.value / 100)); // Handle 20
+          } else if (data.type === 'override') {
+            newPrice = data.value;
+          } else {
+            // Fixed
+            newPrice = Math.max(0, this.originalPrice - data.value);
+          }
+
+          // Update Global State
+          window.bookingData.price = newPrice;
+          window.bookingData.promoCode = code;
+          window.bookingData.originalPrice = this.originalPrice;
+          window.bookingData.discountAmount = (this.originalPrice - newPrice).toFixed(2);
+
+          // UI Feedback
+          messageEl.textContent = "Code applied successfully!";
+          messageEl.classList.add('text-[var(--sage-green)]');
+          messageEl.classList.remove('text-gray-500');
+
+          input.disabled = true;
+          input.classList.add('bg-gray-50', 'text-gray-500');
+          applyBtn.textContent = 'Applied';
+          applyBtn.classList.add('bg-[var(--sage-green)]', 'pointer-events-none');
+          applyBtn.classList.remove('bg-gray-800');
+
+          toggleBtn.classList.add('hidden');
+
+          // Refresh Displays
+          this.updateDisplay();
+
+          // Re-Initialize Payment (To update Stripe Intent amount)
+          if (this.stripe) {
+            const paymentContainer = this.querySelector('#payment-container');
+            paymentContainer.innerHTML = `
+                      <div class="flex flex-col items-center justify-center h-40 text-gray-400">
+                          <i class="fas fa-circle-notch fa-spin text-2xl mb-2 text-[var(--sage-green)]"></i>
+                          <span class="text-sm font-medium">Updating Total...</span>
+                      </div>
+                  `;
+            this.initStripe();
+          }
+
         } else {
-          newPrice = Math.max(0, this.originalPrice - discount.value);
+          // Invalid Code
+          throw new Error(data.error || "Invalid Code");
         }
-
-        // Update Global State
-        window.bookingData.price = newPrice;
-        window.bookingData.promoCode = code;
-        window.bookingData.originalPrice = this.originalPrice;
-        window.bookingData.discountAmount = (this.originalPrice - newPrice).toFixed(2);
-
-        // UI Feedback
-        messageEl.textContent = "Code applied successfully!";
-        messageEl.classList.add('text-[var(--sage-green)]');
-        messageEl.classList.remove('text-red-500');
-
-        input.disabled = true;
-        input.classList.add('bg-gray-50', 'text-gray-500');
-        applyBtn.textContent = 'Applied';
-        applyBtn.classList.add('bg-[var(--sage-green)]', 'pointer-events-none');
-        applyBtn.classList.remove('bg-gray-800');
-
-        toggleBtn.classList.add('hidden'); // Hide the toggle link so it looks cleaner
-
-        // Refresh Displays
-        this.updateDisplay();
-
-        // Re-Initialize Payment (To update Stripe Intent amount)
-        // We verify Stripe exists first
-        if (this.stripe) {
-          // Clear old element to prevent duplicates
-          const paymentContainer = this.querySelector('#payment-container');
-          paymentContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center h-40 text-gray-400">
-                        <i class="fas fa-circle-notch fa-spin text-2xl mb-2 text-[var(--sage-green)]"></i>
-                        <span class="text-sm font-medium">Updating Total...</span>
-                    </div>
-                `;
-          this.initStripe(); // Re-run init to fetch new intent
-        }
-
-      } else {
-        // Invalid Code
-        messageEl.textContent = "Invalid code. Please try again.";
+      } catch (err) {
+        // Error Handling
+        messageEl.textContent = err.message || "Invalid code. Please try again.";
         messageEl.classList.add('text-red-500');
-        messageEl.classList.remove('text-[var(--sage-green)]');
+        messageEl.classList.remove('text-gray-500', 'text-[var(--sage-green)]');
 
         // Shake animation
         input.classList.add('ring-2', 'ring-red-200', 'border-red-300');
