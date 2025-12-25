@@ -386,7 +386,7 @@ export class StepPayment extends HTMLElement {
         });
 
         expressCheckout.on('confirm', async (event) => {
-          const { error } = await this.stripe.confirmPayment({
+          const { error, paymentIntent } = await this.stripe.confirmPayment({
             elements: this.elements,
             clientSecret,
             confirmParams: { return_url: window.location.href },
@@ -397,7 +397,8 @@ export class StepPayment extends HTMLElement {
             msgEl.textContent = error.message;
             msgEl.classList.remove('hidden');
           } else {
-            this.completeBooking();
+            console.log("[StepPayment] Apple Pay Success:", paymentIntent);
+            this.completeBooking(paymentIntent);
           }
         });
       }
