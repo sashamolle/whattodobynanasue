@@ -14,7 +14,7 @@ window.ENV = {
 
     // Stripe Publishable Key
     // Replace with your LIVE key (pk_live_...) when ready for production
-    STRIPE_PK: 'pk_test_51Sgmzs0JW9TGIeXSW1dfxballtkTvMzEbGAHSB0pwrwiOlLQmO1IpXayh8sIv5GA20k9QuvDMRy3ml97q9gEnxi600kEZ6CtSx'
+    STRIPE_PK: 'pk_live_51Sgmzi0YXinpks17uQJsIrOoeBT1GUtwazNR60tTzzBUUAvpL1yTusWgVYFTf0I48KEAksBUaXD3MUa401VSbHcO00EV31U2pO'
 };
 
 // Freeze object to prevent accidental modification
