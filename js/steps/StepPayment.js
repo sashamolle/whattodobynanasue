@@ -390,6 +390,7 @@ export class StepPayment extends HTMLElement {
             elements: this.elements,
             clientSecret,
             confirmParams: { return_url: window.location.href },
+            redirect: "if_required",
           });
           if (error) {
             const msgEl = this.querySelector('#payment-message');
