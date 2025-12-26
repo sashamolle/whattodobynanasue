@@ -9,6 +9,35 @@ export class StepConfirmation extends HTMLElement {
       const el = this.querySelector('#confirm-email');
       if (el) el.textContent = window.bookingData.parentEmail;
     }
+
+    // [GA4] Track Conversion
+    this.trackPurchase();
+  }
+
+  trackPurchase() {
+    const data = window.bookingData;
+
+    // Safety checks: Must have ID, Price, and NOT already tracked
+    if (!data || !data.paymentIntentId || data.purchaseTracked) return;
+
+    if (window.gtag) {
+      console.log(`[GA4] Tracking Purchase: ${data.paymentIntentId} ($${data.price})`);
+
+      window.gtag('event', 'purchase', {
+        transaction_id: data.paymentIntentId,
+        value: data.totalPaid || data.price, // Prefer totalPaid (with travel fee), fallback to base
+        currency: 'USD',
+        coupon: data.promoCode || undefined,
+        items: [{
+          item_id: data.serviceType,
+          item_name: 'Booked Session',
+          price: data.totalPaid || data.price
+        }]
+      });
+
+      // Mark as tracked to prevent double-counting on re-renders
+      data.purchaseTracked = true;
+    }
   }
 
   render() {

@@ -194,6 +194,28 @@ export class StepIntake extends HTMLElement {
     // Initial check
     checkValidity();
 
+    // [GA4] Friction Tracking: Capture validation errors on blur
+    const inputs = form.querySelectorAll('input, textarea');
+    inputs.forEach(input => {
+      input.addEventListener('blur', () => {
+        // If INVALID after user leaves field
+        if (!input.checkValidity() && input.value.trim() !== '') {
+          // Only track if they actually typed something (or left it required-empty? standard is usually "attempted")
+          // Logic: If plain empty and required, it's invalid. 
+          // Let's track any invalid state on blur.
+
+          if (window.gtag) {
+            window.gtag('event', 'view_error_message', {
+              event_category: 'form_friction',
+              event_label: 'intake_form',
+              field_id: input.id,
+              error_message: input.validationMessage
+            });
+          }
+        }
+      });
+    });
+
     backBtn.onclick = () => {
       this.dispatchEvent(new CustomEvent('step-back', {
         detail: { step: 1 },
