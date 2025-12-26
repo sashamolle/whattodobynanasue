@@ -88,8 +88,35 @@ class SiteHeader extends HTMLElement {
       'send_page_view': !isBookingPage // [GA4] Only auto-send if NOT on booking app
     });
 
+    // 3. Initialize Global Click Tracker
+    this.initClickTracking();
+
     window.googleAnalyticsLoaded = true;
     // console.log(`[Analytics] GA4 Initialized with ID: ${gaId}`);
+  }
+
+  initClickTracking() {
+    document.body.addEventListener('click', (e) => {
+      // Find closest clickable element (Button or Link)
+      const target = e.target.closest('a, button');
+
+      if (!target) return;
+
+      // Extract Metadata
+      const clickData = {
+        element_text: (target.innerText || target.textContent || '').trim().substring(0, 50), // Cap length
+        element_id: target.id || '(no-id)',
+        element_class: target.className || '',
+        link_url: target.href || '(no-url)',
+        element_type: target.tagName.toLowerCase()
+      };
+
+      // Send to GA4
+      if (window.gtag) {
+        // console.log('[GA4] Tracking Click:', clickData);
+        window.gtag('event', 'user_click', clickData);
+      }
+    });
   }
 
   highlightActiveLink() {

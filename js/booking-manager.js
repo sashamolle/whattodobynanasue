@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Navigation Logic ---
     function showStep(index) {
+        // [GA4] Virtual Page View Tracking (Send immediately before UI work)
+        trackVirtualPageView(index);
+
         // Hide all
         steps.forEach(el => el.classList.add('hidden'));
 
@@ -78,9 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (steps[index] && typeof steps[index].updateDisplay === 'function') {
             steps[index].updateDisplay();
         }
-
-        // [GA4] Virtual Page View Tracking
-        trackVirtualPageView(index);
 
         currentStepIndex = index;
         window.scrollTo({ top: 0, behavior: 'smooth' });
