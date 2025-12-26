@@ -80,7 +80,8 @@ class SiteHeader extends HTMLElement {
 
     gtag('js', new Date());
     gtag('config', gaId, {
-      'page_path': window.location.pathname // Redact PII
+      'page_path': window.location.pathname, // Redact PII
+      'send_page_view': false // [GA4] Disable default PV, let SPA routers handle it
     });
 
     window.googleAnalyticsLoaded = true;
