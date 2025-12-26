@@ -78,10 +78,14 @@ class SiteHeader extends HTMLElement {
     // Expose gtag globally just in case
     window.gtag = gtag;
 
+    // Check if we are on the Booking SPA (booking.html)
+    // If yes, disable default PV and let booking-manager.js handle it
+    const isBookingPage = window.location.pathname.includes('booking.html');
+
     gtag('js', new Date());
     gtag('config', gaId, {
       'page_path': window.location.pathname, // Redact PII
-      'send_page_view': false // [GA4] Disable default PV, let SPA routers handle it
+      'send_page_view': !isBookingPage // [GA4] Only auto-send if NOT on booking app
     });
 
     window.googleAnalyticsLoaded = true;
