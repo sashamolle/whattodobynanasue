@@ -79,8 +79,48 @@ document.addEventListener('DOMContentLoaded', () => {
             steps[index].updateDisplay();
         }
 
+        // [GA4] Virtual Page View Tracking
+        trackVirtualPageView(index);
+
         currentStepIndex = index;
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // --- GA4 Virtual Page Tracking ---
+    function trackVirtualPageView(stepIndex) {
+        // Mapping Step Index (0-5) to Virtual Paths
+        // 0: Service -> step-1
+        // 1: Intake  -> step-2
+        // 2: Waiver  -> step-3
+        // 3: Schedule-> step-4
+        // 4: Payment -> step-5
+        // 5: Confirm -> thank-you
+
+        const mapping = {
+            0: { path: '/signup/step-1', title: 'Signup - Step 1' },
+            1: { path: '/signup/step-2', title: 'Signup - Step 2' },
+            2: { path: '/signup/step-3', title: 'Signup - Step 3' },
+            3: { path: '/signup/step-4', title: 'Signup - Step 4' },
+            4: { path: '/signup/step-5', title: 'Signup - Step 5' },
+            5: { path: '/signup/thank-you', title: 'Signup - Complete' }
+        };
+
+        const config = mapping[stepIndex];
+        if (!config) return;
+
+        const tagId = window.ENV?.GA4_MEASUREMENT_ID;
+
+        // Ensure gtag exists (it should from index.html / dynamically loaded script)
+        if (typeof window.gtag === 'function' && tagId) {
+            console.log(`[GA4] Sending Virtual Page View: ${config.path}`);
+            window.gtag('config', tagId, {
+                'page_path': config.path,
+                'page_title': config.title
+            });
+        } else {
+            // Optional: Log warning only if dev, or silent fail
+            // console.warn("[GA4] gtag not found or ID missing");
+        }
     }
 
     // --- Submit Logic (Step 4 -> 5) ---
