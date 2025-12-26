@@ -113,9 +113,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ensure gtag exists (it should from index.html / dynamically loaded script)
         if (typeof window.gtag === 'function' && tagId) {
             console.log(`[GA4] Sending Virtual Page View: ${config.path}`);
-            window.gtag('config', tagId, {
+
+            // [GA4] Use 'event' + 'page_view' for SPA transitions
+            // 'config' often gets ignored if sent multiple times without page reload
+            window.gtag('event', 'page_view', {
                 'page_path': config.path,
-                'page_title': config.title
+                'page_title': config.title,
+                'send_to': tagId
             });
         } else {
             // Optional: Log warning only if dev, or silent fail
