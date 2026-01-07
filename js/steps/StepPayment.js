@@ -192,6 +192,19 @@ export class StepPayment extends HTMLElement {
                         <!-- Error Message Area -->
                         <div id="payment-message" class="hidden mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg text-center border border-red-100"></div>
 
+                        <!-- Waiver Acceptance Checkbox -->
+                        <div class="mt-6 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <label class="flex items-start gap-3 cursor-pointer group">
+                                <input type="checkbox" id="waiver-checkbox" 
+                                    class="mt-1 w-5 h-5 rounded border-gray-300 text-[var(--sage-green)] focus:ring-[var(--sage-green)] focus:ring-offset-0 cursor-pointer">
+                                <span class="text-sm text-gray-700 leading-relaxed">
+                                    I have read and agree to the 
+                                    <button type="button" class="waiver-link text-[var(--sage-green)] font-medium hover:underline" data-doc="terms">Terms & Conditions</button> and 
+                                    <button type="button" class="waiver-link text-[var(--sage-green)] font-medium hover:underline" data-doc="privacy">Privacy Policy</button>.
+                                </span>
+                            </label>
+                        </div>
+
                         <!-- Button Row -->
                         <div class="mt-8 flex flex-col-reverse md:flex-row justify-between items-center gap-4 pt-6 border-t border-gray-100">
                             <button type="button" id="btn-step-4-back" 
@@ -213,6 +226,36 @@ export class StepPayment extends HTMLElement {
                         <i class="fab fa-cc-visa text-2xl text-blue-800"></i>
                         <i class="fab fa-cc-mastercard text-2xl text-red-600"></i>
                         <i class="fab fa-cc-amex text-2xl text-blue-500"></i>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal for Terms/Privacy/Waiver -->
+            <div id="waiver-modal" class="hidden fixed inset-0 z-50 overflow-y-auto">
+                <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+                    <!-- Background overlay -->
+                    <div class="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" id="modal-overlay"></div>
+                    
+                    <!-- Modal panel -->
+                    <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-3xl sm:w-full">
+                        <div class="bg-white px-6 pt-6 pb-4">
+                            <div class="flex items-start justify-between mb-4">
+                                <h3 id="modal-title" class="text-2xl font-bold text-[var(--dark-heading)]"></h3>
+                                <button type="button" id="modal-close" class="text-gray-400 hover:text-gray-600 transition-colors">
+                                    <i class="fas fa-times text-xl"></i>
+                                </button>
+                            </div>
+                            <div id="modal-content" class="mt-4 max-h-[60vh] overflow-y-auto prose prose-sm max-w-none">
+                                <div class="flex items-center justify-center h-40">
+                                    <i class="fas fa-circle-notch fa-spin text-2xl text-[var(--sage-green)]"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-6 py-4">
+                            <button type="button" id="modal-accept" class="w-full bg-[var(--sage-green)] text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all">
+                                I Understand
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -520,10 +563,106 @@ export class StepPayment extends HTMLElement {
     const form = this.querySelector('#payment-form');
     const backBtn = this.querySelector('#btn-step-4-back');
     const payBtn = this.querySelector('#btn-pay-now');
+    const waiverCheckbox = this.querySelector('#waiver-checkbox');
+    const waiverLinks = this.querySelectorAll('.waiver-link');
+    const modal = this.querySelector('#waiver-modal');
+    const modalOverlay = this.querySelector('#modal-overlay');
+    const modalClose = this.querySelector('#modal-close');
+    const modalAccept = this.querySelector('#modal-accept');
+    const modalTitle = this.querySelector('#modal-title');
+    const modalContent = this.querySelector('#modal-content');
+
+    // Waiver checkbox validation - disable Pay button until checked
+    const updatePayButtonState = () => {
+      const isWaiverAccepted = waiverCheckbox.checked;
+      const isPaymentValid = !payBtn.disabled; // Check if payment fields are valid
+
+      if (!isWaiverAccepted) {
+        payBtn.disabled = true;
+        payBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        payBtn.title = 'Please accept the waiver to continue';
+      } else if (isWaiverAccepted && isPaymentValid) {
+        payBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        payBtn.title = '';
+      }
+    };
+
+    waiverCheckbox.addEventListener('change', updatePayButtonState);
+
+    // Modal handling for Terms/Privacy/Waiver links
+    const openModal = async (docType) => {
+      const titles = {
+        terms: 'Terms & Conditions',
+        privacy: 'Privacy Policy',
+        waiver: 'Safety Waiver'
+      };
+
+      modalTitle.textContent = titles[docType] || 'Document';
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+
+      // Load content
+      modalContent.innerHTML = '<div class="flex items-center justify-center h-40"><i class="fas fa-circle-notch fa-spin text-2xl text-[var(--sage-green)]"></i></div>';
+
+      try {
+        const API_BASE = window.ENV.API_BASE;
+        let content = '';
+
+        if (docType === 'waiver') {
+          // Fetch waiver from backend
+          const response = await fetch(`${API_BASE}/api/waiver/latest`);
+          const data = await response.json();
+          content = data.content || 'Waiver content not available.';
+        } else if (docType === 'terms') {
+          content = `
+            <h4>Terms & Conditions</h4>
+            <p>By booking a session with What To Do by Nana Sue, you agree to the following terms:</p>
+            <ul>
+              <li>Sessions must be cancelled at least 24 hours in advance for a full refund</li>
+              <li>Late cancellations (less than 24 hours) will forfeit 50% of the session fee</li>
+              <li>No-shows will forfeit the full session fee</li>
+              <li>All advice provided is educational and not a substitute for medical advice</li>
+            </ul>
+          `;
+        } else if (docType === 'privacy') {
+          content = `
+            <h4>Privacy Policy</h4>
+            <p>We respect your privacy and are committed to protecting your personal information.</p>
+            <ul>
+              <li>We collect only necessary information to provide our services</li>
+              <li>Your information is never sold or shared with third parties</li>
+              <li>Payment information is securely processed through Stripe</li>
+              <li>You may request deletion of your data at any time</li>
+            </ul>
+          `;
+        }
+
+        modalContent.innerHTML = content;
+      } catch (error) {
+        modalContent.innerHTML = '<p class="text-red-600">Error loading document. Please try again.</p>';
+      }
+    };
+
+    const closeModal = () => {
+      modal.classList.add('hidden');
+      document.body.style.overflow = '';
+    };
+
+    waiverLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const docType = link.getAttribute('data-doc');
+        openModal(docType);
+      });
+    });
+
+    modalClose.addEventListener('click', closeModal);
+    modalOverlay.addEventListener('click', closeModal);
+    modalAccept.addEventListener('click', closeModal);
 
     backBtn.onclick = () => {
       this.dispatchEvent(new CustomEvent('step-back', {
-        detail: { step: 4 },
+        detail: { step: 3 },
         bubbles: true,
         composed: true
       }));
@@ -531,6 +670,16 @@ export class StepPayment extends HTMLElement {
 
     form.onsubmit = async (e) => {
       e.preventDefault();
+
+      // Ensure waiver is accepted
+      if (!waiverCheckbox.checked) {
+        alert('Please accept the waiver to continue.');
+        return;
+      }
+
+      // Store waiver acceptance
+      window.bookingData.waiverAccepted = true;
+      window.bookingData.acceptedAt = new Date().toISOString();
 
       payBtn.disabled = true;
       const origText = payBtn.innerHTML;
@@ -579,7 +728,7 @@ export class StepPayment extends HTMLElement {
     }
 
     this.dispatchEvent(new CustomEvent('step-complete', {
-      detail: { step: 4 },
+      detail: { step: 3 },
       bubbles: true,
       composed: true
     }));

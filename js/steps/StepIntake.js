@@ -105,9 +105,9 @@ export class StepIntake extends HTMLElement {
                         class="text-gray-500 font-medium hover:text-[var(--dark-heading)] px-4 py-2 rounded-lg transition-colors flex items-center gap-2">
                         <i class="fas fa-arrow-left text-sm"></i> Back
                     </button>
-                    <button type="submit" id="btn-step-1-next"
+                    <button type="submit" id="btn-step-1-next" 
                         class="bg-gray-200 text-gray-400 px-8 py-4 rounded-full font-semibold shadow-none cursor-not-allowed transition-all duration-300 flex items-center gap-2" disabled>
-                        Next: Waiver <i class="fas fa-arrow-right text-sm"></i>
+                        Next: Schedule <i class="fas fa-arrow-right text-sm"></i>
                     </button>
                 </div>
             </form>

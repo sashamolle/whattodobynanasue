@@ -11,18 +11,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const steps = [
         document.getElementById('step0'), // Service
         document.getElementById('step1'), // Intake
-        document.getElementById('step2'), // Waiver
-        document.getElementById('step3'), // Schedule
-        document.getElementById('step4'), // Payment
-        document.getElementById('step5')  // Confirmation
+        document.getElementById('step2'), // Schedule
+        document.getElementById('step3'), // Payment
+        document.getElementById('step4')  // Confirmation
     ];
 
     const indicators = [
         document.getElementById('step-0-indicator'),
         document.getElementById('step-1-indicator'),
         document.getElementById('step-2-indicator'),
-        document.getElementById('step-3-indicator'),
-        document.getElementById('step-4-indicator')
+        document.getElementById('step-3-indicator')
     ];
 
     let currentStepIndex = 0;
@@ -88,21 +86,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GA4 Virtual Page Tracking ---
     function trackVirtualPageView(stepIndex) {
-        // Mapping Step Index (0-5) to Virtual Paths
-        // 0: Service -> step-1
-        // 1: Intake  -> step-2
-        // 2: Waiver  -> step-3
-        // 3: Schedule-> step-4
-        // 4: Payment -> step-5
-        // 5: Confirm -> thank-you
+        // Mapping Step Index (0-4) to Virtual Paths
+        // 0: Service  -> step-1
+        // 1: Intake   -> step-2
+        // 2: Schedule -> step-3
+        // 3: Payment  -> step-4
+        // 4: Confirm  -> thank-you
 
         const mapping = {
             0: { path: '/signup/step-1', title: 'Signup - Step 1' },
             1: { path: '/signup/step-2', title: 'Signup - Step 2' },
             2: { path: '/signup/step-3', title: 'Signup - Step 3' },
             3: { path: '/signup/step-4', title: 'Signup - Step 4' },
-            4: { path: '/signup/step-5', title: 'Signup - Step 5' },
-            5: { path: '/signup/thank-you', title: 'Signup - Complete' }
+            4: { path: '/signup/thank-you', title: 'Signup - Complete' }
         };
 
         const config = mapping[stepIndex];
@@ -161,20 +157,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const stepIdx = e.detail.step; // 0, 1, 2...
 
         // Validation / Side Effects before moving?
-        // Step 4 (Payment) implies Submission
-        if (stepIdx === 4) {
+        // Step 3 (Payment) implies Submission
+        if (stepIdx === 3) {
             const success = await submitBooking();
             if (success) {
                 // Update Confirmation Screen with latest data (email)
 
-                showStep(5);
+                showStep(4);
             } else {
                 // Determine how to reset button state in component? 
                 // Component handles its own loading state usually. 
                 // Ideally we signal back failure?
                 // For MVP, alert is handled above. User stays on Step 4.
                 // We might need to un-disable the button.
-                const paymentComp = document.getElementById('step4');
+                const paymentComp = document.getElementById('step3');
                 const btn = paymentComp.querySelector('#btn-pay-now');
                 if (btn) {
                     btn.disabled = false;

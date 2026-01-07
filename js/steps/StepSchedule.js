@@ -90,7 +90,7 @@ export class StepSchedule extends HTMLElement {
 
         this.querySelector('#btn-step-3-back').onclick = () => {
             this.dispatchEvent(new CustomEvent('step-back', {
-                detail: { step: 3 },
+                detail: { step: 2 },
                 bubbles: true,
                 composed: true
             }));
@@ -102,7 +102,7 @@ export class StepSchedule extends HTMLElement {
                 return;
             }
             this.dispatchEvent(new CustomEvent('step-complete', {
-                detail: { step: 3 },
+                detail: { step: 2 },
                 bubbles: true,
                 composed: true
             }));
