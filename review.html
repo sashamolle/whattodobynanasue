@@ -106,22 +106,10 @@
                             </h3>
 
                             <div class="space-y-6">
-                                <div>
-                                    <select id="class-type" name="classType" required class="form-input text-gray-400">
-                                        <option value="" disabled selected>Select a class type</option>
-                                        <option value="Baby Mobility 101" class="text-gray-700">Baby Mobility 101:
-                                            Foundations & Reflexes (0-4 mos)</option>
-                                        <option value="Baby Mobility 102" class="text-gray-700">Baby Mobility 102: Core
-                                            Strength & Rolling (4-7 mos)</option>
-                                        <option value="Baby Mobility 103" class="text-gray-700">Baby Mobility 103:
-                                            Sitting & Dynamic Transitions (7-12 mos)</option>
-                                        <option value="Private Class" class="text-gray-700">Private Class</option>
-                                    </select>
-                                </div>
 
                                 <!-- Rating -->
                                 <div>
-                                    <div class="flex gap-2 justify-center md:justify-start" id="star-rating">
+                                    <div class="flex gap-2 justify-center" id="star-rating">
                                         <button type="button" class="star-btn transition-transform hover:scale-110"
                                             data-rating="1">
                                             <svg class="h-8 w-8 fill-current text-gray-300" viewBox="0 0 20 20">
@@ -308,11 +296,10 @@
             const name = document.getElementById('student-name').value.trim();
             const emailInput = document.getElementById('student-email');
             const email = emailInput.value.trim();
-            const classType = document.getElementById('class-type').value;
             const rating = document.getElementById('rating-value').value;
 
             // All required fields filled AND email is valid format?
-            isFormValid = name && email && emailInput.validity.valid && classType && rating;
+            isFormValid = name && email && emailInput.validity.valid && rating;
 
             if (isFormValid) {
                 // Enable button (visually)
@@ -328,7 +315,6 @@
         // Listen for changes on all required fields
         document.getElementById('student-name').addEventListener('input', checkFormValidity);
         document.getElementById('student-email').addEventListener('input', checkFormValidity);
-        document.getElementById('class-type').addEventListener('change', checkFormValidity);
 
         // Also check when star rating changes
         starButtons.forEach(btn => {
@@ -355,7 +341,6 @@
             if (!isFormValid) {
                 const name = document.getElementById('student-name');
                 const email = document.getElementById('student-email');
-                const classType = document.getElementById('class-type');
                 const rating = document.getElementById('rating-value');
 
                 if (!name.value.trim()) {
@@ -364,9 +349,6 @@
                 } else if (!email.value.trim()) {
                     email.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     email.focus();
-                } else if (!classType.value) {
-                    classType.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    classType.focus();
                 } else if (!rating.value) {
                     document.getElementById('star-rating').scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
@@ -391,7 +373,6 @@
                 const formData = {
                     studentName: document.getElementById('student-name').value.trim(),
                     studentEmail: document.getElementById('student-email').value.trim(),
-                    classType: document.getElementById('class-type').value,
                     rating: selectedRating,
                     comment: document.getElementById('comment').value.trim()
                 };
