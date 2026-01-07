@@ -213,41 +213,6 @@
         }
         window.scrollTo(0, 0);
 
-        // Extract class parameter from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const classParam = urlParams.get('class');
-
-        if (classParam) {
-            const classTypeSelect = document.getElementById('class-type');
-            // Map URL param to select value
-            const classMap = {
-                '101': 'Baby Mobility 101',
-                '102': 'Baby Mobility 102',
-                '103': 'Baby Mobility 103',
-                'mobility': 'Baby Mobility 101',
-                'private': 'Private Class'
-            };
-            const mappedValue = classMap[classParam.toLowerCase()];
-            if (mappedValue) {
-                classTypeSelect.value = mappedValue;
-            }
-        }
-
-        // Change select color when option is selected
-        const classTypeSelect = document.getElementById('class-type');
-        classTypeSelect.addEventListener('change', function () {
-            if (this.value) {
-                this.classList.remove('text-gray-400');
-                this.classList.add('text-gray-700');
-            }
-        });
-
-        // If pre-filled from URL, change color immediately
-        if (classTypeSelect.value) {
-            classTypeSelect.classList.remove('text-gray-400');
-            classTypeSelect.classList.add('text-gray-700');
-        }
-
 
         // Star Rating Logic
         let selectedRating = 0;
