@@ -86,6 +86,13 @@
                             </div>
                         </div>
 
+                        <!-- Honeypot Field (Hidden from humans, visible to bots) -->
+                        <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none;"
+                            aria-hidden="true">
+                            <label for="website">Website</label>
+                            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off" />
+                        </div>
+
                         <div class="border-t border-gray-100"></div>
 
                         <!-- Review Details Section -->
@@ -174,8 +181,8 @@
                         <!-- Submit Button -->
                         <button type="submit" id="submit-btn"
                             class="w-full bg-gray-200 text-gray-400 px-8 py-4 rounded-full font-semibold shadow-none cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2">
-                            <span>Submit Review</span>
-                            <i class="fas fa-paper-plane text-sm"></i>
+                            <span id="submit-btn-text">Submit Review</span>
+                            <i id="submit-btn-icon" class="fas fa-paper-plane text-sm"></i>
                         </button>
                     </form>
                 </div>
@@ -337,6 +344,13 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
+            // Honeypot check - if filled, it's a bot
+            const honeypot = document.getElementById('website').value;
+            if (honeypot) {
+                console.log('[Bot Detection] Honeypot triggered, discarding submission');
+                return; // Silently fail for bots
+            }
+
             // If form is not valid, scroll to first invalid field
             if (!isFormValid) {
                 const name = document.getElementById('student-name');
@@ -365,9 +379,12 @@
                 return;
             }
 
-            // Disable submit button
+            // Update button to loading state
+            const submitBtnText = document.getElementById('submit-btn-text');
+            const submitBtnIcon = document.getElementById('submit-btn-icon');
             submitBtn.classList.add('opacity-50', 'pointer-events-none');
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            submitBtnText.textContent = 'Sending...';
+            submitBtnIcon.className = 'fas fa-spinner fa-spin text-sm';
             errorMessage.classList.add('hidden');
 
             try {
@@ -420,8 +437,10 @@
             } catch (error) {
                 console.error('Review submission error:', error);
                 showError('Network error. Please check your connection and try again.');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<span>Submit Review</span> <i class="fas fa-paper-plane text-sm"></i>';
+                // Reset button state
+                submitBtn.classList.remove('opacity-50', 'pointer-events-none');
+                submitBtnText.textContent = 'Submit Review';
+                submitBtnIcon.className = 'fas fa-paper-plane text-sm';
             }
         });
 
