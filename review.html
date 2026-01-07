@@ -189,9 +189,8 @@
                     <h3 class="text-3xl font-bold text-[var(--dark-heading)] mb-4">
                         Thank You, <span id="success-name">Friend</span>!
                     </h3>
-                    <p class="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
-                        Your review has been submitted and is pending approval. We truly appreciate you taking the time
-                        to share your experience!
+                    <p class="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed" id="success-message">
+                        <!-- Dynamic message will be inserted here based on rating -->
                     </p>
                     <a href="index.html"
                         class="inline-flex items-center justify-center bg-[var(--sage-green)] text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
@@ -392,8 +391,17 @@
                 const data = await response.json();
 
                 if (response.ok) {
-                    // Show success state
+                    // Show success state with dynamic message based on rating
                     document.getElementById('success-name').textContent = formData.studentName;
+
+                    // Set message based on rating
+                    const successMessage = document.getElementById('success-message');
+                    if (selectedRating >= 4) {
+                        successMessage.textContent = "Thank you for sharing your experience! As a small business, your words mean the world to us—but seeing your little one grow means even more. We'll get this posted on our \"Wall of Love\" as soon as we can. Hope to see you in class soon!";
+                    } else {
+                        successMessage.textContent = "Thank you for your honest feedback. Nana Sue values every student's experience, and we'll be reaching out to you personally to see how we can make your next class even better.";
+                    }
+
                     formContainer.classList.add('hidden');
                     successContainer.classList.remove('hidden');
                 } else {
