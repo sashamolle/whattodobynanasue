@@ -69,7 +69,7 @@
                                         Your Name
                                     </label>
                                     <input type="text" id="student-name" name="studentName" required maxlength="100"
-                                        class="form-input text-gray-700 placeholder-gray-400"
+                                        autocomplete="name" class="form-input text-gray-700 placeholder-gray-400"
                                         placeholder="First & Last Name" />
                                 </div>
 
@@ -80,7 +80,7 @@
                                         Email Address
                                     </label>
                                     <input type="email" id="student-email" name="studentEmail" required maxlength="100"
-                                        class="form-input text-gray-700 placeholder-gray-400"
+                                        autocomplete="email" class="form-input text-gray-700 placeholder-gray-400"
                                         placeholder="you@example.com" />
                                 </div>
                             </div>
@@ -300,12 +300,13 @@
 
         const checkFormValidity = () => {
             const name = document.getElementById('student-name').value.trim();
-            const email = document.getElementById('student-email').value.trim();
+            const emailInput = document.getElementById('student-email');
+            const email = emailInput.value.trim();
             const classType = document.getElementById('class-type').value;
             const rating = document.getElementById('rating-value').value;
 
-            // All required fields filled?
-            isFormValid = name && email && classType && rating;
+            // All required fields filled AND email is valid format?
+            isFormValid = name && email && emailInput.validity.valid && classType && rating;
 
             if (isFormValid) {
                 // Enable button (visually)
