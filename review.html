@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Submit a Review - What To Do by Nana Sue</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="js/config.js"></script>
+    <script src="components.js" defer></script>
+</head>
+
+<body>
+
+    <site-header></site-header>
+
+    <!-- Main Content Area -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <section id="review-form-section">
+            <h2 class="text-4xl font-bold text-gray-900 text-center mb-4">
+                Share Your Experience
+            </h2>
+            <p class="text-xl text-center text-gray-600 max-w-3xl mx-auto mb-16">
+                We'd love to hear about your experience with Nana Sue's classes!
+            </p>
+
+            <!-- Review Form -->
+            <div id="form-container" class="bg-white rounded-3xl shadow-sm p-8 md:p-12 max-w-2xl mx-auto">
+                <form id="review-form" class="space-y-6">
+
+                    <!-- Student Name -->
+                    <div>
+                        <label for="student-name" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Your Name <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" id="student-name" name="studentName" required maxlength="100"
+                            class="form-input w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--sage-green)] focus:border-transparent transition-all"
+                            placeholder="Enter your name" />
+                    </div>
+
+                    <!-- Class Type -->
+                    <div>
+                        <label for="class-type" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Class Type <span class="text-red-500">*</span>
+                        </label>
+                        <select id="class-type" name="classType" required
+                            class="form-input w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--sage-green)] focus:border-transparent transition-all">
+                            <option value="">Select a class type</option>
+                            <option value="Mobility">Baby Mobility Class</option>
+                            <option value="Consultation">Private Consultation</option>
+                            <option value="Virtual">Virtual Session</option>
+                        </select>
+                    </div>
+
+                    <!-- Rating -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Rating <span class="text-red-500">*</span>
+                        </label>
+                        <div class="flex gap-2" id="star-rating">
+                            <button type="button"
+                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                data-rating="1">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <button type="button"
+                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                data-rating="2">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <button type="button"
+                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                data-rating="3">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <button type="button"
+                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                data-rating="4">
+                                <i class="far fa-star"></i>
+                            </button>
+                            <button type="button"
+                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
+                                data-rating="5">
+                                <i class="far fa-star"></i>
+                            </button>
+                        </div>
+                        <input type="hidden" id="rating-value" name="rating" required />
+                    </div>
+
+                    <!-- Comment -->
+                    <div>
+                        <label for="comment" class="block text-sm font-semibold text-gray-700 mb-2">
+                            Your Review <span class="text-red-500">*</span>
+                        </label>
+                        <textarea id="comment" name="comment" required maxlength="500" rows="5"
+                            class="form-input w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--sage-green)] focus:border-transparent transition-all resize-none"
+                            placeholder="Tell us about your experience..."></textarea>
+                        <p class="text-xs text-gray-500 mt-1">
+                            <span id="char-count">0</span>/500 characters
+                        </p>
+                    </div>
+
+                    <!-- Error Message -->
+                    <div id="error-message"
+                        class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" id="submit-btn"
+                        class="w-full bg-[var(--sage-green)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2">
+                        <span>Submit Review</span>
+                        <i class="fas fa-paper-plane text-sm"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success State (Hidden by default) -->
+            <div id="success-container"
+                class="hidden bg-white rounded-3xl shadow-sm p-8 md:p-12 max-w-2xl mx-auto text-center">
+                <div
+                    class="w-24 h-24 bg-[var(--sage-green-light)] rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+                    <i class="fas fa-check text-4xl text-[var(--sage-green)]"></i>
+                </div>
+                <h3 class="text-3xl font-bold text-[var(--dark-heading)] mb-4">
+                    Thank You, <span id="success-name">Friend</span>!
+                </h3>
+                <p class="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
+                    Your review has been submitted and is pending approval. We truly appreciate you taking the time to
+                    share your experience!
+                </p>
+                <a href="index.html"
+                    class="inline-flex items-center justify-center bg-[var(--sage-green)] text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                    Back to Home <i class="fas fa-home ml-2 text-sm opacity-80"></i>
+                </a>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-400 mt-20 py-10">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm">
+                &copy; 2026 What To Do by Nana Sue. All rights reserved.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Extract class parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const classParam = urlParams.get('class');
+
+        if (classParam) {
+            const classTypeSelect = document.getElementById('class-type');
+            // Map URL param to select value
+            const classMap = {
+                'mobility': 'Mobility',
+                'consultation': 'Consultation',
+                'virtual': 'Virtual'
+            };
+            const mappedValue = classMap[classParam.toLowerCase()];
+            if (mappedValue) {
+                classTypeSelect.value = mappedValue;
+            }
+        }
+
+        // Star Rating Logic
+        let selectedRating = 0;
+        const starButtons = document.querySelectorAll('.star-btn');
+        const ratingInput = document.getElementById('rating-value');
+
+        starButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                selectedRating = parseInt(btn.dataset.rating);
+                ratingInput.value = selectedRating;
+
+                // Update star display
+                starButtons.forEach((star, index) => {
+                    const icon = star.querySelector('i');
+                    if (index < selectedRating) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas', 'text-yellow-400');
+                    } else {
+                        icon.classList.remove('fas', 'text-yellow-400');
+                        icon.classList.add('far', 'text-gray-300');
+                    }
+                });
+            });
+        });
+
+        // Character Counter
+        const commentTextarea = document.getElementById('comment');
+        const charCount = document.getElementById('char-count');
+
+        commentTextarea.addEventListener('input', () => {
+            charCount.textContent = commentTextarea.value.length;
+        });
+
+        // Form Submission
+        const form = document.getElementById('review-form');
+        const formContainer = document.getElementById('form-container');
+        const successContainer = document.getElementById('success-container');
+        const errorMessage = document.getElementById('error-message');
+        const submitBtn = document.getElementById('submit-btn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // Validate rating
+            if (!selectedRating) {
+                showError('Please select a rating');
+                return;
+            }
+
+            // Disable submit button
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+            errorMessage.classList.add('hidden');
+
+            try {
+                const formData = {
+                    studentName: document.getElementById('student-name').value.trim(),
+                    classType: document.getElementById('class-type').value,
+                    rating: selectedRating,
+                    comment: document.getElementById('comment').value.trim()
+                };
+
+                const API_BASE = window.ENV.API_BASE;
+                const response = await fetch(`${API_BASE}/api/reviews`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Show success state
+                    document.getElementById('success-name').textContent = formData.studentName;
+                    formContainer.classList.add('hidden');
+                    successContainer.classList.remove('hidden');
+                } else {
+                    // Handle errors
+                    if (response.status === 429) {
+                        showError('You\'ve submitted too many reviews recently. Please try again in an hour.');
+                    } else if (data.details) {
+                        showError(data.details.map(err => err.msg).join(', '));
+                    } else {
+                        showError(data.error || 'Failed to submit review. Please try again.');
+                    }
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<span>Submit Review</span> <i class="fas fa-paper-plane text-sm"></i>';
+                }
+
+            } catch (error) {
+                console.error('Review submission error:', error);
+                showError('Network error. Please check your connection and try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>Submit Review</span> <i class="fas fa-paper-plane text-sm"></i>';
+            }
+        });
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+            errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    </script>
+
+</body>
+
+</html>
