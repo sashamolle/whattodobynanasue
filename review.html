@@ -10,133 +10,197 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <script src="js/config.js"></script>
     <script src="components.js" defer></script>
+    <style>
+        /* Match dropdown arrow spacing to calendar icon in intake form */
+        select.form-input {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 1rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        /* Add scroll margin to account for sticky header (80px) + padding */
+        .form-input,
+        #star-rating {
+            scroll-margin-top: 100px;
+        }
+    </style>
 </head>
 
-<body>
+<body class="bg-gray-50">
 
     <site-header></site-header>
 
     <!-- Main Content Area -->
-    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <section id="review-form-section">
-            <h2 class="text-4xl font-bold text-gray-900 text-center mb-4">
-                Share Your Experience
-            </h2>
-            <p class="text-xl text-center text-gray-600 max-w-3xl mx-auto mb-16">
-                We'd love to hear about your experience with Nana Sue's classes!
-            </p>
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
-            <!-- Review Form -->
-            <div id="form-container" class="bg-white rounded-3xl shadow-sm p-8 md:p-12 max-w-2xl mx-auto">
-                <form id="review-form" class="space-y-6">
+        <div class="max-w-3xl mx-auto">
 
-                    <!-- Student Name -->
-                    <div>
-                        <label for="student-name" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Your Name <span class="text-red-500">*</span>
-                        </label>
-                        <input type="text" id="student-name" name="studentName" required maxlength="100"
-                            class="form-input w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--sage-green)] focus:border-transparent transition-all"
-                            placeholder="Enter your name" />
-                    </div>
-
-                    <!-- Class Type -->
-                    <div>
-                        <label for="class-type" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Class Type <span class="text-red-500">*</span>
-                        </label>
-                        <select id="class-type" name="classType" required
-                            class="form-input w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--sage-green)] focus:border-transparent transition-all">
-                            <option value="">Select a class type</option>
-                            <option value="Mobility">Baby Mobility Class</option>
-                            <option value="Consultation">Private Consultation</option>
-                            <option value="Virtual">Virtual Session</option>
-                        </select>
-                    </div>
-
-                    <!-- Rating -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Rating <span class="text-red-500">*</span>
-                        </label>
-                        <div class="flex gap-2" id="star-rating">
-                            <button type="button"
-                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                data-rating="1">
-                                <i class="far fa-star"></i>
-                            </button>
-                            <button type="button"
-                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                data-rating="2">
-                                <i class="far fa-star"></i>
-                            </button>
-                            <button type="button"
-                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                data-rating="3">
-                                <i class="far fa-star"></i>
-                            </button>
-                            <button type="button"
-                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                data-rating="4">
-                                <i class="far fa-star"></i>
-                            </button>
-                            <button type="button"
-                                class="star-btn text-3xl text-gray-300 hover:text-yellow-400 transition-colors"
-                                data-rating="5">
-                                <i class="far fa-star"></i>
-                            </button>
-                        </div>
-                        <input type="hidden" id="rating-value" name="rating" required />
-                    </div>
-
-                    <!-- Comment -->
-                    <div>
-                        <label for="comment" class="block text-sm font-semibold text-gray-700 mb-2">
-                            Your Review <span class="text-red-500">*</span>
-                        </label>
-                        <textarea id="comment" name="comment" required maxlength="500" rows="5"
-                            class="form-input w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-[var(--sage-green)] focus:border-transparent transition-all resize-none"
-                            placeholder="Tell us about your experience..."></textarea>
-                        <p class="text-xs text-gray-500 mt-1">
-                            <span id="char-count">0</span>/500 characters
-                        </p>
-                    </div>
-
-                    <!-- Error Message -->
-                    <div id="error-message"
-                        class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" id="submit-btn"
-                        class="w-full bg-[var(--sage-green)] text-white px-8 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2">
-                        <span>Submit Review</span>
-                        <i class="fas fa-paper-plane text-sm"></i>
-                    </button>
-                </form>
-            </div>
-
-            <!-- Success State (Hidden by default) -->
-            <div id="success-container"
-                class="hidden bg-white rounded-3xl shadow-sm p-8 md:p-12 max-w-2xl mx-auto text-center">
-                <div
-                    class="w-24 h-24 bg-[var(--sage-green-light)] rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
-                    <i class="fas fa-check text-4xl text-[var(--sage-green)]"></i>
+            <!-- Form Section -->
+            <section id="review-form-section">
+                <div class="text-center mb-10">
+                    <h2 class="text-3xl font-bold text-[var(--dark-heading)] mb-3">Share Your Experience</h2>
+                    <p class="text-gray-500">We'd love to hear about your experience with Nana Sue's classes!</p>
                 </div>
-                <h3 class="text-3xl font-bold text-[var(--dark-heading)] mb-4">
-                    Thank You, <span id="success-name">Friend</span>!
-                </h3>
-                <p class="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
-                    Your review has been submitted and is pending approval. We truly appreciate you taking the time to
-                    share your experience!
-                </p>
-                <a href="index.html"
-                    class="inline-flex items-center justify-center bg-[var(--sage-green)] text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
-                    Back to Home <i class="fas fa-home ml-2 text-sm opacity-80"></i>
-                </a>
-            </div>
 
-        </section>
+                <!-- Review Form -->
+                <div id="form-container" class="bg-white rounded-xl p-8 md:p-10">
+                    <form id="review-form" class="space-y-10">
+
+                        <!-- Your Information Section -->
+                        <div>
+                            <h3 class="flex items-center text-lg font-semibold text-[var(--dark-heading)] mb-6">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-[var(--sage-green-light)] text-[var(--sage-green)] flex items-center justify-center mr-3">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                Your Information
+                            </h3>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <!-- Student Name -->
+                                <div>
+                                    <label for="student-name"
+                                        class="block text-sm font-medium text-[var(--dark-heading)] mb-2">
+                                        Your Name
+                                    </label>
+                                    <input type="text" id="student-name" name="studentName" required maxlength="100"
+                                        class="form-input text-gray-700 placeholder-gray-400"
+                                        placeholder="First & Last Name" />
+                                </div>
+
+                                <!-- Email -->
+                                <div>
+                                    <label for="student-email"
+                                        class="block text-sm font-medium text-[var(--dark-heading)] mb-2">
+                                        Email Address
+                                    </label>
+                                    <input type="email" id="student-email" name="studentEmail" required maxlength="100"
+                                        class="form-input text-gray-700 placeholder-gray-400"
+                                        placeholder="you@example.com" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-100"></div>
+
+                        <!-- Review Details Section -->
+                        <div>
+                            <h3 class="flex items-center text-lg font-semibold text-[var(--dark-heading)] mb-6">
+                                <div
+                                    class="w-8 h-8 rounded-full bg-[var(--sage-green-light)] text-[var(--sage-green)] flex items-center justify-center mr-3">
+                                    <i class="fas fa-star"></i>
+                                </div>
+                                Your Review
+                            </h3>
+
+                            <div class="space-y-6">
+                                <div>
+                                    <select id="class-type" name="classType" required class="form-input text-gray-400">
+                                        <option value="" disabled selected>Select a class type</option>
+                                        <option value="Baby Mobility 101" class="text-gray-700">Baby Mobility 101:
+                                            Foundations & Reflexes (0-4 mos)</option>
+                                        <option value="Baby Mobility 102" class="text-gray-700">Baby Mobility 102: Core
+                                            Strength & Rolling (4-7 mos)</option>
+                                        <option value="Baby Mobility 103" class="text-gray-700">Baby Mobility 103:
+                                            Sitting & Dynamic Transitions (7-12 mos)</option>
+                                        <option value="Private Class" class="text-gray-700">Private Class</option>
+                                    </select>
+                                </div>
+
+                                <!-- Rating -->
+                                <div>
+                                    <div class="flex gap-2 justify-center md:justify-start" id="star-rating">
+                                        <button type="button" class="star-btn transition-transform hover:scale-110"
+                                            data-rating="1">
+                                            <svg class="h-8 w-8 fill-current text-gray-300" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="star-btn transition-transform hover:scale-110"
+                                            data-rating="2">
+                                            <svg class="h-8 w-8 fill-current text-gray-300" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="star-btn transition-transform hover:scale-110"
+                                            data-rating="3">
+                                            <svg class="h-8 w-8 fill-current text-gray-300" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="star-btn transition-transform hover:scale-110"
+                                            data-rating="4">
+                                            <svg class="h-8 w-8 fill-current text-gray-300" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        </button>
+                                        <button type="button" class="star-btn transition-transform hover:scale-110"
+                                            data-rating="5">
+                                            <svg class="h-8 w-8 fill-current text-gray-300" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" id="rating-value" name="rating" required />
+                                </div>
+
+                                <!-- Comment -->
+                                <div>
+                                    <textarea id="comment" name="comment" maxlength="500" rows="5"
+                                        class="form-input text-gray-700 placeholder-gray-400 resize-none"
+                                        placeholder="Tell us about your experience..."></textarea>
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        <span id="char-count">0</span>/500 characters
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Error Message -->
+                        <div id="error-message"
+                            class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submit-btn"
+                            class="w-full bg-gray-200 text-gray-400 px-8 py-4 rounded-full font-semibold shadow-none cursor-not-allowed transition-all duration-300 flex items-center justify-center gap-2">
+                            <span>Submit Review</span>
+                            <i class="fas fa-paper-plane text-sm"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Success State (Hidden by default) -->
+                <div id="success-container" class="hidden bg-white rounded-xl p-8 md:p-10 text-center">
+                    <div
+                        class="w-24 h-24 bg-[var(--sage-green-light)] rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+                        <i class="fas fa-check text-4xl text-[var(--sage-green)]"></i>
+                    </div>
+                    <h3 class="text-3xl font-bold text-[var(--dark-heading)] mb-4">
+                        Thank You, <span id="success-name">Friend</span>!
+                    </h3>
+                    <p class="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
+                        Your review has been submitted and is pending approval. We truly appreciate you taking the time
+                        to share your experience!
+                    </p>
+                    <a href="index.html"
+                        class="inline-flex items-center justify-center bg-[var(--sage-green)] text-white px-10 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300">
+                        Back to Home <i class="fas fa-home ml-2 text-sm opacity-80"></i>
+                    </a>
+                </div>
+
+            </section>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -149,6 +213,12 @@
     </footer>
 
     <script>
+        // Scroll to top on page load/refresh
+        if ('scrollRestoration' in history) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+
         // Extract class parameter from URL
         const urlParams = new URLSearchParams(window.location.search);
         const classParam = urlParams.get('class');
@@ -157,9 +227,11 @@
             const classTypeSelect = document.getElementById('class-type');
             // Map URL param to select value
             const classMap = {
-                'mobility': 'Mobility',
-                'consultation': 'Consultation',
-                'virtual': 'Virtual'
+                '101': 'Baby Mobility 101',
+                '102': 'Baby Mobility 102',
+                '103': 'Baby Mobility 103',
+                'mobility': 'Baby Mobility 101',
+                'private': 'Private Class'
             };
             const mappedValue = classMap[classParam.toLowerCase()];
             if (mappedValue) {
@@ -167,26 +239,42 @@
             }
         }
 
+        // Change select color when option is selected
+        const classTypeSelect = document.getElementById('class-type');
+        classTypeSelect.addEventListener('change', function () {
+            if (this.value) {
+                this.classList.remove('text-gray-400');
+                this.classList.add('text-gray-700');
+            }
+        });
+
+        // If pre-filled from URL, change color immediately
+        if (classTypeSelect.value) {
+            classTypeSelect.classList.remove('text-gray-400');
+            classTypeSelect.classList.add('text-gray-700');
+        }
+
+
         // Star Rating Logic
         let selectedRating = 0;
         const starButtons = document.querySelectorAll('.star-btn');
         const ratingInput = document.getElementById('rating-value');
 
-        starButtons.forEach(btn => {
+        starButtons.forEach((btn, index) => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 selectedRating = parseInt(btn.dataset.rating);
                 ratingInput.value = selectedRating;
 
                 // Update star display
-                starButtons.forEach((star, index) => {
-                    const icon = star.querySelector('i');
-                    if (index < selectedRating) {
-                        icon.classList.remove('far');
-                        icon.classList.add('fas', 'text-yellow-400');
+                starButtons.forEach((star, starIndex) => {
+                    const svg = star.querySelector('svg');
+                    if (starIndex < selectedRating) {
+                        svg.classList.remove('text-gray-300');
+                        svg.classList.add('text-yellow-400');
                     } else {
-                        icon.classList.remove('fas', 'text-yellow-400');
-                        icon.classList.add('far', 'text-gray-300');
+                        svg.classList.remove('text-yellow-400');
+                        svg.classList.add('text-gray-300');
                     }
                 });
             });
@@ -200,15 +288,76 @@
             charCount.textContent = commentTextarea.value.length;
         });
 
-        // Form Submission
+        // Get form elements (must be before checkFormValidity)
         const form = document.getElementById('review-form');
         const formContainer = document.getElementById('form-container');
         const successContainer = document.getElementById('success-container');
         const errorMessage = document.getElementById('error-message');
         const submitBtn = document.getElementById('submit-btn');
 
+        // Button State Management (like booking form)
+        let isFormValid = false;
+
+        const checkFormValidity = () => {
+            const name = document.getElementById('student-name').value.trim();
+            const email = document.getElementById('student-email').value.trim();
+            const classType = document.getElementById('class-type').value;
+            const rating = document.getElementById('rating-value').value;
+
+            // All required fields filled?
+            isFormValid = name && email && classType && rating;
+
+            if (isFormValid) {
+                // Enable button (visually)
+                submitBtn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none');
+                submitBtn.classList.add('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer');
+            } else {
+                // Disable button (visually)
+                submitBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed', 'shadow-none');
+                submitBtn.classList.remove('bg-[var(--sage-green)]', 'text-white', 'shadow-lg', 'hover:shadow-xl', 'hover:-translate-y-0.5', 'cursor-pointer');
+            }
+        };
+
+        // Listen for changes on all required fields
+        document.getElementById('student-name').addEventListener('input', checkFormValidity);
+        document.getElementById('student-email').addEventListener('input', checkFormValidity);
+        document.getElementById('class-type').addEventListener('change', checkFormValidity);
+
+        // Also check when star rating changes
+        starButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                setTimeout(checkFormValidity, 50); // Small delay to ensure rating value is set
+            });
+        });
+
+        // Initial check
+        checkFormValidity();
+
+        // Form Submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // If form is not valid, scroll to first invalid field
+            if (!isFormValid) {
+                const name = document.getElementById('student-name');
+                const email = document.getElementById('student-email');
+                const classType = document.getElementById('class-type');
+                const rating = document.getElementById('rating-value');
+
+                if (!name.value.trim()) {
+                    name.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    name.focus();
+                } else if (!email.value.trim()) {
+                    email.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    email.focus();
+                } else if (!classType.value) {
+                    classType.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    classType.focus();
+                } else if (!rating.value) {
+                    document.getElementById('star-rating').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                return; // Don't submit
+            }
 
             // Validate rating
             if (!selectedRating) {
@@ -217,13 +366,14 @@
             }
 
             // Disable submit button
-            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'pointer-events-none');
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
             errorMessage.classList.add('hidden');
 
             try {
                 const formData = {
                     studentName: document.getElementById('student-name').value.trim(),
+                    studentEmail: document.getElementById('student-email').value.trim(),
                     classType: document.getElementById('class-type').value,
                     rating: selectedRating,
                     comment: document.getElementById('comment').value.trim()
