@@ -246,6 +246,14 @@ export class StepServiceSchedule extends HTMLElement {
           window.bookingData.price = 150;
         }
 
+        // Track service selection in GA4
+        if (window.gtag && window.ENV?.ENABLE_ANALYTICS !== false) {
+          window.gtag('event', 'service_selected', {
+            service_type: radio.value,
+            price: window.bookingData.price
+          });
+        }
+
         // Show service checkmark only if conditions are met
         const serviceCheck = this.querySelector('#service-check');
         if (serviceCheck) {
@@ -668,6 +676,15 @@ export class StepServiceSchedule extends HTMLElement {
     if (nextBtnMobile) {
       nextBtnMobile.disabled = false;
       nextBtnMobile.className = 'w-full bg-[var(--sage-green)] text-white px-6 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl cursor-pointer transition-all duration-300 flex items-center justify-center gap-2 text-sm min-h-[48px]';
+    }
+
+    // Track time slot selection in GA4
+    if (window.gtag && window.ENV?.ENABLE_ANALYTICS !== false) {
+      window.gtag('event', 'time_slot_selected', {
+        selected_date: dateStr,
+        selected_time: timeStr,
+        service_type: window.bookingData.serviceType
+      });
     }
 
     // Update mobile summary
