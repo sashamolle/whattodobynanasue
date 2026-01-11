@@ -7,20 +7,18 @@
 // window.API_BASE and window.bookingData are already available.
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Component Registry
+    // Component Registry (3 steps + confirmation)
     const steps = [
-        document.getElementById('step0'), // Service
+        document.getElementById('step0'), // Service + Schedule
         document.getElementById('step1'), // Intake
-        document.getElementById('step2'), // Schedule
-        document.getElementById('step3'), // Payment
-        document.getElementById('step4')  // Confirmation
+        document.getElementById('step2'), // Payment
+        document.getElementById('step3')  // Confirmation
     ];
 
     const indicators = [
         document.getElementById('step-0-indicator'),
         document.getElementById('step-1-indicator'),
-        document.getElementById('step-2-indicator'),
-        document.getElementById('step-3-indicator')
+        document.getElementById('step-2-indicator')
     ];
 
     let currentStepIndex = 0;
@@ -35,6 +33,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Show target
         steps[index].classList.remove('hidden');
+
+        // Call onShow lifecycle method if it exists
+        if (steps[index] && typeof steps[index].onShow === 'function') {
+            console.log(`[BookingManager] Calling onShow for step ${index}`);
+            steps[index].onShow();
+        }
+
+        // Update mobile summary for intake step
+        if (index === 1 && steps[index].updateMobileSummary) {
+            steps[index].updateMobileSummary();
+        }
 
         // Update Indicators
         indicators.forEach((ind, i) => {
@@ -86,19 +95,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- GA4 Virtual Page Tracking ---
     function trackVirtualPageView(stepIndex) {
-        // Mapping Step Index (0-4) to Virtual Paths
-        // 0: Service  -> step-1
-        // 1: Intake   -> step-2
-        // 2: Schedule -> step-3
-        // 3: Payment  -> step-4
-        // 4: Confirm  -> thank-you
+        // Mapping Step Index (0-3) to Virtual Paths
+        // 0: Service+Schedule  -> step-1
+        // 1: Intake            -> step-2
+        // 2: Payment           -> step-3
+        // 3: Confirm           -> thank-you
 
         const mapping = {
             0: { path: '/signup/step-1', title: 'Signup - Step 1' },
             1: { path: '/signup/step-2', title: 'Signup - Step 2' },
             2: { path: '/signup/step-3', title: 'Signup - Step 3' },
-            3: { path: '/signup/step-4', title: 'Signup - Step 4' },
-            4: { path: '/signup/thank-you', title: 'Signup - Complete' }
+            3: { path: '/signup/thank-you', title: 'Signup - Complete' }
         };
 
         const config = mapping[stepIndex];
@@ -139,8 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (data.bookingId) window.bookingData.id = data.bookingId;
                 return true;
             } else {
-                const err = await response.json();
-                alert(`Error: ${err.message || 'Server error'}`);
+                const err = await response.json().catch(() => ({ message: 'Unknown error' }));
+                console.error('[BookingManager] Booking submission failed:', err);
+                alert(`Error: ${err.message || err.error || 'Server error'}`);
                 return false;
             }
         } catch (e) {
@@ -154,23 +162,25 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listen for events bubbling up from Shadow/Light DOM components
 
     document.addEventListener('step-complete', async (e) => {
+        console.log('[BookingManager] step-complete event received:', e.detail);
         const stepIdx = e.detail.step; // 0, 1, 2...
 
         // Validation / Side Effects before moving?
-        // Step 3 (Payment) implies Submission
-        if (stepIdx === 3) {
+        // Step 2 (Payment) implies Submission
+        if (stepIdx === 2) {
+            console.log('[BookingManager] Payment step complete, submitting booking...');
             const success = await submitBooking();
             if (success) {
                 // Update Confirmation Screen with latest data (email)
 
-                showStep(4);
+                showStep(3);
             } else {
                 // Determine how to reset button state in component? 
                 // Component handles its own loading state usually. 
                 // Ideally we signal back failure?
                 // For MVP, alert is handled above. User stays on Step 4.
                 // We might need to un-disable the button.
-                const paymentComp = document.getElementById('step3');
+                const paymentComp = document.getElementById('step2');
                 const btn = paymentComp.querySelector('#btn-pay-now');
                 if (btn) {
                     btn.disabled = false;
@@ -189,6 +199,17 @@ document.addEventListener('DOMContentLoaded', () => {
         showStep(stepIdx - 1);
     });
 
-    // Initialize
-    showStep(0);
+    // Initialize - Check for Stripe redirect success
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentIntentClientSecret = urlParams.get('payment_intent_client_secret');
+    const redirectStatus = urlParams.get('redirect_status');
+
+    if (paymentIntentClientSecret && redirectStatus === 'succeeded') {
+        // Stripe redirected back after successful payment
+        console.log('[BookingManager] Detected successful Stripe redirect, showing confirmation');
+        showStep(4);
+    } else {
+        // Normal flow - start at beginning
+        showStep(0);
+    }
 });

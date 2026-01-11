@@ -1,12 +1,40 @@
+import { calculateBookingPrice } from '../utils/booking-format.js';
+
 export class StepPayment extends HTMLElement {
   connectedCallback() {
     this.stripe = null;
     this.elements = null;
-    // Fix: If originalPrice is already stored (from previous visit), use it. 
-    // Otherwise fallback to current price (first visit) or 150 default.
-    this.originalPrice = (window.bookingData && window.bookingData.originalPrice)
-      ? window.bookingData.originalPrice
-      : (window.bookingData ? window.bookingData.price : 150.00);
+
+    console.log('[StepPayment] === INITIALIZATION START ===');
+    console.log('[StepPayment] bookingData:', window.bookingData);
+
+    // Fix: Use bookingData.originalPrice if it exists (from previous discount application)
+    // Otherwise, calculate the original price from service type and zone
+    if (window.bookingData && window.bookingData.originalPrice) {
+      this.originalPrice = window.bookingData.originalPrice;
+      console.log('[StepPayment] Using stored originalPrice:', this.originalPrice);
+    } else if (window.bookingData && window.bookingData.serviceType && window.bookingData.travelZone) {
+      // Calculate original price based on service type and zone
+      const pricing = calculateBookingPrice(window.bookingData.serviceType, window.bookingData.travelZone);
+      this.originalPrice = pricing.total;
+      console.log('[StepPayment] Calculated originalPrice from service/zone:', {
+        serviceType: window.bookingData.serviceType,
+        travelZone: window.bookingData.travelZone,
+        pricing,
+        originalPrice: this.originalPrice
+      });
+    } else if (window.bookingData && window.bookingData.price) {
+      // Fallback: Use current price if service/zone not available
+      this.originalPrice = window.bookingData.price;
+      console.log('[StepPayment] Using bookingData.price as originalPrice:', this.originalPrice);
+    } else {
+      this.originalPrice = 150; // Final fallback
+      console.log('[StepPayment] Using fallback originalPrice: 150');
+    }
+
+    console.log('[StepPayment] Final originalPrice:', this.originalPrice);
+    console.log('[StepPayment] Current bookingData.price:', window.bookingData?.price);
+    console.log('[StepPayment] === INITIALIZATION END ===');
 
     this.render();
     this.setupListeners();
@@ -37,33 +65,163 @@ export class StepPayment extends HTMLElement {
     });
   }
 
+  // Called by booking manager when this step becomes visible
+  onShow() {
+    console.log('[StepPayment] === onShow CALLED ===');
+    console.log('[StepPayment] Current bookingData:', {
+      serviceType: window.bookingData.serviceType,
+      travelZone: window.bookingData.travelZone,
+      price: window.bookingData.price,
+      originalPrice: window.bookingData.originalPrice,
+      promoCode: window.bookingData.promoCode
+    });
+
+    // Calculate what the price SHOULD be based on current service/zone
+    if (window.bookingData.serviceType && window.bookingData.travelZone !== undefined) {
+      const pricing = calculateBookingPrice(window.bookingData.serviceType, window.bookingData.travelZone);
+      const expectedPrice = pricing.total;
+
+      console.log('[StepPayment] Expected price from service/zone:', expectedPrice);
+
+      // Check if service/zone changed (price doesn't match expected)
+      // If so, clear discount and reset to new price
+      if (window.bookingData.originalPrice && window.bookingData.originalPrice !== expectedPrice) {
+        console.log('[StepPayment] ⚠️ SERVICE/ZONE CHANGED! Clearing discount and resetting price');
+        console.log('[StepPayment] Old originalPrice:', window.bookingData.originalPrice, 'New expected:', expectedPrice);
+
+        // Clear discount
+        delete window.bookingData.originalPrice;
+        delete window.bookingData.promoCode;
+        delete window.bookingData.discountAmount;
+        window.bookingData.price = expectedPrice;
+
+        // Reset promo UI
+        this.resetPromoUI();
+
+        console.log('[StepPayment] ✅ Discount cleared!');
+      }
+
+      // Set originalPrice to current expected price
+      this.originalPrice = expectedPrice;
+
+      // If no discount applied, make sure price matches expected
+      if (!window.bookingData.promoCode) {
+        window.bookingData.price = expectedPrice;
+      }
+
+      console.log('[StepPayment] Set originalPrice to:', this.originalPrice);
+    } else if (window.bookingData.price) {
+      // Fallback: use current price
+      this.originalPrice = window.bookingData.price;
+      console.log('[StepPayment] Using bookingData.price as originalPrice:', this.originalPrice);
+    }
+
+    // Update display with current state
+    this.updateDisplay();
+
+    // Re-initialize Stripe with current price
+    if (this.stripe) {
+      this.initStripe();
+    }
+
+    // Update mobile summary
+    this.updateMobileSummary();
+
+    console.log('[StepPayment] === onShow COMPLETE ===');
+  }
+
+  updateMobileSummary() {
+    // Update mobile footer with appointment details
+    const mobileDate = this.querySelector('#mobile-date');
+    const mobileTotal = this.querySelector('#mobile-total');
+    const mobileTravelFeeNote = this.querySelector('#mobile-travel-fee-note');
+    const mobilePriceBreakdown = this.querySelector('#mobile-price-breakdown');
+
+    if (mobileDate && window.bookingData.appointmentDate && window.bookingData.appointmentTime) {
+      // Format date
+      const dateObj = new Date(window.bookingData.appointmentDate + 'T00:00:00');
+      const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+      mobileDate.textContent = `${dateStr} at ${window.bookingData.appointmentTime} (45m)`;
+    }
+
+    if (mobileTotal && window.bookingData.price) {
+      mobileTotal.textContent = `$${window.bookingData.price}`;
+    }
+
+    // Build price breakdown
+    if (mobilePriceBreakdown) {
+      const breakdown = [];
+      const isInHome = window.bookingData.serviceType === 'in-home';
+      const basePrice = isInHome ? 225 : 150;
+      const isZone2 = window.bookingData.travelZone === 'zone2';
+      const travelFee = (isInHome && isZone2) ? 30 : 0;
+
+      // Session fee
+      breakdown.push(`$${basePrice} session`);
+
+      // Travel fee
+      if (travelFee > 0) {
+        breakdown.push(`$${travelFee} travel`);
+      }
+
+      // Join the base parts with +
+      let breakdownText = breakdown.join(' + ');
+
+      // Add discount separately (with space, not +)
+      if (window.bookingData.promoCode && window.bookingData.discountAmount) {
+        breakdownText += ` -$${window.bookingData.discountAmount} ${window.bookingData.promoCode}`;
+      }
+
+      mobilePriceBreakdown.textContent = breakdownText;
+    }
+
+    // Show/hide travel fee note
+    if (mobileTravelFeeNote) {
+      const isZone2 = window.bookingData.travelZone === 'zone2';
+      if (isZone2) {
+        mobileTravelFeeNote.classList.remove('hidden');
+      } else {
+        mobileTravelFeeNote.classList.add('hidden');
+      }
+    }
+  }
+
   resetPromoUI() {
+    console.log('[StepPayment] resetPromoUI called');
+
     const input = this.querySelector('#promo-input');
     const container = this.querySelector('#promo-container');
     const toggleBtn = this.querySelector('#toggle-promo');
     const applyBtn = this.querySelector('#apply-promo-btn');
     const messageEl = this.querySelector('#promo-message');
 
+    if (!input || !container || !toggleBtn || !applyBtn || !messageEl) {
+      console.warn('[StepPayment] resetPromoUI: Some elements not found');
+      return;
+    }
+
     // Reset Input
     input.value = '';
     input.disabled = false;
     input.classList.remove('bg-gray-50', 'text-gray-500');
 
-    // Reset Button
+    // Hide Container
+    container.classList.add('hidden');
+
+    // Show Toggle Button
+    toggleBtn.classList.remove('hidden');
+
+    // Reset Apply Button
     applyBtn.textContent = 'Apply';
     applyBtn.classList.remove('bg-[var(--sage-green)]', 'pointer-events-none');
     applyBtn.classList.add('bg-gray-800');
 
     // Hide Message
-    messageEl.textContent = '';
     messageEl.classList.add('hidden');
+    messageEl.textContent = '';
 
-    // Reset Container Visibility (Optional: Keep it open or close it? Let's close it cleanly)
-    // container.classList.add('hidden'); 
-    // toggleBtn.classList.remove('hidden');
-    // Actually, let's keep it open if the user had it open? No, standard reset is safer.
-    container.classList.add('hidden');
-    toggleBtn.classList.remove('hidden');
+    console.log('[StepPayment] resetPromoUI complete - calling updateDisplay');
+    this.updateDisplay();
   }
 
   restorePromoState(code) {
@@ -94,13 +252,46 @@ export class StepPayment extends HTMLElement {
   }
 
   updateDisplay() {
+    console.log('[StepPayment] updateDisplay called');
+    console.log('[StepPayment] updateDisplay state:', {
+      price: window.bookingData?.price,
+      originalPrice: this.originalPrice,
+      promoCode: window.bookingData?.promoCode,
+      discountAmount: window.bookingData?.discountAmount
+    });
+
+    // IMPORTANT: Recalculate originalPrice when this step becomes visible
+    // because connectedCallback fires before user selects service/zone
+    if (!window.bookingData.originalPrice && window.bookingData.serviceType && window.bookingData.travelZone) {
+      const pricing = calculateBookingPrice(window.bookingData.serviceType, window.bookingData.travelZone);
+      this.originalPrice = pricing.total;
+      console.log('[StepPayment] RECALCULATED originalPrice on display:', {
+        serviceType: window.bookingData.serviceType,
+        travelZone: window.bookingData.travelZone,
+        pricing,
+        originalPrice: this.originalPrice
+      });
+    } else if (!window.bookingData.originalPrice && window.bookingData.price) {
+      this.originalPrice = window.bookingData.price;
+      console.log('[StepPayment] Set originalPrice from bookingData.price:', this.originalPrice);
+    }
+
     const priceDisplay = this.querySelector('#payment-display-price');
     const originalPriceDisplay = this.querySelector('#original-price-display');
     const discountBadge = this.querySelector('#discount-badge');
 
     if (window.bookingData && window.bookingData.price) {
-      // If price is different from original, show discount view
-      if (window.bookingData.price < this.originalPrice) {
+      // Check if discount is actually applied (has promo code AND price is less than original)
+      const hasDiscount = window.bookingData.promoCode && window.bookingData.price < this.originalPrice;
+
+      console.log('[StepPayment] === DISCOUNT CHECK ===');
+      console.log('[StepPayment] hasPromoCode:', !!window.bookingData.promoCode, 'value:', window.bookingData.promoCode);
+      console.log('[StepPayment] price < originalPrice:', window.bookingData.price < this.originalPrice, `(${window.bookingData.price} < ${this.originalPrice})`);
+      console.log('[StepPayment] hasDiscount:', hasDiscount);
+
+      if (hasDiscount) {
+        // Show discount view
+        console.log('[StepPayment] SHOWING DISCOUNT VIEW');
         priceDisplay.textContent = `$${window.bookingData.price.toFixed(2)}`;
         priceDisplay.classList.add('text-[var(--sage-green)]');
 
@@ -109,11 +300,13 @@ export class StepPayment extends HTMLElement {
 
         discountBadge.classList.remove('hidden');
       } else {
-        // Standard view
+        // Standard view - no discount
+        console.log('[StepPayment] SHOWING STANDARD VIEW - HIDING DISCOUNT BADGE');
         priceDisplay.textContent = `$${window.bookingData.price.toFixed(2)}`;
         priceDisplay.classList.remove('text-[var(--sage-green)]');
         originalPriceDisplay.classList.add('hidden');
         discountBadge.classList.add('hidden');
+        console.log('[StepPayment] discountBadge.className after hiding:', discountBadge?.className);
       }
     }
   }
@@ -121,19 +314,20 @@ export class StepPayment extends HTMLElement {
   render() {
     this.innerHTML = `
         <div class="fade-in max-w-3xl mx-auto">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-[var(--dark-heading)] mb-3">Payment Details</h2>
-                <p class="text-gray-500">Secure your session to complete booking.</p>
-            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+                <div class="mb-8 text-center">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-3">Payment Details</h2>
+                    <p class="text-base text-gray-500">Secure your session to complete booking.</p>
+                </div>
 
-            <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm relative overflow-hidden">
-                <!-- Decorative background element -->
-                <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--sage-green-light)] rounded-bl-full opacity-50 -mr-10 -mt-10 pointer-events-none"></div>
+                <div class="bg-white rounded-2xl p-8 border border-gray-100 shadow-sm relative overflow-hidden">
+                    <!-- Decorative background element -->
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-[var(--sage-green-light)] rounded-bl-full opacity-50 -mr-10 -mt-10 pointer-events-none"></div>
 
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-8 border-b border-gray-100 relative z-10 gap-6">
-                    <div class="text-left">
-                        <span class="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Total Due</span>
-                        <div class="flex items-baseline gap-3">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 pb-8 border-b border-gray-100 relative z-10 gap-6">
+                        <div class="text-left">
+                            <span class="block text-gray-400 text-xs font-bold uppercase tracking-widest mb-1">Total Due</span>
+                            <div class="flex items-baseline gap-3">
                             <span id="original-price-display" class="hidden text-xl text-gray-400 line-through decoration-gray-400">$150.00</span>
                             <span id="payment-display-price" class="text-4xl font-bold text-[var(--dark-heading)] transition-colors duration-300">$150.00</span>
                             <span class="text-gray-400 text-sm">USD</span>
@@ -199,14 +393,22 @@ export class StepPayment extends HTMLElement {
                                     class="mt-1 w-5 h-5 rounded border-gray-300 text-[var(--sage-green)] focus:ring-[var(--sage-green)] focus:ring-offset-0 cursor-pointer">
                                 <span class="text-sm text-gray-700 leading-relaxed">
                                     I have read and agree to the 
-                                    <button type="button" class="waiver-link text-[var(--sage-green)] font-medium hover:underline" data-doc="terms">Terms & Conditions</button> and 
-                                    <button type="button" class="waiver-link text-[var(--sage-green)] font-medium hover:underline" data-doc="privacy">Privacy Policy</button>.
+                                    <a href="terms.html" target="_blank" rel="noopener noreferrer" class="text-[var(--sage-green)] font-medium hover:underline">Terms & Conditions</a> and 
+                                    <a href="privacy.html" target="_blank" rel="noopener noreferrer" class="text-[var(--sage-green)] font-medium hover:underline">Privacy Policy</a>.
                                 </span>
                             </label>
+                            
+                            <!-- Rescheduling Policy Link -->
+                            <div class="mt-3 text-center">
+                                <button type="button" class="policy-link text-sm text-[var(--sage-green)] font-medium hover:underline inline-flex items-center gap-1" data-doc="reschedule">
+                                    <i class="fas fa-info-circle text-xs"></i>
+                                    View Our Rescheduling Policy
+                                </button>
+                            </div>
                         </div>
 
-                        <!-- Button Row -->
-                        <div class="mt-8 flex flex-col-reverse md:flex-row justify-between items-center gap-4 pt-6 border-t border-gray-100">
+                        <!-- Button Row (Desktop Only) -->
+                        <div class="hidden md:flex mt-8 flex-col-reverse md:flex-row justify-between items-center gap-4 pt-6 border-t border-gray-100">
                             <button type="button" id="btn-step-4-back" 
                                 class="w-full md:w-auto text-gray-500 font-medium hover:text-[var(--dark-heading)] px-4 py-3 md:py-2 rounded-lg transition-colors flex items-center justify-center gap-2">
                                 <i class="fas fa-arrow-left text-sm"></i> Back
@@ -219,13 +421,45 @@ export class StepPayment extends HTMLElement {
                         </div>
                     </form>
                 </div>
+            </div>
 
-                <div class="mt-8 text-center">
-                    <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-2">Powered by Stripe</p>
-                    <div class="flex justify-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all duration-300">
-                        <i class="fab fa-cc-visa text-2xl text-blue-800"></i>
-                        <i class="fab fa-cc-mastercard text-2xl text-red-600"></i>
-                        <i class="fab fa-cc-amex text-2xl text-blue-500"></i>
+            <div class="mt-8 text-center">
+                <p class="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mb-2">Powered by Stripe</p>
+                <div class="flex justify-center gap-2 opacity-50 grayscale hover:grayscale-0 transition-all duration-300">
+                    <i class="fab fa-cc-visa text-2xl text-blue-800"></i>
+                    <i class="fab fa-cc-mastercard text-2xl text-red-600"></i>
+                    <i class="fab fa-cc-amex text-2xl text-blue-500"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sticky Mobile Footer -->
+            <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 shadow-lg">
+                <div class="px-4 py-4 pb-safe">
+                    <!-- Appointment Summary -->
+                    <div class="mb-4 text-xs">
+                        <div class="flex items-center justify-between text-gray-800 font-bold">
+                            <div class="flex items-center gap-2">
+                                <i class="fas fa-calendar-alt text-[var(--sage-green)]"></i>
+                                <span id="mobile-date">Select date & time</span>
+                            </div>
+                            <div class="text-right">
+                                <div id="mobile-total" class="text-[var(--sage-green)] text-lg">$150</div>
+                                <div id="mobile-price-breakdown" class="text-[9px] text-gray-500 font-normal mt-1 text-right"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Buttons -->
+                    <div class="flex gap-3">
+                        <button type="button" id="btn-step-4-back-mobile"
+                            class="flex-shrink-0 text-gray-500 font-medium hover:text-gray-800 px-4 py-3 rounded-full transition-colors flex items-center justify-center gap-2 border border-gray-200">
+                            <i class="fas fa-arrow-left text-sm"></i>
+                        </button>
+                        <button type="submit" form="payment-form" id="btn-pay-now-mobile"
+                            class="flex-1 bg-[var(--sage-green)] text-white px-6 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 text-sm min-h-[48px] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none">
+                            Pay Now <i class="fas fa-lock text-sm opacity-80"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -299,29 +533,60 @@ export class StepPayment extends HTMLElement {
         const data = await res.json();
 
         if (data.valid) {
-          // Valid Code
+          console.log('[Promo] === DISCOUNT CALCULATION START ===');
+          console.log('[Promo] Discount data:', data);
+          console.log('[Promo] this.originalPrice BEFORE calculation:', this.originalPrice);
+          console.log('[Promo] window.bookingData.originalPrice BEFORE:', window.bookingData.originalPrice);
+
+          // Calculate new price based on discount
           let newPrice = this.originalPrice;
-          if (data.type === 'percent') {
-            newPrice = this.originalPrice * (1 - (data.value / 100)); // Backend returns value as number (e.g. 20 for 20%)? Or 0.2?
-            // Wait, looking at pricing.js: { type: 'percent', value: 0.20 } -> 0.20
-            // { type: 'fixed', value: 20.00 }
-            // { type: 'override', value: 5.00 }
-            // Let's assume backend returns exactly our object.
-            if (data.value <= 1) newPrice = this.originalPrice * (1 - data.value); // Handle 0.20
-            else newPrice = this.originalPrice * (1 - (data.value / 100)); // Handle 20
+          if (data.type === 'percentage') {
+            newPrice = this.originalPrice * (1 - (data.value / 100)); // Backend returns value as number (e.g. 20 for 20%)
+            console.log('[Promo] Type: percentage, value:', data.value, 'newPrice:', newPrice);
+          } else if (data.type === 'percent') {
+            // Flexible handling: If value is 0.2 (20%), or 20 (20%)
+            // Assume if value <= 1, it's a decimal (0.2), else it's a percentage (20)
+            if (data.value <= 1) {
+              newPrice = this.originalPrice * (1 - data.value); // Handle 0.20
+              console.log('[Promo] Type: percent (decimal), value:', data.value, 'newPrice:', newPrice);
+            } else {
+              newPrice = this.originalPrice * (1 - (data.value / 100)); // Handle 20
+              console.log('[Promo] Type: percent (whole), value:', data.value, 'newPrice:', newPrice);
+            }
+          } else if (data.type === 'fixed') {
+            // Fixed discount: Subtract value from original price
+            newPrice = Math.max(0, this.originalPrice - data.value);
+            console.log('[Promo] Type: fixed, value:', data.value, 'newPrice:', newPrice);
           } else if (data.type === 'override') {
             newPrice = data.value;
-          } else {
-            // Fixed
-            newPrice = Math.max(0, this.originalPrice - data.value);
+            console.log('[Promo] Type: override, value:', data.value, 'newPrice:', newPrice);
           }
 
-          // Update Global State
-          window.bookingData.price = newPrice;
+          // Store discount info in bookingData
           window.bookingData.promoCode = code;
-          window.bookingData.originalPrice = this.originalPrice;
-          window.bookingData.discountAmount = (this.originalPrice - newPrice).toFixed(2);
+          // IMPORTANT: Don't overwrite originalPrice - it should stay as the pre-discount price
+          if (!window.bookingData.originalPrice) {
+            window.bookingData.originalPrice = this.originalPrice;
+            console.log('[Promo] SET window.bookingData.originalPrice to:', this.originalPrice);
+          } else {
+            console.log('[Promo] KEPT existing window.bookingData.originalPrice:', window.bookingData.originalPrice);
+          }
 
+          const discountAmount = (this.originalPrice - newPrice).toFixed(2);
+          window.bookingData.discountAmount = discountAmount;
+          window.bookingData.price = parseFloat(newPrice.toFixed(2));
+
+          console.log('[Promo] Final values:', {
+            code,
+            type: data.type,
+            value: data.value,
+            'this.originalPrice': this.originalPrice,
+            'window.bookingData.originalPrice': window.bookingData.originalPrice,
+            newPrice,
+            discountAmount,
+            'window.bookingData.price': window.bookingData.price
+          });
+          console.log('[Promo] === DISCOUNT CALCULATION END ===');
           // UI Feedback
           messageEl.textContent = "Code applied successfully!";
           messageEl.classList.add('text-[var(--sage-green)]');
@@ -337,17 +602,31 @@ export class StepPayment extends HTMLElement {
 
           // Refresh Displays
           this.updateDisplay();
+          this.updateMobileSummary();
 
-          // Re-Initialize Payment (To update Stripe Intent amount)
-          if (this.stripe) {
-            const paymentContainer = this.querySelector('#payment-container');
-            paymentContainer.innerHTML = `
-                      <div class="flex flex-col items-center justify-center h-40 text-gray-400">
-                          <i class="fas fa-circle-notch fa-spin text-2xl mb-2 text-[var(--sage-green)]"></i>
-                          <span class="text-sm font-medium">Updating Total...</span>
-                      </div>
-                  `;
-            this.initStripe();
+          // Update Payment Intent amount without re-mounting (preserves card details)
+          if (this.clientSecret) {
+            try {
+              const API_BASE = window.ENV.API_BASE;
+              const response = await fetch(`${API_BASE}/api/update-payment-intent`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  clientSecret: this.clientSecret,
+                  amount: Math.round(newPrice * 100) // Convert to cents
+                })
+              });
+
+              if (response.ok) {
+                const data = await response.json();
+                this.clientSecret = data.clientSecret;
+                console.log('[StepPayment] Payment Intent amount updated successfully');
+              } else {
+                console.error('[StepPayment] Failed to update Payment Intent amount');
+              }
+            } catch (error) {
+              console.error('[StepPayment] Error updating Payment Intent:', error);
+            }
           }
 
         } else {
@@ -406,14 +685,22 @@ export class StepPayment extends HTMLElement {
         travelZone: window.bookingData.travelZone
       };
 
+      console.log('[StepPayment] === CREATING PAYMENT INTENT ===');
+      console.log('[StepPayment] Payload:', payload);
+      console.log('[StepPayment] Full bookingData:', window.bookingData);
+
       const response = await fetch(`${API_BASE}/api/create-payment-intent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
 
+      console.log('[StepPayment] Response status:', response.status);
+
       if (!response.ok) {
-        throw new Error(`Backend Error: ${response.status}`);
+        const errorData = await response.json().catch(() => ({}));
+        console.error('[StepPayment] Payment intent error:', errorData);
+        throw new Error(`Backend Error: ${response.status} - ${errorData.error || 'Unknown'}`);
       }
 
       const { clientSecret } = await response.json();
@@ -475,19 +762,45 @@ export class StepPayment extends HTMLElement {
 
       // Auto-Disable/Enable Pay Button based on validity
       const payBtn = this.querySelector('#btn-pay-now');
+      const waiverCheckbox = this.querySelector('#waiver-checkbox');
+
       if (payBtn) {
         payBtn.disabled = true;
         payBtn.classList.add('opacity-50', 'cursor-not-allowed');
       }
 
       paymentElement.on('change', (event) => {
-        if (payBtn) {
-          payBtn.disabled = !event.complete;
-          if (event.complete) {
+        // Store payment validity for checkbox handler to use
+        this.paymentValid = event.complete;
+
+        if (payBtn && waiverCheckbox) {
+          // Button is enabled only if BOTH payment is complete AND waiver is checked
+          const isPaymentComplete = event.complete;
+          const isWaiverChecked = waiverCheckbox.checked;
+
+          payBtn.disabled = !(isPaymentComplete && isWaiverChecked);
+
+          if (isPaymentComplete && isWaiverChecked) {
             payBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            payBtn.title = '';
           } else {
             payBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            if (!isWaiverChecked) {
+              payBtn.title = 'Please accept the terms to continue';
+            } else {
+              payBtn.title = 'Please complete payment information';
+            }
           }
+        }
+      });
+
+      // Listen for payment element changes to update button state
+      paymentElement.on('change', (event) => {
+        this.paymentValid = event.complete;
+
+        // Call updatePayButtonState if it exists
+        if (this.updatePayButtonState) {
+          this.updatePayButtonState();
         }
       });
 
@@ -573,28 +886,46 @@ export class StepPayment extends HTMLElement {
     const modalContent = this.querySelector('#modal-content');
 
     // Waiver checkbox validation - disable Pay button until checked
-    const updatePayButtonState = () => {
-      const isWaiverAccepted = waiverCheckbox.checked;
-      const isPaymentValid = !payBtn.disabled; // Check if payment fields are valid
+    const payBtnMobile = this.querySelector('#btn-pay-now-mobile');
 
-      if (!isWaiverAccepted) {
-        payBtn.disabled = true;
-        payBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        payBtn.title = 'Please accept the waiver to continue';
-      } else if (isWaiverAccepted && isPaymentValid) {
-        payBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-        payBtn.title = '';
-      }
+    // Store as instance method so Stripe listener can call it
+    this.updatePayButtonState = () => {
+      const isWaiverAccepted = waiverCheckbox.checked;
+      const isPaymentValid = this.paymentValid || false; // Use stored validity from Stripe element
+
+      // Update both desktop and mobile buttons
+      [payBtn, payBtnMobile].forEach(btn => {
+        if (!btn) return;
+
+        if (!isWaiverAccepted) {
+          btn.disabled = true;
+          btn.classList.add('opacity-50', 'cursor-not-allowed');
+          btn.title = 'Please accept the terms to continue';
+        } else if (isWaiverAccepted && isPaymentValid) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-50', 'cursor-not-allowed');
+          btn.title = '';
+        } else {
+          // Checkbox is checked but payment is incomplete
+          btn.disabled = true;
+          btn.classList.add('opacity-50', 'cursor-not-allowed');
+          btn.title = 'Please complete payment information';
+        }
+      });
     };
 
-    waiverCheckbox.addEventListener('change', updatePayButtonState);
+    // Set initial state (disabled until waiver is checked)
+    this.updatePayButtonState();
+
+    waiverCheckbox.addEventListener('change', this.updatePayButtonState);
 
     // Modal handling for Terms/Privacy/Waiver links
     const openModal = async (docType) => {
       const titles = {
         terms: 'Terms & Conditions',
         privacy: 'Privacy Policy',
-        waiver: 'Safety Waiver'
+        waiver: 'Safety Waiver',
+        reschedule: 'Our Rescheduling Policy'
       };
 
       modalTitle.textContent = titles[docType] || 'Document';
@@ -613,6 +944,51 @@ export class StepPayment extends HTMLElement {
           const response = await fetch(`${API_BASE}/api/waiver/latest`);
           const data = await response.json();
           content = data.content || 'Waiver content not available.';
+
+          // Store terms version for audit trail
+          if (data.version) {
+            window.bookingData.termsVersion = '1.0';
+          }
+        } else if (docType === 'reschedule') {
+          content = `
+            <div class="space-y-6">
+              <div class="bg-gradient-to-br from-[var(--sage-green-light)] to-white border border-[var(--sage-green)] rounded-xl p-6">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <i class="fas fa-calendar-check text-[var(--sage-green)] text-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h5 class="font-bold text-[var(--dark-heading)] text-lg mb-2">Flexible Rescheduling</h5>
+                    <p class="text-gray-700 leading-relaxed">Need to change your time? No problem! You can reschedule for free up to 24 hours before our session.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-gray-50 border border-gray-200 rounded-xl p-6">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <i class="fas fa-heart text-[var(--sage-green)] text-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h5 class="font-bold text-[var(--dark-heading)] text-lg mb-2">No Refunds</h5>
+                    <p class="text-gray-700 leading-relaxed">To keep our small business running smoothly, all bookings are final and non-refundable. We are happy to move your appointment to a new date, but we cannot issue cash refunds.</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="bg-amber-50 border border-amber-200 rounded-xl p-6">
+                <div class="flex items-start gap-3">
+                  <div class="flex-shrink-0 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm">
+                    <i class="fas fa-clock text-amber-600 text-lg"></i>
+                  </div>
+                  <div class="flex-1">
+                    <h5 class="font-bold text-[var(--dark-heading)] text-lg mb-2">The 24-Hour Rule</h5>
+                    <p class="text-gray-700 leading-relaxed">Because Nana Sue reserves this time specifically for your family, changes made with less than 24 hours' notice will forfeit the session fee.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
         } else if (docType === 'terms') {
           content = `
             <h4>Terms & Conditions</h4>
@@ -656,17 +1032,39 @@ export class StepPayment extends HTMLElement {
       });
     });
 
+    // Policy links (e.g., Rescheduling Policy)
+    const policyLinks = this.querySelectorAll('.policy-link');
+    policyLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const docType = link.getAttribute('data-doc');
+        openModal(docType);
+      });
+    });
+
     modalClose.addEventListener('click', closeModal);
     modalOverlay.addEventListener('click', closeModal);
     modalAccept.addEventListener('click', closeModal);
 
     backBtn.onclick = () => {
       this.dispatchEvent(new CustomEvent('step-back', {
-        detail: { step: 3 },
+        detail: { step: 2 },
         bubbles: true,
         composed: true
       }));
     };
+
+    // Mobile back button
+    const backBtnMobile = this.querySelector('#btn-step-4-back-mobile');
+    if (backBtnMobile) {
+      backBtnMobile.onclick = () => {
+        this.dispatchEvent(new CustomEvent('step-back', {
+          detail: { step: 2 },
+          bubbles: true,
+          composed: true
+        }));
+      };
+    }
 
     form.onsubmit = async (e) => {
       e.preventDefault();
@@ -677,13 +1075,20 @@ export class StepPayment extends HTMLElement {
         return;
       }
 
-      // Store waiver acceptance
-      window.bookingData.waiverAccepted = true;
-      window.bookingData.acceptedAt = new Date().toISOString();
+      // Store terms and conditions acceptance
+      window.bookingData.termsAndConditionsAccepted = true;
+      window.bookingData.termsVersion = '1.0';
+      // acceptedAt will be set by backend using serverTimestamp for consistency
 
       payBtn.disabled = true;
       const origText = payBtn.innerHTML;
       payBtn.innerHTML = `<i class="fas fa-circle-notch fa-spin text-lg"></i>`;
+
+      // Also disable and show loading on mobile button
+      if (payBtnMobile) {
+        payBtnMobile.disabled = true;
+        payBtnMobile.innerHTML = `<i class="fas fa-circle-notch fa-spin text-lg"></i>`;
+      }
 
       // 1. If Stripe Elements are active (Real Transaction)
       if (this.stripe && this.elements) {
@@ -701,11 +1106,13 @@ export class StepPayment extends HTMLElement {
           msgEl.classList.remove('hidden');
           payBtn.disabled = false;
           payBtn.innerHTML = origText;
-        } else if (paymentIntent && paymentIntent.status === 'succeeded') {
-          // Success
-          this.completeBooking(paymentIntent);
+          if (payBtnMobile) {
+            payBtnMobile.disabled = false;
+            payBtnMobile.innerHTML = 'Pay Now <i class="fas fa-lock text-sm opacity-80"></i>';
+          }
         } else {
-          console.warn("Unexpected Stripe State:", paymentIntent);
+          // Payment succeeded or is processing
+          console.log('[StepPayment] Payment Intent Status:', paymentIntent?.status);
           this.completeBooking(paymentIntent);
         }
       }
@@ -719,6 +1126,7 @@ export class StepPayment extends HTMLElement {
 
 
   completeBooking(paymentIntent) {
+    console.log('[StepPayment] completeBooking called');
     window.bookingData.bookingComplete = true;
 
     if (paymentIntent) {
@@ -727,8 +1135,9 @@ export class StepPayment extends HTMLElement {
       window.bookingData.paymentMethodId = paymentIntent.payment_method;
     }
 
+    console.log('[StepPayment] Dispatching step-complete event for step 2');
     this.dispatchEvent(new CustomEvent('step-complete', {
-      detail: { step: 3 },
+      detail: { step: 2 },
       bubbles: true,
       composed: true
     }));

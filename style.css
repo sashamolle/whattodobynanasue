@@ -129,6 +129,11 @@ h4 {
   box-shadow: 0 0 0 4px var(--sage-green-light);
 }
 
+/* Checkbox accent color */
+input[type="checkbox"] {
+  accent-color: var(--sage-green);
+}
+
 /* Progress Bar Styles */
 .step-circle {
   transition: all 0.3s ease;

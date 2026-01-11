@@ -152,3 +152,19 @@ class SiteHeader extends HTMLElement {
 
 // Register the custom tag <site-header>
 customElements.define('site-header', SiteHeader);
+
+// Site Footer Component
+class SiteFooter extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+      <footer class="bg-gray-800 text-gray-400 mt-20 py-10">
+        <div class="container mx-auto px-6 text-center">
+          <p class="text-sm">&copy; 2025 What To Do by Nana Sue. All rights reserved. | <a href="terms.html" class="hover:text-white">Terms & Conditions</a> | <a href="privacy.html" class="hover:text-white">Privacy Policy</a></p>
+        </div>
+      </footer>
+    `;
+  }
+}
+
+// Register the custom tag <site-footer>
+customElements.define('site-footer', SiteFooter);
