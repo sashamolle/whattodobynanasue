@@ -170,9 +170,13 @@ export class StepServiceSchedule extends HTMLElement {
             </div>
             </div>
           </div>
-          
           <!-- Desktop Buttons (inside card at bottom) -->
-          <div class="hidden md:flex justify-end items-center mt-8 pt-6 border-t border-gray-100">
+          <div class="hidden md:flex justify-end items-center mt-8 pt-6 border-t border-gray-100 relative">
+            <!-- Tooltip for desktop -->
+            <div id="tooltip-desktop" class="hidden absolute bottom-full right-0 mb-3 bg-[var(--sage-green)] text-white text-sm font-medium px-4 py-3 rounded-lg shadow-lg transition-all duration-300 opacity-0 whitespace-nowrap">
+              <i class="fas fa-calendar-check mr-2"></i>Please find a moment on the calendar to continue.
+              <div class="absolute top-full right-8 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-[var(--sage-green)]"></div>
+            </div>
             <button id="btn-next" disabled class="bg-gray-200 text-gray-400 px-8 py-4 rounded-full font-semibold shadow-none cursor-not-allowed transition-all duration-300 flex items-center gap-2">
               Next: Details <i class="fas fa-arrow-right text-sm"></i>
             </button>
@@ -183,7 +187,12 @@ export class StepServiceSchedule extends HTMLElement {
 
     <!-- Sticky Mobile Footer -->
     <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-100 shadow-lg z-50">
-      <div class="px-4 py-4 pb-safe">
+      <div class="px-4 py-4 pb-safe relative">
+        <!-- Tooltip for mobile -->
+        <div id="tooltip-mobile" class="hidden absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 bg-[var(--sage-green)] text-white text-sm font-medium px-4 py-3 rounded-lg shadow-lg transition-all duration-300 opacity-0 whitespace-nowrap">
+          <i class="fas fa-calendar-check mr-2"></i>Please find a moment on the calendar to continue.
+          <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-[var(--sage-green)]"></div>
+        </div>
         <div id="mobile-summary" class="hidden mb-4 text-xs">
           <!-- Appointment: Date & Time with Price -->
           <div class="flex items-center justify-between text-gray-800 font-bold">
@@ -313,7 +322,7 @@ export class StepServiceSchedule extends HTMLElement {
     const initAutocomplete = () => {
       if (!addressInput || !window.google || !window.google.maps) return;
 
-      const CHELSEA_ORIGIN = "10011, USA";
+      const CHELSEA_ORIGIN = "210 West 20th Street, New York, NY 10011";
 
       // Initialize autocomplete
       const autocomplete = new google.maps.places.Autocomplete(addressInput, {
@@ -394,9 +403,27 @@ export class StepServiceSchedule extends HTMLElement {
     this.querySelector('#next-month')?.addEventListener('click', () => this.changeMonth(1));
 
     // Next Button Click Handlers (both desktop and mobile)
-    const handleNextClick = () => {
-      if (!this.selectedSlot) return;
-      console.log('[StepServiceSchedule] Dispatching step-complete event');
+    const handleNextClick = (e) => {
+      if (!this.selectedSlot) {
+        // Show appropriate tooltip based on which button was clicked
+        const isDesktop = e.target.id === 'btn-next' || e.target.closest('#btn-next');
+        const tooltipId = isDesktop ? 'tooltip-desktop' : 'tooltip-mobile';
+        const tooltip = this.querySelector(`#${tooltipId}`);
+
+        if (tooltip) {
+          // Show tooltip
+          tooltip.classList.remove('hidden');
+          // Trigger animation
+          setTimeout(() => tooltip.classList.remove('opacity-0'), 10);
+
+          // Hide after 3 seconds
+          setTimeout(() => {
+            tooltip.classList.add('opacity-0');
+            setTimeout(() => tooltip.classList.add('hidden'), 300);
+          }, 3000);
+        }
+        return;
+      }
       this.dispatchEvent(new CustomEvent('step-complete', {
         bubbles: true,
         composed: true,
@@ -409,11 +436,9 @@ export class StepServiceSchedule extends HTMLElement {
 
     if (nextBtn) {
       nextBtn.addEventListener('click', handleNextClick);
-      console.log('[StepServiceSchedule] Desktop Next button listener attached');
     }
     if (nextBtnMobile) {
       nextBtnMobile.addEventListener('click', handleNextClick);
-      console.log('[StepServiceSchedule] Mobile Next button listener attached');
     }
   }
 
@@ -447,10 +472,6 @@ export class StepServiceSchedule extends HTMLElement {
     if (this.calendarData) return;
 
     const API_BASE = window.ENV?.API_BASE || '';
-    console.log('[DEBUG] Loading calendar...');
-    console.log('[DEBUG] API_BASE:', API_BASE);
-    console.log('[DEBUG] Hostname:', window.location.hostname);
-    console.log('[DEBUG] Full URL:', `${API_BASE}/api/booking/slots`);
 
     const placeholder = this.querySelector('#calendar-placeholder');
     const content = this.querySelector('#calendar-content');
@@ -674,8 +695,6 @@ export class StepServiceSchedule extends HTMLElement {
   }
 
   updateMobileFooterPricing() {
-    console.log('[DEBUG] updateMobileFooterPricing called');
-    console.log('[DEBUG] window.bookingData:', window.bookingData);
     // Update service icon, price, and total when service type changes
     const mobileServiceIcon = this.querySelector('#mobile-service-icon');
     const mobileServicePrice = this.querySelector('#mobile-service-price');
@@ -700,16 +719,6 @@ export class StepServiceSchedule extends HTMLElement {
 
     // Use bookingData.price if it exists (preserves discount), otherwise use calculated
     const total = window.bookingData.price || calculatedTotal;
-
-    console.log('[DEBUG] Pricing values:', {
-      basePrice,
-      travelFee,
-      calculatedTotal,
-      'bookingData.price': window.bookingData.price,
-      'bookingData.promoCode': window.bookingData.promoCode,
-      'bookingData.discountAmount': window.bookingData.discountAmount,
-      'final total': total
-    });
 
     // Update icon
     if (mobileServiceIcon) {
@@ -803,7 +812,7 @@ export class StepServiceSchedule extends HTMLElement {
   calculateDistance(destination, isManhattan) {
     if (!window.google) return;
 
-    const CHELSEA_ORIGIN = "10011, USA";
+    const CHELSEA_ORIGIN = "210 West 20th Street, New York, NY 10011";
     const service = new google.maps.DistanceMatrixService();
     const addressInput = this.querySelector('#address-input');
 
@@ -974,17 +983,10 @@ export class StepServiceSchedule extends HTMLElement {
       // Update mobile summary
       const mobileSummary = this.querySelector('#mobile-summary');
       const mobileDate = this.querySelector('#mobile-date');
-      console.log('[Mobile Footer Debug] mobileSummary:', mobileSummary);
-      console.log('[Mobile Footer Debug] mobileDate:', mobileDate);
-      console.log('[Mobile Footer Debug] date from selectedSlot:', date);
-      console.log('[Mobile Footer Debug] displayTime:', displayTime);
       if (mobileSummary && mobileDate) {
         const dateObj = new Date(date); // Use the 'date' from selectedSlot
-        console.log('[Mobile Footer Debug] dateObj:', dateObj);
         const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-        console.log('[Mobile Footer Debug] formattedDate:', formattedDate);
         const finalText = `${formattedDate} at ${displayTime} (45m)`;
-        console.log('[Mobile Footer Debug] Setting mobileDate.textContent to:', finalText);
         mobileDate.textContent = finalText;
         mobileSummary.classList.remove('hidden');
       }
@@ -992,7 +994,6 @@ export class StepServiceSchedule extends HTMLElement {
   }
 
   updateDisplay() {
-    console.log('[StepServiceSchedule] updateDisplay called');
     // Restore state if returning to this step
     if (window.bookingData.serviceCategory) {
       const radio = this.querySelector(`input[name="service"][value="${window.bookingData.serviceCategory}"]`);

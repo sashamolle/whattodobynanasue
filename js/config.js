@@ -6,6 +6,11 @@ window.ENV = {
     // GA4 Measurement ID
     GA4_MEASUREMENT_ID: 'G-BK0T845CB2',
 
+    // Enable/Disable Analytics (disable for localhost testing)
+    ENABLE_ANALYTICS: !(window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname.startsWith('192.168.')),
+
     // API Base URL (Differentiates Localhost vs Production)
     // If hostname is localhost/127.0.0.1/local IP, use backend on port 3001
     // Otherwise, use relative path (proxy for production)

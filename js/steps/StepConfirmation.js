@@ -20,7 +20,9 @@ export class StepConfirmation extends HTMLElement {
     // Safety checks: Must have ID, Price, and NOT already tracked
     if (!data || !data.paymentIntentId || data.purchaseTracked) return;
 
-    if (window.gtag) {
+    const analyticsEnabled = window.ENV?.ENABLE_ANALYTICS !== false;
+
+    if (window.gtag && analyticsEnabled) {
       console.log(`[GA4] Tracking Purchase: ${data.paymentIntentId} ($${data.price})`);
 
       window.gtag('event', 'purchase', {
@@ -37,6 +39,8 @@ export class StepConfirmation extends HTMLElement {
 
       // Mark as tracked to prevent double-counting on re-renders
       data.purchaseTracked = true;
+    } else if (!analyticsEnabled) {
+      console.log(`[GA4] Purchase tracking disabled for localhost testing`);
     }
   }
 

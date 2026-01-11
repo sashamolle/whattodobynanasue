@@ -36,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Call onShow lifecycle method if it exists
         if (steps[index] && typeof steps[index].onShow === 'function') {
-            console.log(`[BookingManager] Calling onShow for step ${index}`);
             steps[index].onShow();
         }
 
@@ -112,9 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!config) return;
 
         const tagId = window.ENV?.GA4_MEASUREMENT_ID;
+        const analyticsEnabled = window.ENV?.ENABLE_ANALYTICS !== false;
 
-        // Ensure gtag exists (it should from index.html / dynamically loaded script)
-        if (typeof window.gtag === 'function' && tagId) {
+        // Ensure gtag exists and analytics is enabled
+        if (typeof window.gtag === 'function' && tagId && analyticsEnabled) {
             console.log(`[GA4] Sending Virtual Page View: ${config.path}`);
 
             // [GA4] Use 'event' + 'page_view' for SPA transitions
@@ -125,6 +125,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 'send_to': tagId
             });
         } else {
+            if (!analyticsEnabled) {
+                console.log(`[GA4] Analytics disabled for localhost testing`);
+            }
             // Optional: Log warning only if dev, or silent fail
             // console.warn("[GA4] gtag not found or ID missing");
         }
@@ -133,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Submit Logic (Step 4 -> 5) ---
     async function submitBooking() {
         try {
-            console.log("[BookingManager] Submitting Booking Data:", window.bookingData);
             const apiBase = window.ENV.API_BASE;
             const response = await fetch(`${apiBase}/api/booking`, {
                 method: 'POST',
@@ -162,13 +164,11 @@ document.addEventListener('DOMContentLoaded', () => {
     // Listen for events bubbling up from Shadow/Light DOM components
 
     document.addEventListener('step-complete', async (e) => {
-        console.log('[BookingManager] step-complete event received:', e.detail);
         const stepIdx = e.detail.step; // 0, 1, 2...
 
         // Validation / Side Effects before moving?
         // Step 2 (Payment) implies Submission
         if (stepIdx === 2) {
-            console.log('[BookingManager] Payment step complete, submitting booking...');
             const success = await submitBooking();
             if (success) {
                 // Update Confirmation Screen with latest data (email)
@@ -206,7 +206,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (paymentIntentClientSecret && redirectStatus === 'succeeded') {
         // Stripe redirected back after successful payment
-        console.log('[BookingManager] Detected successful Stripe redirect, showing confirmation');
         showStep(4);
     } else {
         // Normal flow - start at beginning

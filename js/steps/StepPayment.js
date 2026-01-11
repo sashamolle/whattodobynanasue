@@ -5,36 +5,22 @@ export class StepPayment extends HTMLElement {
     this.stripe = null;
     this.elements = null;
 
-    console.log('[StepPayment] === INITIALIZATION START ===');
-    console.log('[StepPayment] bookingData:', window.bookingData);
 
     // Fix: Use bookingData.originalPrice if it exists (from previous discount application)
     // Otherwise, calculate the original price from service type and zone
     if (window.bookingData && window.bookingData.originalPrice) {
       this.originalPrice = window.bookingData.originalPrice;
-      console.log('[StepPayment] Using stored originalPrice:', this.originalPrice);
     } else if (window.bookingData && window.bookingData.serviceType && window.bookingData.travelZone) {
       // Calculate original price based on service type and zone
       const pricing = calculateBookingPrice(window.bookingData.serviceType, window.bookingData.travelZone);
       this.originalPrice = pricing.total;
-      console.log('[StepPayment] Calculated originalPrice from service/zone:', {
-        serviceType: window.bookingData.serviceType,
-        travelZone: window.bookingData.travelZone,
-        pricing,
-        originalPrice: this.originalPrice
-      });
     } else if (window.bookingData && window.bookingData.price) {
       // Fallback: Use current price if service/zone not available
       this.originalPrice = window.bookingData.price;
-      console.log('[StepPayment] Using bookingData.price as originalPrice:', this.originalPrice);
     } else {
       this.originalPrice = 150; // Final fallback
-      console.log('[StepPayment] Using fallback originalPrice: 150');
     }
 
-    console.log('[StepPayment] Final originalPrice:', this.originalPrice);
-    console.log('[StepPayment] Current bookingData.price:', window.bookingData?.price);
-    console.log('[StepPayment] === INITIALIZATION END ===');
 
     this.render();
     this.setupListeners();
@@ -52,7 +38,6 @@ export class StepPayment extends HTMLElement {
     // Listen for Price Updates from StepService
     // This fixes the bug where originalPrice was stale (e.g. 150) if StepPayment loaded before Price Update.
     window.addEventListener('price-update', (e) => {
-      console.log("[StepPayment] Received price update:", e.detail.price);
       this.originalPrice = e.detail.price;
 
       // If Discount was cleared by StepService, reflect that in UI
@@ -67,27 +52,16 @@ export class StepPayment extends HTMLElement {
 
   // Called by booking manager when this step becomes visible
   onShow() {
-    console.log('[StepPayment] === onShow CALLED ===');
-    console.log('[StepPayment] Current bookingData:', {
-      serviceType: window.bookingData.serviceType,
-      travelZone: window.bookingData.travelZone,
-      price: window.bookingData.price,
-      originalPrice: window.bookingData.originalPrice,
-      promoCode: window.bookingData.promoCode
-    });
 
     // Calculate what the price SHOULD be based on current service/zone
     if (window.bookingData.serviceType && window.bookingData.travelZone !== undefined) {
       const pricing = calculateBookingPrice(window.bookingData.serviceType, window.bookingData.travelZone);
       const expectedPrice = pricing.total;
 
-      console.log('[StepPayment] Expected price from service/zone:', expectedPrice);
 
       // Check if service/zone changed (price doesn't match expected)
       // If so, clear discount and reset to new price
       if (window.bookingData.originalPrice && window.bookingData.originalPrice !== expectedPrice) {
-        console.log('[StepPayment] ⚠️ SERVICE/ZONE CHANGED! Clearing discount and resetting price');
-        console.log('[StepPayment] Old originalPrice:', window.bookingData.originalPrice, 'New expected:', expectedPrice);
 
         // Clear discount
         delete window.bookingData.originalPrice;
@@ -98,7 +72,6 @@ export class StepPayment extends HTMLElement {
         // Reset promo UI
         this.resetPromoUI();
 
-        console.log('[StepPayment] ✅ Discount cleared!');
       }
 
       // Set originalPrice to current expected price
@@ -109,11 +82,9 @@ export class StepPayment extends HTMLElement {
         window.bookingData.price = expectedPrice;
       }
 
-      console.log('[StepPayment] Set originalPrice to:', this.originalPrice);
     } else if (window.bookingData.price) {
       // Fallback: use current price
       this.originalPrice = window.bookingData.price;
-      console.log('[StepPayment] Using bookingData.price as originalPrice:', this.originalPrice);
     }
 
     // Update display with current state
@@ -127,7 +98,6 @@ export class StepPayment extends HTMLElement {
     // Update mobile summary
     this.updateMobileSummary();
 
-    console.log('[StepPayment] === onShow COMPLETE ===');
   }
 
   updateMobileSummary() {
@@ -187,7 +157,6 @@ export class StepPayment extends HTMLElement {
   }
 
   resetPromoUI() {
-    console.log('[StepPayment] resetPromoUI called');
 
     const input = this.querySelector('#promo-input');
     const container = this.querySelector('#promo-container');
@@ -220,7 +189,6 @@ export class StepPayment extends HTMLElement {
     messageEl.classList.add('hidden');
     messageEl.textContent = '';
 
-    console.log('[StepPayment] resetPromoUI complete - calling updateDisplay');
     this.updateDisplay();
   }
 
@@ -252,28 +220,13 @@ export class StepPayment extends HTMLElement {
   }
 
   updateDisplay() {
-    console.log('[StepPayment] updateDisplay called');
-    console.log('[StepPayment] updateDisplay state:', {
-      price: window.bookingData?.price,
-      originalPrice: this.originalPrice,
-      promoCode: window.bookingData?.promoCode,
-      discountAmount: window.bookingData?.discountAmount
-    });
-
     // IMPORTANT: Recalculate originalPrice when this step becomes visible
     // because connectedCallback fires before user selects service/zone
     if (!window.bookingData.originalPrice && window.bookingData.serviceType && window.bookingData.travelZone) {
       const pricing = calculateBookingPrice(window.bookingData.serviceType, window.bookingData.travelZone);
       this.originalPrice = pricing.total;
-      console.log('[StepPayment] RECALCULATED originalPrice on display:', {
-        serviceType: window.bookingData.serviceType,
-        travelZone: window.bookingData.travelZone,
-        pricing,
-        originalPrice: this.originalPrice
-      });
     } else if (!window.bookingData.originalPrice && window.bookingData.price) {
       this.originalPrice = window.bookingData.price;
-      console.log('[StepPayment] Set originalPrice from bookingData.price:', this.originalPrice);
     }
 
     const priceDisplay = this.querySelector('#payment-display-price');
@@ -284,14 +237,9 @@ export class StepPayment extends HTMLElement {
       // Check if discount is actually applied (has promo code AND price is less than original)
       const hasDiscount = window.bookingData.promoCode && window.bookingData.price < this.originalPrice;
 
-      console.log('[StepPayment] === DISCOUNT CHECK ===');
-      console.log('[StepPayment] hasPromoCode:', !!window.bookingData.promoCode, 'value:', window.bookingData.promoCode);
-      console.log('[StepPayment] price < originalPrice:', window.bookingData.price < this.originalPrice, `(${window.bookingData.price} < ${this.originalPrice})`);
-      console.log('[StepPayment] hasDiscount:', hasDiscount);
 
       if (hasDiscount) {
         // Show discount view
-        console.log('[StepPayment] SHOWING DISCOUNT VIEW');
         priceDisplay.textContent = `$${window.bookingData.price.toFixed(2)}`;
         priceDisplay.classList.add('text-[var(--sage-green)]');
 
@@ -301,12 +249,10 @@ export class StepPayment extends HTMLElement {
         discountBadge.classList.remove('hidden');
       } else {
         // Standard view - no discount
-        console.log('[StepPayment] SHOWING STANDARD VIEW - HIDING DISCOUNT BADGE');
         priceDisplay.textContent = `$${window.bookingData.price.toFixed(2)}`;
         priceDisplay.classList.remove('text-[var(--sage-green)]');
         originalPriceDisplay.classList.add('hidden');
         discountBadge.classList.add('hidden');
-        console.log('[StepPayment] discountBadge.className after hiding:', discountBadge?.className);
       }
     }
   }
@@ -533,33 +479,24 @@ export class StepPayment extends HTMLElement {
         const data = await res.json();
 
         if (data.valid) {
-          console.log('[Promo] === DISCOUNT CALCULATION START ===');
-          console.log('[Promo] Discount data:', data);
-          console.log('[Promo] this.originalPrice BEFORE calculation:', this.originalPrice);
-          console.log('[Promo] window.bookingData.originalPrice BEFORE:', window.bookingData.originalPrice);
 
           // Calculate new price based on discount
           let newPrice = this.originalPrice;
           if (data.type === 'percentage') {
             newPrice = this.originalPrice * (1 - (data.value / 100)); // Backend returns value as number (e.g. 20 for 20%)
-            console.log('[Promo] Type: percentage, value:', data.value, 'newPrice:', newPrice);
           } else if (data.type === 'percent') {
             // Flexible handling: If value is 0.2 (20%), or 20 (20%)
             // Assume if value <= 1, it's a decimal (0.2), else it's a percentage (20)
             if (data.value <= 1) {
               newPrice = this.originalPrice * (1 - data.value); // Handle 0.20
-              console.log('[Promo] Type: percent (decimal), value:', data.value, 'newPrice:', newPrice);
             } else {
               newPrice = this.originalPrice * (1 - (data.value / 100)); // Handle 20
-              console.log('[Promo] Type: percent (whole), value:', data.value, 'newPrice:', newPrice);
             }
           } else if (data.type === 'fixed') {
             // Fixed discount: Subtract value from original price
             newPrice = Math.max(0, this.originalPrice - data.value);
-            console.log('[Promo] Type: fixed, value:', data.value, 'newPrice:', newPrice);
           } else if (data.type === 'override') {
             newPrice = data.value;
-            console.log('[Promo] Type: override, value:', data.value, 'newPrice:', newPrice);
           }
 
           // Store discount info in bookingData
@@ -567,26 +504,13 @@ export class StepPayment extends HTMLElement {
           // IMPORTANT: Don't overwrite originalPrice - it should stay as the pre-discount price
           if (!window.bookingData.originalPrice) {
             window.bookingData.originalPrice = this.originalPrice;
-            console.log('[Promo] SET window.bookingData.originalPrice to:', this.originalPrice);
           } else {
-            console.log('[Promo] KEPT existing window.bookingData.originalPrice:', window.bookingData.originalPrice);
           }
 
           const discountAmount = (this.originalPrice - newPrice).toFixed(2);
           window.bookingData.discountAmount = discountAmount;
           window.bookingData.price = parseFloat(newPrice.toFixed(2));
 
-          console.log('[Promo] Final values:', {
-            code,
-            type: data.type,
-            value: data.value,
-            'this.originalPrice': this.originalPrice,
-            'window.bookingData.originalPrice': window.bookingData.originalPrice,
-            newPrice,
-            discountAmount,
-            'window.bookingData.price': window.bookingData.price
-          });
-          console.log('[Promo] === DISCOUNT CALCULATION END ===');
           // UI Feedback
           messageEl.textContent = "Code applied successfully!";
           messageEl.classList.add('text-[var(--sage-green)]');
@@ -620,7 +544,6 @@ export class StepPayment extends HTMLElement {
               if (response.ok) {
                 const data = await response.json();
                 this.clientSecret = data.clientSecret;
-                console.log('[StepPayment] Payment Intent amount updated successfully');
               } else {
                 console.error('[StepPayment] Failed to update Payment Intent amount');
               }
@@ -685,9 +608,6 @@ export class StepPayment extends HTMLElement {
         travelZone: window.bookingData.travelZone
       };
 
-      console.log('[StepPayment] === CREATING PAYMENT INTENT ===');
-      console.log('[StepPayment] Payload:', payload);
-      console.log('[StepPayment] Full bookingData:', window.bookingData);
 
       const response = await fetch(`${API_BASE}/api/create-payment-intent`, {
         method: "POST",
@@ -695,7 +615,6 @@ export class StepPayment extends HTMLElement {
         body: JSON.stringify(payload),
       });
 
-      console.log('[StepPayment] Response status:', response.status);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
@@ -749,7 +668,6 @@ export class StepPayment extends HTMLElement {
             msgEl.textContent = error.message;
             msgEl.classList.remove('hidden');
           } else {
-            console.log("[StepPayment] Apple Pay Success:", paymentIntent);
             this.completeBooking(paymentIntent);
           }
         });
@@ -1112,7 +1030,6 @@ export class StepPayment extends HTMLElement {
           }
         } else {
           // Payment succeeded or is processing
-          console.log('[StepPayment] Payment Intent Status:', paymentIntent?.status);
           this.completeBooking(paymentIntent);
         }
       }
@@ -1126,7 +1043,6 @@ export class StepPayment extends HTMLElement {
 
 
   completeBooking(paymentIntent) {
-    console.log('[StepPayment] completeBooking called');
     window.bookingData.bookingComplete = true;
 
     if (paymentIntent) {
@@ -1135,7 +1051,6 @@ export class StepPayment extends HTMLElement {
       window.bookingData.paymentMethodId = paymentIntent.payment_method;
     }
 
-    console.log('[StepPayment] Dispatching step-complete event for step 2');
     this.dispatchEvent(new CustomEvent('step-complete', {
       detail: { step: 2 },
       bubbles: true,

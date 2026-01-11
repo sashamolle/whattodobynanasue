@@ -2,12 +2,10 @@ import { updateMobileSummary as updateMobileSummaryUtil } from '../utils/mobile-
 
 export class StepIntake extends HTMLElement {
   connectedCallback() {
-    console.log('[StepIntake] connectedCallback START');
     this.render();
     this.hydrate(); // Populate form with existing data
     this.setupListeners();
     // Update summary after DOM is ready
-    console.log('[StepIntake] About to call updateMobileSummary');
     setTimeout(() => this.updateMobileSummary(), 0);
   }
 
@@ -254,13 +252,6 @@ export class StepIntake extends HTMLElement {
     const nextBtn = this.querySelector('#btn-step-1-next');
     const nextBtnMobile = this.querySelector('#btn-step-1-next-mobile');
 
-    console.log('[StepIntake] setupListeners - buttons found:', {
-      backBtn: !!backBtn,
-      backBtnMobile: !!backBtnMobile,
-      nextBtn: !!nextBtn,
-      nextBtnMobile: !!nextBtnMobile
-    });
-
     // Validate baby DOB - prevent future dates (backup for mobile browsers that ignore max attribute)
     const babyDobInput = this.querySelector('#babyDob');
     if (babyDobInput) {
@@ -282,7 +273,6 @@ export class StepIntake extends HTMLElement {
 
     // Back button handlers
     const handleBack = () => {
-      console.log('[StepIntake] Back button clicked');
       this.dispatchEvent(new CustomEvent('step-back', {
         detail: { step: 1 },
         bubbles: true,

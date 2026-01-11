@@ -58,6 +58,14 @@ class SiteHeader extends HTMLElement {
     // Prevent duplicate injection
     if (window.googleAnalyticsLoaded) return;
 
+    // Check if analytics is enabled
+    const analyticsEnabled = window.ENV?.ENABLE_ANALYTICS !== false;
+    if (!analyticsEnabled) {
+      console.log('[Analytics] GA4 disabled for localhost testing');
+      window.googleAnalyticsLoaded = true; // Mark as "loaded" to prevent retries
+      return;
+    }
+
     // Get ID from Config
     const gaId = window.ENV ? window.ENV.GA4_MEASUREMENT_ID : null;
 
