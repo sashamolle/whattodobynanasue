@@ -624,6 +624,9 @@ export class StepPayment extends HTMLElement {
 
       const { clientSecret } = await response.json();
 
+      // Store client secret for later updates (e.g., when promo code is applied)
+      this.clientSecret = clientSecret;
+
       // 3. Initialize Elements
       // Note: We create a NEW Stripe instance or element group for the new secret
       this.stripe = Stripe(STRIPE_PK);
