@@ -193,6 +193,76 @@
                     </a>
                 </div>
 
+                <!-- Google Review Modal (for 4-5 star reviews) -->
+                <div id="google-review-modal" class="hidden fixed inset-0 z-50 overflow-y-auto"
+                    aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                    <!-- Background overlay -->
+                    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" id="modal-overlay"></div>
+
+                    <!-- Modal content -->
+                    <div class="flex min-h-full items-center justify-center p-4">
+                        <div
+                            class="relative bg-white rounded-2xl shadow-2xl w-full max-w-lg transform transition-all p-8 md:p-10">
+                            <!-- Close button -->
+                            <button id="modal-close-btn"
+                                class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors p-2">
+                                <i class="fas fa-times text-xl"></i>
+                            </button>
+
+                            <!-- Header -->
+                            <div class="text-center mb-6">
+                                <h3 id="modal-title" class="text-2xl font-bold text-[var(--dark-heading)] mb-2">
+                                    Share on Google? 💚
+                                </h3>
+                                <p class="text-gray-500 text-sm leading-relaxed">
+                                    Thank you for sharing your experience with us, your kind words would help other
+                                    families discover Nana Sue's classes!
+                                </p>
+                            </div>
+
+                            <!-- Review preview box (hidden when no text) -->
+                            <div id="review-preview-box"
+                                class="bg-[var(--sage-green-light)] rounded-xl p-4 mb-6 relative">
+                                <div class="flex items-center gap-2 mb-2">
+                                    <div class="flex" id="modal-stars">
+                                        <!-- Stars will be inserted dynamically -->
+                                    </div>
+                                </div>
+                                <p class="text-gray-700 text-sm leading-relaxed" id="modal-review-text">
+                                    <!-- Review text will be inserted dynamically -->
+                                </p>
+                                <!-- Copy button -->
+                                <button id="copy-review-btn"
+                                    class="absolute top-3 right-3 flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-[var(--sage-green)] bg-white px-3 py-1.5 rounded-full shadow-sm border border-gray-200 hover:border-[var(--sage-green)] transition-all">
+                                    <i class="fas fa-copy"></i>
+                                    <span id="copy-btn-text">Copy</span>
+                                </button>
+                            </div>
+
+                            <!-- Instructions (hidden when no text) -->
+                            <div id="review-instructions" class="text-center mb-6">
+                                <p class="text-gray-600 text-sm">
+                                    <span class="font-medium">Step 1:</span> Copy your review above<br>
+                                    <span class="font-medium">Step 2:</span> Click the button below to open Google
+                                </p>
+                            </div>
+
+                            <!-- Action buttons -->
+                            <div class="flex flex-col gap-3">
+                                <a id="google-review-link" href="#" target="_blank" rel="noopener"
+                                    class="w-full bg-[var(--sage-green)] hover:bg-[var(--sage-green-dark)] text-white px-6 py-4 rounded-full font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2">
+                                    <i class="fab fa-google"></i>
+                                    Open Google Reviews
+                                </a>
+                                <button id="skip-google-btn"
+                                    class="w-full text-gray-500 hover:text-gray-700 px-6 py-3 rounded-full font-medium transition-colors">
+                                    Maybe Later
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </section>
         </div>
     </main>
@@ -361,12 +431,14 @@
                     const successMessage = document.getElementById('success-message');
                     if (selectedRating >= 4) {
                         successMessage.textContent = "Thank you for sharing your experience! As a small business, your words mean the world to us—but seeing your little one grow means even more. We'll get this posted on our \"Wall of Love\" as soon as we can. Hope to see you in class soon!";
+
+                        // Show Google review modal for 4-5 star ratings
+                        showGoogleReviewModal(formData.comment, selectedRating);
                     } else {
                         successMessage.textContent = "Thank you for your honest feedback. Nana Sue values every student's experience, and we'll be reaching out to you personally to see how we can make your next class even better.";
+                        formContainer.classList.add('hidden');
+                        successContainer.classList.remove('hidden');
                     }
-
-                    formContainer.classList.add('hidden');
-                    successContainer.classList.remove('hidden');
                 } else {
                     // Handle errors
                     if (response.status === 429) {
@@ -395,6 +467,120 @@
             errorMessage.classList.remove('hidden');
             errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+
+        // ===== Google Review Modal Functionality =====
+        const googleReviewModal = document.getElementById('google-review-modal');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const skipGoogleBtn = document.getElementById('skip-google-btn');
+        const copyReviewBtn = document.getElementById('copy-review-btn');
+        const googleReviewLink = document.getElementById('google-review-link');
+
+        // Store review text for copying
+        let currentReviewText = '';
+
+        function showGoogleReviewModal(reviewText, rating) {
+            currentReviewText = reviewText;
+
+            // Set the Google review URL from config
+            googleReviewLink.href = window.ENV.GOOGLE_REVIEW_URL || '#';
+
+            // Get the elements we may need to hide
+            const reviewPreviewBox = document.getElementById('review-preview-box');
+            const reviewInstructions = document.getElementById('review-instructions');
+            const modalStars = document.getElementById('modal-stars');
+            const modalReviewText = document.getElementById('modal-review-text');
+
+            // Check if there's actual review text
+            const hasReviewText = reviewText && reviewText.trim();
+
+            if (hasReviewText) {
+                // Show full modal with review text, copy button, and instructions
+                reviewPreviewBox.classList.remove('hidden');
+                reviewInstructions.classList.remove('hidden');
+
+                // Populate stars
+                modalStars.innerHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    const starColor = i <= rating ? 'text-yellow-400' : 'text-gray-300';
+                    modalStars.innerHTML += `
+                        <svg class="h-5 w-5 fill-current ${starColor}" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                        </svg>
+                    `;
+                }
+
+                modalReviewText.textContent = reviewText;
+                copyReviewBtn.style.display = 'flex';
+            } else {
+                // Simplified modal - hide text box and instructions
+                reviewPreviewBox.classList.add('hidden');
+                reviewInstructions.classList.add('hidden');
+            }
+
+            // Show modal with animation
+            googleReviewModal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scroll
+        }
+
+        function closeGoogleReviewModal() {
+            googleReviewModal.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore scrolling
+
+            // Transition to success screen
+            formContainer.classList.add('hidden');
+            successContainer.classList.remove('hidden');
+        }
+
+        // Copy review text to clipboard
+        copyReviewBtn.addEventListener('click', async () => {
+            if (!currentReviewText) return;
+
+            try {
+                await navigator.clipboard.writeText(currentReviewText);
+
+                // Visual feedback
+                const copyBtnText = document.getElementById('copy-btn-text');
+                const copyIcon = copyReviewBtn.querySelector('i');
+
+                copyBtnText.textContent = 'Copied!';
+                copyIcon.className = 'fas fa-check';
+                copyReviewBtn.classList.add('text-[var(--sage-green)]', 'border-[var(--sage-green)]');
+
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyBtnText.textContent = 'Copy';
+                    copyIcon.className = 'fas fa-copy';
+                    copyReviewBtn.classList.remove('text-[var(--sage-green)]', 'border-[var(--sage-green)]');
+                }, 2000);
+            } catch (err) {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = currentReviewText;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-9999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+
+                const copyBtnText = document.getElementById('copy-btn-text');
+                copyBtnText.textContent = 'Copied!';
+                setTimeout(() => copyBtnText.textContent = 'Copy', 2000);
+            }
+        });
+
+        // Modal close handlers
+        modalCloseBtn.addEventListener('click', closeGoogleReviewModal);
+        skipGoogleBtn.addEventListener('click', closeGoogleReviewModal);
+        modalOverlay.addEventListener('click', closeGoogleReviewModal);
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && !googleReviewModal.classList.contains('hidden')) {
+                closeGoogleReviewModal();
+            }
+        });
     </script>
 
 </body>
